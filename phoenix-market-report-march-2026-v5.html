@@ -90,6 +90,42 @@ body.fullscreen-mode .fs-nav{display:flex!important;}
 .fs-exit{position:fixed;top:16px;right:20px;background:none;border:1px solid var(--border);color:var(--gold-dim);font-size:10px;letter-spacing:.3em;text-transform:uppercase;padding:6px 14px;cursor:pointer;font-family:'Montserrat',sans-serif;z-index:201;display:none;}
 body.fullscreen-mode .fs-exit{display:block;}
 
+/* ── PRINT / PDF ── */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { margin: 0; padding: 0; background: #000 !important; }
+  .viewer-header, .top-controls, .thumb-strip, .fs-nav, .fs-exit { display: none !important; }
+  .page-wrapper {
+    display: block !important;
+    padding: 0 !important;
+    width: 816px !important;
+  }
+  .page {
+    display: block !important;
+    width: 816px !important;
+    height: 1056px !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    transform: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+  .page:last-child { page-break-after: auto !important; break-after: auto !important; }
+  #spreadContainer { display: none !important; }
+  @page { size: 816px 1056px; margin: 0; }
+}
+
+/* ── MOBILE RESPONSIVE — scale handled by JS ── */
+@media (max-width: 860px) {
+  #spreadBtn { display: none !important; }
+  .thumb { width: 36px; height: 46px; font-size: 7px; }
+  .page-wrapper { padding: 0; }
+}
+
 /* ── PAGE ELEMENTS ── */
 .gold-rule{width:100%;height:1px;background:var(--gold);opacity:.4;}
 .gold-rule-thin{width:100%;height:1px;background:var(--gold);opacity:.15;}
@@ -250,6 +286,7 @@ body.fullscreen-mode .fs-exit{display:block;}
   <button class="nav-btn" id="nextBtn" onclick="changePage(1)">&#8594;</button>
   <button class="view-toggle-btn" id="spreadBtn" onclick="toggleSpread()">&#9635; Book View</button>
   <button class="fullscreen-btn" onclick="enterFullscreen()">&#8599; Full Screen</button>
+  <button class="fullscreen-btn" onclick="downloadPDF()" title="Download as PDF">&#8595; PDF</button>
 </div>
 
 <div class="thumb-strip" id="thumbStrip"></div>
@@ -619,28 +656,28 @@ body.fullscreen-mode .fs-exit{display:block;}
     <div class="page-label" style="margin-bottom:16px;">Economic Development</div>
     <div class="section-title" style="margin-bottom:28px;font-size:24px;">Phoenix Keeps <em>Building.</em></div>
     <div class="data-box" style="margin-bottom:18px;" id="econ-box-1">
-      <div class="data-box-title" id="econ-source-1">Story 1 &nbsp;·&nbsp; Manufacturing &nbsp;·&nbsp; AZ Big Media</div>
+      <div class="data-box-title" id="econ-source-1">Story 1</div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;">
-        <div style="font-size:13px;font-weight:600;color:var(--gold);">500 Jobs. One Decision. Waddell.</div>
+        <div id="econ-headline-1" style="font-size:13px;font-weight:600;color:var(--gold);">500 Jobs. One Decision. Waddell.</div>
         <a id="econ-link-1" href="#" target="_blank" style="font-size:8px;font-weight:700;letter-spacing:.2em;color:var(--gold-dim);text-transform:uppercase;text-decoration:none;border:1px solid rgba(201,169,110,.2);padding:3px 8px;" onclick="return !!this.getAttribute('data-href')" data-href="">Read Story &#8599;</a>
       </div>
-      <div class="body-text" style="font-size:12px;">ERMCO's new manufacturing facility landing in Waddell puts 500 jobs in the West Valley's backyard. That's 500 households with paychecks, commutes, and housing needs anchored right here in Maricopa County. Companies don't make $100M+ facility decisions in markets they don't believe in.</div>
+      <div id="econ-body-1" class="body-text" style="font-size:12px;">ERMCO's new manufacturing facility landing in Waddell puts 500 jobs in the West Valley's backyard. That's 500 households with paychecks, commutes, and housing needs anchored right here in Maricopa County. Companies don't make $100M+ facility decisions in markets they don't believe in.</div>
     </div>
     <div class="data-box" style="margin-bottom:18px;" id="econ-box-2">
-      <div class="data-box-title" id="econ-source-2">Story 2 &nbsp;·&nbsp; Sports &amp; Mixed-Use &nbsp;·&nbsp; KTAR</div>
+      <div class="data-box-title" id="econ-source-2">Story 2</div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;">
-        <div style="font-size:13px;font-weight:600;color:var(--gold);">The Cardinals Are Planting Roots in North Phoenix</div>
+        <div id="econ-headline-2" style="font-size:13px;font-weight:600;color:var(--gold);">The Cardinals Are Planting Roots in North Phoenix</div>
         <a id="econ-link-2" href="#" target="_blank" style="font-size:8px;font-weight:700;letter-spacing:.2em;color:var(--gold-dim);text-transform:uppercase;text-decoration:none;border:1px solid rgba(201,169,110,.2);padding:3px 8px;" data-href="">Read Story &#8599;</a>
       </div>
-      <div class="body-text" style="font-size:12px;">The Arizona Cardinals broke ground on a 250,000 sq ft headquarters at Paradise Ridge — part of a 217-acre mixed-use development anchoring north Phoenix for decades. When an NFL franchise commits $136 million to land in your backyard, that's a vote of confidence you don't ignore.</div>
+      <div id="econ-body-2" class="body-text" style="font-size:12px;">The Arizona Cardinals broke ground on a 250,000 sq ft headquarters at Paradise Ridge — part of a 217-acre mixed-use development anchoring north Phoenix for decades. When an NFL franchise commits $136 million to land in your backyard, that's a vote of confidence you don't ignore.</div>
     </div>
     <div class="data-box" id="econ-box-3">
-      <div class="data-box-title" id="econ-source-3">Story 3 &nbsp;·&nbsp; Employment &nbsp;·&nbsp; AZ Economy</div>
+      <div class="data-box-title" id="econ-source-3">Story 3</div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;">
-        <div style="font-size:13px;font-weight:600;color:var(--gold);">Phoenix's Job Engine Keeps Running</div>
+        <div id="econ-headline-3" style="font-size:13px;font-weight:600;color:var(--gold);">Phoenix's Job Engine Keeps Running</div>
         <a id="econ-link-3" href="#" target="_blank" style="font-size:8px;font-weight:700;letter-spacing:.2em;color:var(--gold-dim);text-transform:uppercase;text-decoration:none;border:1px solid rgba(201,169,110,.2);padding:3px 8px;" data-href="">Read Story &#8599;</a>
       </div>
-      <div class="body-text" style="font-size:12px;">Greater Phoenix crossed 2.5 million jobs in February, up nearly 1% year-over-year. Construction, professional services, and financial sectors all posted gains — the same industries that put people in homes.</div>
+      <div id="econ-body-3" class="body-text" style="font-size:12px;">Greater Phoenix crossed 2.5 million jobs in February, up nearly 1% year-over-year. Construction, professional services, and financial sectors all posted gains — the same industries that put people in homes.</div>
     </div>
   </div>
   <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">12</span></div>
@@ -767,9 +804,9 @@ const REPORT_CONFIG = {
 
   // Page 12 article links
   econLinks: [
-    { url: "", source: "Story 1 · Manufacturing · AZ Big Media" },
-    { url: "", source: "Story 2 · Sports & Mixed-Use · KTAR" },
-    { url: "", source: "Story 3 · Employment · AZ Economy" }
+    { url: "", source: "Story 1" },
+    { url: "", source: "Story 2" },
+    { url: "", source: "Story 3" }
   ],
 
   // Page 13 rate chart — paste imgur URL of MND chart screenshot
@@ -796,10 +833,15 @@ function applyConfig(cfg) {
   // Econ links
   if(cfg.econLinks) {
     cfg.econLinks.forEach((l, i) => {
-      const el = document.getElementById(`econ-link-${i+1}`);
-      const sl = document.getElementById(`econ-source-${i+1}`);
+      const n = i + 1;
+      const el = document.getElementById(`econ-link-${n}`);
+      const sl = document.getElementById(`econ-source-${n}`);
+      const hl = document.getElementById(`econ-headline-${n}`);
+      const bl = document.getElementById(`econ-body-${n}`);
       if(el && l.url) { el.href = l.url; el.style.opacity = '1'; }
       if(sl && l.source) sl.textContent = l.source;
+      if(hl && l.headline) hl.textContent = l.headline;
+      if(bl && l.body) bl.textContent = l.body;
     });
   }
 
@@ -944,9 +986,9 @@ function loadMasterJson(e) {
         const cfg = {};
         if(lnks['link-econ-1'] || lnks['link-econ-2'] || lnks['link-econ-3']) {
           cfg.econLinks = [
-            { url: lnks['link-econ-1'] || '', source: 'Story 1 · Manufacturing · AZ Big Media' },
-            { url: lnks['link-econ-2'] || '', source: 'Story 2 · Sports & Mixed-Use · KTAR' },
-            { url: lnks['link-econ-3'] || '', source: 'Story 3 · Employment · AZ Economy' }
+            { url: lnks['link-econ-1'] || '', source: [lnks['link-econ-1-source'], lnks['link-econ-1-title']].filter(Boolean).join(' · ') || 'Story 1' },
+            { url: lnks['link-econ-2'] || '', source: [lnks['link-econ-2-source'], lnks['link-econ-2-title']].filter(Boolean).join(' · ') || 'Story 2' },
+            { url: lnks['link-econ-3'] || '', source: [lnks['link-econ-3-source'], lnks['link-econ-3-title']].filter(Boolean).join(' · ') || 'Story 3' }
           ];
         }
         if(lnks['link-gdrive']) cfg.gdriveUrl = lnks['link-gdrive'];
@@ -1579,13 +1621,16 @@ function buildThumbs() {
 }
 
 function showPages(visibleSet) {
+  const isMobile = window.innerWidth < 860;
   for(let i=1;i<=TOTAL;i++){
     const p=document.getElementById('page-'+i);
     if(!p) continue;
     if(visibleSet.has(i)){
       p.style.display='block';
-      p.style.cssFloat='none';
-      p.style.margin='0';
+      if(!isMobile){
+        p.style.cssFloat='none';
+        p.style.margin='0';
+      }
     } else {
       p.style.display='none';
     }
@@ -1608,10 +1653,14 @@ function goTo(n) {
 }
 
 function renderSingle() {
-  document.getElementById('pageWrapper').style.display='flex';
-  document.getElementById('pageWrapper').style.flexDirection='row';
-  document.getElementById('pageWrapper').style.justifyContent='center';
+  const isMobile = window.innerWidth < 860;
+  const pw = document.getElementById('pageWrapper');
   document.getElementById('spreadContainer').style.display='none';
+  if(!isMobile){
+    pw.style.display='flex';
+    pw.style.flexDirection='row';
+    pw.style.justifyContent='center';
+  }
   showPages(new Set([current]));
   document.getElementById('prevBtn').disabled=current===1;
   document.getElementById('nextBtn').disabled=current===TOTAL;
@@ -1770,6 +1819,104 @@ setTimeout(()=>{
   drawSellerCanvas();
   drawRateChartPlaceholder();
 },300);
+
+// ── MOBILE SCALE ──
+// Instead of transform:scale on the page (which leaves ghost space),
+// we size a viewport container to 100vw × aspect-ratio height,
+// then scale the 816×1056 page to fit inside it.
+function applyMobileScale() {
+  const PAGE_W = 816;
+  const PAGE_H = 1056;
+  const ASPECT = PAGE_H / PAGE_W; // ~1.294
+  const vw = window.innerWidth;
+  const pw = document.getElementById('pageWrapper');
+
+  if (vw >= 860) {
+    // Desktop: remove all mobile overrides
+    document.querySelectorAll('.page').forEach(p => {
+      p.style.cssText = '';
+    });
+    pw.style.cssText = '';
+    return;
+  }
+
+  // Mobile: fit page to viewport width, maintain aspect ratio
+  const containerW = vw;
+  const containerH = Math.round(containerW * ASPECT);
+  const scale = containerW / PAGE_W;
+
+  // Style the wrapper as a fixed-size viewport slot
+  pw.style.cssText = [
+    'padding: 0',
+    'width: ' + containerW + 'px',
+    'height: ' + containerH + 'px',
+    'overflow: hidden',
+    'display: block',
+    'position: relative',
+  ].join(';');
+
+  // Each page sits at top-left of wrapper, scaled down to fit exactly
+  document.querySelectorAll('.page').forEach(p => {
+    p.style.cssText = [
+      'position: absolute',
+      'top: 0',
+      'left: 0',
+      'width: ' + PAGE_W + 'px',
+      'height: ' + PAGE_H + 'px',
+      'transform: scale(' + scale + ')',
+      'transform-origin: top left',
+      'display: none',           // goTo() will override the active one
+      'margin: 0',
+    ].join(';');
+  });
+
+  // Re-show the currently active page
+  const activePage = document.getElementById('page-' + current);
+  if (activePage) activePage.style.display = 'block';
+}
+
+applyMobileScale();
+window.addEventListener('resize', applyMobileScale);
+
+// ── PDF DOWNLOAD ──
+function downloadPDF() {
+  const pages = document.querySelectorAll('.page');
+  const pw = document.getElementById('pageWrapper');
+  const spreadContainer = document.getElementById('spreadContainer');
+
+  // Save current state
+  const savedDisplay = [];
+  pages.forEach((p, i) => savedDisplay.push(p.style.display));
+  const savedPWDisplay = pw.style.display;
+  const savedPWJustify = pw.style.justifyContent;
+  const spreadWasVisible = spreadContainer && spreadContainer.style.display !== 'none';
+
+  // Prepare for print: show all pages, neutralize wrapper flex
+  pages.forEach(p => {
+    p.style.display = 'block';
+    p.style.removeProperty('transform');
+    p.style.removeProperty('transform-origin');
+    p.style.removeProperty('margin-bottom');
+  });
+  pw.style.display = 'block';
+  pw.style.justifyContent = 'unset';
+  pw.style.padding = '0';
+  if (spreadContainer) spreadContainer.style.display = 'none';
+
+  window.print();
+
+  // Restore after dialog
+  setTimeout(() => {
+    pages.forEach((p, i) => { p.style.display = savedDisplay[i]; });
+    pw.style.display = savedPWDisplay;
+    pw.style.justifyContent = savedPWJustify;
+    pw.style.padding = '';
+    if (spreadContainer && spreadWasVisible) spreadContainer.style.display = '';
+    applyMobileScale();
+    goTo(current);
+  }, 1000);
+}
+
 </script>
 </body>
 </html>
