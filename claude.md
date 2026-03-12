@@ -13,7 +13,7 @@ Do not take actions outside this scope without explicit instruction.
 2. Fetch Cromford research
 3. Source article options — present to user, wait for selection
 4. Generate narratives using /prompts/narrative-prompts.md
-5. Assemble HTML from /templates/base-report.html
+5. Assemble HTML from /home/aafdev/kwsl-market-reports/phoenix-market-report-march-2026-v5.html
 6. Push to GitHub Pages
 
 ## Output Naming Convention
