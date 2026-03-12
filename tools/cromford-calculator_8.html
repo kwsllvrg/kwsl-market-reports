@@ -1,1 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phoenix Market Data Calculator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap');
 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f5f2eb;
+    --cream: #ede9df;
+    --rule: #c8c0b0;
+    --red: #c0392b;
+    --green: #1a6b3c;
+    --accent: #8b4513;
+    --muted: #7a7060;
+  }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+  }
+
+  header {
+    max-width: 900px;
+    margin: 0 auto 48px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  header h1 span {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  #report-date {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  .grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 680px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: white;
+    border: 1px solid var(--rule);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .card-header {
+    background: var(--ink);
+    color: white;
+    padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-header h2 {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .card-header .mode-tag {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #aaa;
+    background: rgba(255,255,255,0.1);
+    padding: 2px 7px;
+    border-radius: 2px;
+  }
+
+  .card-body { padding: 18px; }
+
+  .row-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+    margin-top: 14px;
+  }
+
+  .row-label:first-child { margin-top: 0; }
+
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--cream);
+    padding-bottom: 8px;
+  }
+
+  .input-row input {
+    flex: 1;
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    outline: none;
+    padding: 2px 0;
+    min-width: 0;
+  }
+
+  .input-row input::placeholder { color: #ccc; font-weight: 400; }
+
+  .result-pct {
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 64px;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .result-pct.pos { color: var(--green); }
+  .result-pct.neg { color: var(--red); }
+  .result-pct.zero { color: var(--muted); }
+
+  .current-marker {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    font-weight: 500;
+    text-transform: uppercase;
+    min-width: 64px;
+    text-align: right;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--rule);
+    margin: 16px 0 12px;
+  }
+
+  /* Output panel */
+  #output-section {
+    max-width: 900px;
+    margin: 32px auto 0;
+  }
+
+  #output-section h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  #output-box {
+    background: var(--ink);
+    color: #e8e4da;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    padding: 28px 32px;
+    white-space: pre;
+    overflow-x: auto;
+    min-height: 120px;
+    border: none;
+    letter-spacing: 0.3px;
+  }
+
+  #output-box .lbl { color: #888; }
+  #output-box .pos { color: #6fcf97; }
+  #output-box .neg { color: #eb5757; }
+  #output-box .val { color: #f2c94c; }
+
+  .action-bar {
+    max-width: 900px;
+    margin: 16px auto 0;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  button {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: white;
+    padding: 10px 22px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  button:hover { background: var(--accent); border-color: var(--accent); }
+
+  button.secondary {
+    background: transparent;
+    color: var(--ink);
+  }
+
+  button.secondary:hover { background: var(--cream); }
+
+  #copy-confirm {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--green);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .full-width { grid-column: 1 / -1; }
+
+  /* ── Tab Navigation ── */
+  .tab-nav {
+    max-width: 900px;
+    margin: 48px auto 0;
+    display: flex;
+    border-bottom: 2px solid var(--ink);
+  }
+  .tab-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: 1px solid var(--rule);
+    border-bottom: none;
+    background: var(--cream);
+    color: var(--muted);
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-right: 4px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .tab-btn.active { background: var(--ink); color: white; border-color: var(--ink); }
+  .tab-btn:hover:not(.active) { background: var(--paper); color: var(--ink); }
+  .tab-section { display: none; }
+  .tab-section.active { display: block; }
+
+  /* ── Links & Media tab ── */
+  .link-section { margin-bottom: 36px; }
+  .link-section-header {
+    background: var(--ink); color: white; padding: 10px 16px;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 0;
+  }
+  .link-section-note {
+    background: #2d2d2d; color: #aaa; padding: 6px 16px; font-size: 9px;
+    letter-spacing: 0.5px; margin-bottom: 1px;
+  }
+  .link-row {
+    background: white; border: 1px solid var(--rule); border-top: none;
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .link-row + .link-row { border-top: none; }
+  .link-label {
+    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted); font-weight: 500;
+  }
+  .link-sublabel {
+    font-size: 9px; color: var(--muted); letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .link-input {
+    font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 400;
+    border: none; border-bottom: 1px solid var(--cream); background: transparent;
+    color: var(--ink); outline: none; width: 100%; padding: 4px 0;
+  }
+  .link-input::placeholder { color: #bbb; }
+  .link-input:focus { border-bottom-color: var(--accent); }
+  .link-preview {
+    font-size: 10px; color: var(--accent); margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 100%; display: none;
+  }
+
+  /* ── Shared section styles ── */
+  .section-wrap { max-width: 900px; margin: 0 auto; padding-top: 28px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 4px; }
+  .section-sub { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; }
+
+  .mls-total-bar {
+    background: var(--ink); color: white; padding: 14px 20px;
+    display: flex; align-items: center; gap: 16px; margin-bottom: 28px;
+  }
+  .mls-total-bar label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
+  .mls-total-bar input {
+    font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: white; padding: 4px 10px; width: 140px; outline: none;
+  }
+  .mls-total-bar input::placeholder { color: rgba(255,255,255,0.35); }
+  .mls-total-bar .mls-note { font-size: 10px; color: rgba(255,255,255,0.45); }
+
+  /* ── Price band tables (pg10) ── */
+  .market-block { margin-bottom: 36px; }
+  .market-block-header {
+    background: var(--ink); color: white; padding: 10px 16px;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  }
+  .market-block-cities {
+    background: #2d2d2d; color: #aaa; padding: 6px 16px; font-size: 9px; letter-spacing: 0.5px;
+  }
+  .band-table { width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--rule); border-top: none; }
+  .band-table th {
+    background: var(--cream); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted); padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--rule); white-space: nowrap;
+  }
+  .band-table th:first-child { text-align: left; }
+  .band-table td { padding: 6px 10px; font-size: 12px; border-bottom: 1px solid var(--cream); text-align: right; vertical-align: middle; }
+  .band-table td:first-child { text-align: left; font-size: 10px; letter-spacing: 0.5px; color: var(--muted); white-space: nowrap; font-weight: 500; }
+  .band-table input[type=number] {
+    font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+    border: none; background: transparent; color: var(--ink); outline: none; width: 65px; text-align: right; padding: 2px 0;
+  }
+  .band-table input::placeholder { color: #ccc; }
+  .band-table .calc-cell { color: var(--accent); font-weight: 500; font-size: 12px; min-width: 52px; }
+  .band-table .delta-cell { font-size: 11px; min-width: 46px; }
+  .delta-cell.pos { color: var(--green); }
+  .delta-cell.neg { color: var(--red); }
+  .delta-cell.zero { color: var(--muted); }
+
+  /* Standalone stats */
+  .stats-grid-10 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; margin-bottom: 24px; }
+  .stat-box { background: white; border: 1px solid var(--rule); padding: 12px 14px; }
+  .stat-box .stat-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .stat-box .stat-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .stat-box .stat-period { font-size: 9px; color: var(--muted); width: 60px; flex-shrink: 0; }
+  .stat-box input[type=number] {
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+    border: none; border-bottom: 1px solid var(--cream); background: transparent; color: var(--ink); outline: none; width: 65px; padding: 2px 0;
+  }
+  .stat-box input::placeholder { color: #ccc; }
+  .stat-box .stat-delta { font-size: 11px; margin-left: auto; }
+  .pct-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .pct-row .stat-period { font-size: 9px; color: var(--muted); width: 60px; flex-shrink: 0; }
+  .pct-row input[type=number] {
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+    border: none; border-bottom: 1px solid var(--cream); background: transparent; color: var(--ink); outline: none; width: 65px; padding: 2px 0;
+  }
+
+  /* ── Brand blocks (pg11) ── */
+  .brand-block { background: white; border: 1px solid var(--rule); margin-bottom: 20px; overflow: hidden; }
+  .brand-header { background: var(--ink); color: white; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
+  .brand-header h3 { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+  .brand-header .brand-tag { font-size: 9px; letter-spacing: 1px; color: rgba(255,255,255,0.5); }
+  .brand-metrics { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .brand-metric { padding: 12px 14px; border-right: 1px solid var(--cream); }
+  .brand-metric:last-child { border-right: none; }
+  .brand-metric .bm-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .brand-metric .bm-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+  .brand-metric .bm-period { font-size: 9px; color: var(--muted); width: 48px; flex-shrink: 0; }
+  .brand-metric input[type=number] {
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+    border: none; border-bottom: 1px solid var(--cream); background: transparent; color: var(--ink); outline: none; width: 80px; padding: 2px 0;
+  }
+  .brand-metric input::placeholder { color: #ccc; }
+  .brand-metric .bm-delta { font-size: 10px; margin-left: auto; }
+  .brand-metric .bm-share { font-size: 11px; color: var(--accent); font-weight: 500; margin-top: 4px; }
+  .ibr-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 8px; }
+  .ibr-brand { background: white; border: 1px solid var(--rule); overflow: hidden; }
+  .ibr-brand-header { background: #3a3a3a; color: white; padding: 8px 14px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
+  .ibr-brand-body { padding: 10px 14px; }
+  .ibr-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .ibr-label { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); width: 80px; flex-shrink: 0; }
+  .ibr-brand input[type=number] {
+    font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+    border: none; border-bottom: 1px solid var(--cream); background: transparent; color: var(--ink); outline: none; width: 70px; padding: 2px 0;
+  }
+  .ibr-brand input::placeholder { color: #ccc; }
+  .ibr-delta { font-size: 10px; margin-left: auto; }
+  .ibr-share { font-size: 10px; color: var(--accent); font-weight: 500; }
+
+  @media (max-width: 680px) {
+    .stats-grid-10 { grid-template-columns: 1fr; }
+    .brand-metrics { grid-template-columns: 1fr; }
+    .ibr-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span>Cromford Report</span>Phoenix Market<br>Data Calculator</h1>
+  <div id="report-date"></div>
+</header>
+
+<div class="grid" id="metrics-grid">
+  <!-- Cards injected by JS -->
+</div>
+
+<div id="output-section">
+  <h3>— Calculated Output —</h3>
+  <div id="output-box">Enter data above to generate output...</div>
+</div>
+
+<div class="action-bar">
+  <button onclick="copyOutput()">Copy Output</button>
+  <button class="secondary" onclick="clearAll()">Clear All</button>
+  <button class="secondary" onclick="saveData()" title="Export all entered data as JSON for next month">Save This Month</button>
+  <label style="cursor:pointer;">
+    <button class="secondary" onclick="document.getElementById('load-file').click()" title="Load prior month JSON to pre-fill prior month fields">Load Prior Month</button>
+    <input type="file" id="load-file" accept=".json" style="display:none" onchange="loadData(event)">
+  </label>
+  <span id="copy-confirm">Copied to clipboard</span>
+  <span id="save-confirm" style="font-size:11px;letter-spacing:1px;color:var(--green);opacity:0;transition:opacity 0.3s;">Saved</span>
+  <span id="load-confirm" style="font-size:11px;letter-spacing:1px;color:var(--green);opacity:0;transition:opacity 0.3s;">Loaded</span>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     TAB NAVIGATION
+══════════════════════════════════════════════════ -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('pg10')">Pg 10 — Hyper Focused</button>
+  <button class="tab-btn" onclick="switchTab('pg11')">Pg 11 — How Do We Stack Up</button>
+  <button class="tab-btn" onclick="switchTab('pglinks')">Pg 12/13 — Links &amp; Media</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PAGE 10 — HYPER FOCUSED MARKET
+══════════════════════════════════════════════════ -->
+<div id="tab-pg10" class="tab-section active">
+<div class="section-wrap">
+  <div class="section-title">Hyper Focused Market</div>
+  <div class="section-sub">FlexMLS data — enter current + prior month values. Months supply calculates automatically.</div>
+
+  <!-- EAST VALLEY -->
+  <div class="market-block">
+    <div class="market-block-header">East Valley Market</div>
+    <div class="market-block-cities">Ahwatukee · Chandler · Chandler Heights · Gilbert · Tempe · Mesa · Apache Junction · Queen Creek · San Tan Valley</div>
+    <table class="band-table" id="ev-table">
+      <thead>
+        <tr>
+          <th>Price Range</th>
+          <th>Active (cur)</th>
+          <th>Active (prior)</th>
+          <th>Δ Active</th>
+          <th>Sold (cur)</th>
+          <th>Sold (prior)</th>
+          <th>Δ Sold</th>
+          <th>Mo Supply</th>
+          <th>Mo Supply (prior)</th>
+          <th>Δ Mo Supply</th>
+        </tr>
+      </thead>
+      <tbody id="ev-tbody"></tbody>
+    </table>
+
+    <div class="stats-grid-10" id="ev-stats"></div>
+  </div>
+
+  <!-- SOLD TOTALS TRACKER -->
+  <div style="background:var(--ink);color:white;padding:14px 20px;display:flex;gap:32px;align-items:center;margin-bottom:28px;flex-wrap:wrap;">
+    <span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888;">Sold Totals This Month</span>
+    <span style="font-size:10px;letter-spacing:1px;color:#888;">East Valley: <strong id="tracker-ev-sold" style="color:white;font-size:14px;">—</strong></span>
+    <span style="font-size:10px;letter-spacing:1px;color:#888;">NE Valley: <strong id="tracker-nev-sold" style="color:white;font-size:14px;">—</strong></span>
+    <span style="font-size:10px;letter-spacing:1px;color:#888;">EV + NEV Combined: <strong id="tracker-total-sold" style="color:#f2c94c;font-size:14px;">—</strong></span>
+    <span style="font-size:9px;color:#555;margin-left:auto;">Enter Total MLS Closings on Pg 11 tab for market share</span>
+  </div>
+
+  <!-- NORTH EAST VALLEY -->
+  <div class="market-block">
+    <div class="market-block-header">North East Valley Market</div>
+    <div class="market-block-cities">Scottsdale · Paradise Valley · Grayhawk · Desert Ridge · Cave Creek · Fountain Hills</div>
+    <table class="band-table" id="nev-table">
+      <thead>
+        <tr>
+          <th>Price Range</th>
+          <th>Active (cur)</th>
+          <th>Active (prior)</th>
+          <th>Δ Active</th>
+          <th>Sold (cur)</th>
+          <th>Sold (prior)</th>
+          <th>Δ Sold</th>
+          <th>Mo Supply</th>
+          <th>Mo Supply (prior)</th>
+          <th>Δ Mo Supply</th>
+        </tr>
+      </thead>
+      <tbody id="nev-tbody"></tbody>
+    </table>
+
+    <div class="stats-grid-10" id="nev-stats"></div>
+  </div>
+
+</div><!-- /section-wrap -->
+</div><!-- /tab-pg10 -->
+
+<!-- ══════════════════════════════════════════════════
+     PAGE 11 — HOW DO WE STACK UP
+══════════════════════════════════════════════════ -->
+<div id="tab-pg11" class="tab-section">
+<div class="section-wrap">
+  <div class="section-title">How Do We Stack Up</div>
+  <div class="section-sub">FlexMLS data — enter current month values + prior month for delta. Market share calculates from total MLS closings.</div>
+
+  <div class="mls-total-bar">
+    <label>Total MLS Closings This Month:</label>
+    <input type="number" id="mls-total" placeholder="e.g. 4847" oninput="recalcPg11()">
+    <span class="mls-note">All market share % calculated from this figure</span>
+  </div>
+
+  <!-- KW ALL -->
+  <div class="brand-block">
+    <div class="brand-header">
+      <h3>All Keller Williams</h3>
+      <span class="brand-tag">Brand Total</span>
+    </div>
+    <div class="brand-metrics" id="kw-all-metrics"></div>
+  </div>
+
+  <!-- KWSL -->
+  <div class="brand-block">
+    <div class="brand-header">
+      <h3>KWSL — Keller Williams Southwest Lifestyles</h3>
+      <span class="brand-tag">Our Two Offices</span>
+    </div>
+    <div class="brand-metrics" id="kwsl-metrics"></div>
+  </div>
+
+  <!-- IBUYRS / NON-CONVENTIONAL -->
+  <!-- iBUYERS -->
+  <div class="market-block-header" style="margin-bottom:12px;margin-top:8px;">iBuyers Breakdown</div>
+  <div class="ibr-grid" id="ibr-grid-ibuyers"></div>
+
+  <!-- FLAT FEE -->
+  <div class="market-block-header" style="margin-bottom:12px;margin-top:20px;">Flat Fee</div>
+  <div class="ibr-grid" id="ibr-grid-flatfee"></div>
+
+  <!-- DISCOUNT BROKERS -->
+  <div class="market-block-header" style="margin-bottom:12px;margin-top:20px;">Discount Brokers</div>
+  <div class="ibr-grid" id="ibr-grid-discount"></div>
+
+</div><!-- /section-wrap -->
+</div><!-- /tab-pg11 -->
+
+<!-- ══════════════════════════════════════════════════
+     LINKS & MEDIA — PG 12 / 13
+══════════════════════════════════════════════════ -->
+<div id="tab-pglinks" class="tab-section">
+<div class="section-wrap">
+  <div class="section-title">Links &amp; Media</div>
+  <div class="section-sub">These populate directly into the report. Paste URLs after gathering this month's content.</div>
+
+  <!-- ECONOMIC DEVELOPMENT ARTICLES -->
+  <div class="link-section">
+    <div class="link-section-header">Pg 12 — Economic Development Articles</div>
+    <div class="link-section-note">For each story: enter the headline, select the source, paste the URL. The workflow script reads all three fields when writing pg 12 copy.</div>
+    <div class="link-row">
+      <div class="link-label">Story 1</div>
+      <input class="link-input" type="text" id="link-econ-1-title" placeholder="Story headline or topic (e.g. 500 Jobs. One Decision. Waddell.)" style="margin-bottom:6px;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px;">
+        <select class="link-input" id="link-econ-1-source" style="width:auto;padding:8px 12px;flex:1;">
+          <option value="">— Select source —</option>
+          <option value="AZ Big Media">AZ Big Media</option>
+          <option value="KTAR">KTAR</option>
+          <option value="Axios Phoenix">Axios Phoenix</option>
+          <option value="Phoenix Business Journal">Phoenix Business Journal</option>
+          <option value="AZ Central">AZ Central</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <input class="link-input" type="url" id="link-econ-1" placeholder="https://..." oninput="previewLink('link-econ-1')">
+      <div class="link-preview" id="prev-econ-1"></div>
+    </div>
+    <div class="link-row">
+      <div class="link-label">Story 2</div>
+      <input class="link-input" type="text" id="link-econ-2-title" placeholder="Story headline or topic" style="margin-bottom:6px;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px;">
+        <select class="link-input" id="link-econ-2-source" style="width:auto;padding:8px 12px;flex:1;">
+          <option value="">— Select source —</option>
+          <option value="AZ Big Media">AZ Big Media</option>
+          <option value="KTAR">KTAR</option>
+          <option value="Axios Phoenix">Axios Phoenix</option>
+          <option value="Phoenix Business Journal">Phoenix Business Journal</option>
+          <option value="AZ Central">AZ Central</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <input class="link-input" type="url" id="link-econ-2" placeholder="https://..." oninput="previewLink('link-econ-2')">
+      <div class="link-preview" id="prev-econ-2"></div>
+    </div>
+    <div class="link-row">
+      <div class="link-label">Story 3</div>
+      <input class="link-input" type="text" id="link-econ-3-title" placeholder="Story headline or topic" style="margin-bottom:6px;">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px;">
+        <select class="link-input" id="link-econ-3-source" style="width:auto;padding:8px 12px;flex:1;">
+          <option value="">— Select source —</option>
+          <option value="AZ Big Media">AZ Big Media</option>
+          <option value="KTAR">KTAR</option>
+          <option value="Axios Phoenix">Axios Phoenix</option>
+          <option value="Phoenix Business Journal">Phoenix Business Journal</option>
+          <option value="AZ Central">AZ Central</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <input class="link-input" type="url" id="link-econ-3" placeholder="https://..." oninput="previewLink('link-econ-3')">
+      <div class="link-preview" id="prev-econ-3"></div>
+    </div>
+  </div>
+
+  <!-- MARKETING STRATEGIES GOOGLE DRIVE -->
+  <div class="link-section">
+    <div class="link-section-header">Pg 14/15 — Marketing Strategies Google Drive Folder</div>
+    <div class="link-section-note">The "Open in Google Drive ↗" button on the agent-version marketing strategies pages links here.</div>
+    <div class="link-row">
+      <div class="link-label">Google Drive Folder URL</div>
+      <div class="link-sublabel">Share the folder link — agents click through to the full content suite</div>
+      <input class="link-input" type="url" id="link-gdrive" placeholder="https://drive.google.com/drive/folders/..." oninput="previewLink('link-gdrive')">
+      <div class="link-preview" id="prev-gdrive"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 8 SNAPSHOT IMAGES -->
+  <div class="link-section">
+    <div class="link-section-header">Pg 8 — Market Snapshot Images (imgur)</div>
+    <div class="link-section-note">Upload screenshots to imgur.com/upload, then paste the direct image URL (ends in .png or .jpg). These appear as a clickable lightbox gallery on pg 8.</div>
+    <div class="link-row">
+      <div class="link-label">Image 1 · CMI Cities Overview</div>
+      <div class="link-sublabel">Cromford Market Index snapshot — all tracked cities</div>
+      <input class="link-input" type="url" id="link-img-1" placeholder="https://i.imgur.com/XXXXXXX.png" oninput="previewLink('link-img-1', true)">
+      <div class="link-preview" id="prev-img-1"></div>
+    </div>
+    <div class="link-row">
+      <div class="link-label">Image 2 · Price Band Breakdown</div>
+      <div class="link-sublabel">Year-over-year appreciation by price band</div>
+      <input class="link-input" type="url" id="link-img-2" placeholder="https://i.imgur.com/XXXXXXX.png" oninput="previewLink('link-img-2', true)">
+      <div class="link-preview" id="prev-img-2"></div>
+    </div>
+    <div class="link-row">
+      <div class="link-label">Image 3 · Concise Market Snapshot</div>
+      <div class="link-sublabel">Full market snapshot / Cromford summary graphic</div>
+      <input class="link-input" type="url" id="link-img-3" placeholder="https://i.imgur.com/XXXXXXX.png" oninput="previewLink('link-img-3', true)">
+      <div class="link-preview" id="prev-img-3"></div>
+    </div>
+  </div>
+
+</div><!-- /section-wrap -->
+</div><!-- /tab-pglinks -->
+
+<script>
+const METRICS = [
+  {
+    id: 'active',
+    label: 'Active Listings',
+    mode: 'Weekly',
+    periods: ['Current Week', '1 Month Back', '3 Months Back', '6 Months Back', '12 Months Back'],
+    prefix: '',
+    decimals: 0
+  },
+  {
+    id: 'new',
+    label: 'New Listings',
+    mode: 'Month-End',
+    periods: ['Current Month', '1 Month Back', '3 Months Back', '6 Months Back', '12 Months Back'],
+    prefix: '',
+    decimals: 0
+  },
+  {
+    id: 'contract',
+    label: 'Under Contract',
+    mode: 'Weekly',
+    periods: ['Current Week', '1 Month Back', '3 Months Back', '6 Months Back', '12 Months Back'],
+    prefix: '',
+    decimals: 0
+  },
+  {
+    id: 'sales',
+    label: 'Sold Homes',
+    mode: 'Month-End',
+    periods: ['Current Month', '1 Month Back', '3 Months Back', '6 Months Back', '12 Months Back'],
+    prefix: '',
+    decimals: 0
+  },
+  {
+    id: 'sqft',
+    label: 'Avg $/SqFt',
+    mode: 'Month-End',
+    periods: ['Current Month', '1 Month Back', '3 Months Back', '6 Months Back', '12 Months Back'],
+    prefix: '$',
+    decimals: 2
+  },
+  {
+    id: 'lsr',
+    label: 'Listing Success Rate',
+    mode: 'Month-End',
+    periods: ['Current Month', '1 Month Back', '3 Months Back', '6 Months Back', '12 Months Back'],
+    prefix: '',
+    suffix: '%',
+    decimals: 1,
+    inputNote: 'Enter as number, e.g. 74 for 74%'
+  }
+];
+
+const grid = document.getElementById('metrics-grid');
+
+METRICS.forEach(metric => {
+  const card = document.createElement('div');
+  card.className = 'card' + (metric.id === 'lsr' ? ' full-width' : '');
+  card.innerHTML = `
+    <div class="card-header">
+      <h2>${metric.label}</h2>
+      <span class="mode-tag">${metric.mode}</span>
+    </div>
+    <div class="card-body" id="body-${metric.id}"></div>
+  `;
+  grid.appendChild(card);
+
+  const body = card.querySelector('.card-body');
+
+  metric.periods.forEach((period, i) => {
+    const labelEl = document.createElement('div');
+    labelEl.className = 'row-label';
+    labelEl.textContent = period;
+
+    const row = document.createElement('div');
+    row.className = 'input-row';
+
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.step = metric.decimals > 0 ? '0.1' : '1';
+    input.placeholder = i === 0 ? (metric.suffix === '%' ? 'e.g. 74' : 'Enter value') : '—';
+    input.id = `${metric.id}-${i}`;
+    input.dataset.metric = metric.id;
+    input.dataset.idx = i;
+    input.addEventListener('input', recalculate);
+
+    // Show suffix hint inline for % fields
+    const suffixHint = document.createElement('span');
+    suffixHint.style.cssText = 'font-size:13px;color:var(--muted);margin-right:4px;';
+    suffixHint.textContent = metric.suffix || '';
+
+    const badge = document.createElement('div');
+    badge.id = `badge-${metric.id}-${i}`;
+
+    if (i === 0) {
+      badge.className = 'current-marker';
+      badge.textContent = 'Current';
+    } else {
+      badge.className = 'result-pct zero';
+      badge.textContent = '—';
+    }
+
+    row.appendChild(input);
+    if (metric.suffix) row.appendChild(suffixHint);
+    row.appendChild(badge);
+    body.appendChild(labelEl);
+    body.appendChild(row);
+  });
+});
+
+function getVal(id, idx) {
+  const el = document.getElementById(`${id}-${idx}`);
+  if (!el || el.value === '') return null;
+  return parseFloat(el.value);
+}
+
+function pct(current, prior) {
+  if (prior === 0 || prior === null) return null;
+  return ((current - prior) / Math.abs(prior)) * 100;
+}
+
+function fmtPct(val) {
+  if (val === null) return '—';
+  const sign = val >= 0 ? '+' : '';
+  return sign + val.toFixed(2) + '%';
+}
+
+function recalculate() {
+  const results = {};
+
+  METRICS.forEach(metric => {
+    const current = getVal(metric.id, 0);
+    results[metric.id] = { current, pcts: [] };
+
+    for (let i = 1; i <= 4; i++) {
+      const prior = getVal(metric.id, i);
+      const badge = document.getElementById(`badge-${metric.id}-${i}`);
+
+      if (current !== null && prior !== null) {
+        const p = pct(current, prior);
+        badge.textContent = fmtPct(p);
+        badge.className = 'result-pct ' + (p > 0 ? 'pos' : p < 0 ? 'neg' : 'zero');
+        results[metric.id].pcts.push(p);
+      } else {
+        badge.textContent = '—';
+        badge.className = 'result-pct zero';
+        results[metric.id].pcts.push(null);
+      }
+    }
+  });
+
+  renderOutput(results);
+}
+
+function renderOutput(results) {
+  const box = document.getElementById('output-box');
+  const hasAny = METRICS.some(m => results[m.id].current !== null);
+  if (!hasAny) {
+    box.innerHTML = 'Enter data above to generate output...';
+    return;
+  }
+
+  const periodLabels = ['1mo', '3mo', '6mo', '12mo'];
+  let lines = [];
+
+  lines.push('<span class="lbl">═══════════════════════════════════════════</span>');
+  lines.push('<span class="lbl">  GREATER PHOENIX MARKET SNAPSHOT</span>');
+  lines.push('<span class="lbl">═══════════════════════════════════════════</span>');
+  lines.push('');
+
+  METRICS.forEach(metric => {
+    const r = results[metric.id];
+    if (r.current === null) return;
+
+    const prefix = metric.prefix || '';
+    const suffix = metric.suffix || '';
+    const displayVal = metric.id === 'lsr'
+      ? r.current.toFixed(metric.decimals) + suffix
+      : prefix + r.current.toLocaleString('en-US', { minimumFractionDigits: metric.decimals, maximumFractionDigits: metric.decimals }) + suffix;
+
+    lines.push(`<span class="lbl">  ${metric.label.toUpperCase().padEnd(26)}</span><span class="val">${displayVal}</span>`);
+
+    periodLabels.forEach((lbl, i) => {
+      const p = r.pcts[i];
+      if (p === null) return;
+      const sign = p >= 0 ? '+' : '';
+      const cls = p >= 0 ? 'pos' : 'neg';
+      const formatted = (sign + p.toFixed(2) + '%').padStart(8);
+      lines.push(`<span class="lbl">    vs ${lbl} back</span><span class="${cls}">${formatted}</span>`);
+    });
+
+    lines.push('');
+  });
+
+  box.innerHTML = lines.join('\n');
+}
+
+function copyOutput() {
+  const box = document.getElementById('output-box');
+  const plain = box.innerText;
+  navigator.clipboard.writeText(plain).then(() => {
+    const confirm = document.getElementById('copy-confirm');
+    confirm.style.opacity = 1;
+    setTimeout(() => confirm.style.opacity = 0, 2200);
+  });
+}
+
+function clearAll() {
+  document.querySelectorAll('.card-body input').forEach(input => input.value = '');
+  document.querySelectorAll('.result-pct').forEach(badge => {
+    badge.textContent = '—';
+    badge.className = 'result-pct zero';
+  });
+  document.getElementById('output-box').innerHTML = 'Enter data above to generate output...';
+}
+
+// Set report date
+const now = new Date();
+document.getElementById('report-date').innerHTML =
+  `Report Period<br>${now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
+
+// ══════════════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════════════
+function switchTab(id) {
+  document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ══════════════════════════════════════════════
+// PAGE 10 — PRICE BAND DATA
+// ══════════════════════════════════════════════
+const EV_BANDS = [
+  '$0 – $250K', '$250K – $400K', '$400K – $500K',
+  '$500K – $600K', '$600K – $800K', '$800K – $1M', '$1M+'
+];
+
+const NEV_BANDS = [
+  '$0 – $400K', '$400K – $600K', '$600K – $1M',
+  '$1M – $2M', '$2M – $5M', '$5M – $10M', '$10M+'
+];
+
+const EV_STATS = [
+  { id: 'ev-adom',    label: 'Active Days on Market' },
+  { id: 'ev-ucdom',   label: 'Under Contract DOM' },
+  { id: 'ev-cdom',    label: 'Closed DOM' },
+  { id: 'ev-cash',    label: 'Cash % of Sales', isCash: true },
+  { id: 'ev-expired', label: 'Expired / Cancelled' },
+  { id: 'ev-60d',     label: '% Sold in 60 Days', suffix: '%', noPrior: true },
+  { id: 'ev-90d',     label: '% Sold in 90 Days', suffix: '%', noPrior: true },
+];
+
+const NEV_STATS = [
+  { id: 'nev-adom',    label: 'Active Days on Market' },
+  { id: 'nev-ucdom',   label: 'Under Contract DOM' },
+  { id: 'nev-cdom',    label: 'Closed DOM' },
+  { id: 'nev-cash',    label: 'Cash % of Sales', isCash: true },
+  { id: 'nev-expired', label: 'Expired / Cancelled' },
+  { id: 'nev-60d',     label: '% Sold in 60 Days', suffix: '%', noPrior: true },
+  { id: 'nev-90d',     label: '% Sold in 90 Days', suffix: '%', noPrior: true },
+];
+
+function buildBandTable(tbodyId, bands, prefix) {
+  const tbody = document.getElementById(tbodyId);
+  bands.forEach((band, i) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${band}</td>
+      <td><input type="number" id="${prefix}-act-cur-${i}" placeholder="—" oninput="recalcBands('${prefix}')"></td>
+      <td><input type="number" id="${prefix}-act-pri-${i}" placeholder="—" oninput="recalcBands('${prefix}')"></td>
+      <td class="delta-cell zero" id="${prefix}-act-d-${i}">—</td>
+      <td><input type="number" id="${prefix}-sol-cur-${i}" placeholder="—" oninput="recalcBands('${prefix}')"></td>
+      <td><input type="number" id="${prefix}-sol-pri-${i}" placeholder="—" oninput="recalcBands('${prefix}')"></td>
+      <td class="delta-cell zero" id="${prefix}-sol-d-${i}">—</td>
+      <td class="calc-cell" id="${prefix}-mos-cur-${i}">—</td>
+      <td class="calc-cell" style="color:var(--muted)" id="${prefix}-mos-pri-${i}">—</td>
+      <td class="delta-cell zero" id="${prefix}-mos-d-${i}">—</td>
+    `;
+    tbody.appendChild(row);
+  });
+
+  // Totals footer row
+  const tfoot = document.createElement('tfoot');
+  tfoot.innerHTML = `
+    <tr style="background:var(--ink);color:white;">
+      <td style="text-align:left;padding:8px 10px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:500;">TOTAL</td>
+      <td style="text-align:right;padding:8px 10px;font-size:12px;font-weight:500;" id="${prefix}-tot-act-cur">—</td>
+      <td style="text-align:right;padding:8px 10px;font-size:12px;color:#aaa;" id="${prefix}-tot-act-pri">—</td>
+      <td style="text-align:right;padding:8px 10px;font-size:11px;" id="${prefix}-tot-act-d" class="delta-cell zero">—</td>
+      <td style="text-align:right;padding:8px 10px;font-size:12px;font-weight:500;" id="${prefix}-tot-sol-cur">—</td>
+      <td style="text-align:right;padding:8px 10px;font-size:12px;color:#aaa;" id="${prefix}-tot-sol-pri">—</td>
+      <td style="text-align:right;padding:8px 10px;font-size:11px;" id="${prefix}-tot-sol-d" class="delta-cell zero">—</td>
+      <td colspan="3" style="text-align:right;padding:8px 10px;font-size:10px;color:#888;letter-spacing:1px;">Overall Mo Supply in right column above ↑</td>
+    </tr>
+  `;
+  // Insert tfoot into the parent table
+  const table = document.getElementById(tbodyId).closest('table');
+  if (table) table.appendChild(tfoot);
+}
+
+function buildStatsBlock(containerId, stats) {
+  const container = document.getElementById(containerId);
+  stats.forEach(s => {
+    const box = document.createElement('div');
+    box.className = 'stat-box';
+
+    if (s.isCash) {
+      // Cash deals entered manually; Total Deals auto-pulled from sold totals above
+      box.innerHTML = `
+        <div class="stat-label">${s.label}</div>
+        <div class="stat-row">
+          <span class="stat-period">Cash Deals</span>
+          <input type="number" id="${s.id}-cash-cur" placeholder="—" step="1" oninput="recalcCash('${s.id}')">
+        </div>
+        <div class="stat-row">
+          <span class="stat-period" style="color:var(--accent);">Total Deals</span>
+          <input type="number" id="${s.id}-total-cur" placeholder="auto" step="1" oninput="recalcCash('${s.id}')"
+            title="Auto-filled from Sold totals above. Override manually if needed."
+            style="color:var(--muted);">
+          <span style="font-size:9px;color:var(--accent);margin-left:4px;letter-spacing:0.5px;">auto</span>
+        </div>
+        <div class="stat-row" style="margin-top:4px;border-top:1px solid var(--cream);padding-top:4px;">
+          <span class="stat-period" style="color:var(--accent);">Cash %</span>
+          <span id="${s.id}-pct" style="font-size:14px;font-weight:500;color:var(--accent);">—</span>
+          <span class="stat-delta zero" id="${s.id}-delta" style="margin-left:auto;">—</span>
+        </div>
+        <div class="stat-row" style="margin-top:2px;">
+          <span class="stat-period">Prior Mo %</span>
+          <input type="number" id="${s.id}-pri" placeholder="—" step="0.1" oninput="recalcCash('${s.id}')">
+          <span style="font-size:10px;color:var(--muted);margin-left:4px;">%</span>
+        </div>
+      `;
+    } else if (s.noPrior) {
+      box.innerHTML = `
+        <div class="stat-label">${s.label}</div>
+        <div class="stat-row">
+          <span class="stat-period">Current</span>
+          <input type="number" id="${s.id}-cur" placeholder="—" step="0.1">
+          ${s.suffix ? `<span style="font-size:11px;color:var(--muted)">${s.suffix}</span>` : ''}
+        </div>
+      `;
+    } else {
+      box.innerHTML = `
+        <div class="stat-label">${s.label}</div>
+        <div class="stat-row">
+          <span class="stat-period">Current</span>
+          <input type="number" id="${s.id}-cur" placeholder="—" step="0.1" oninput="recalcStat('${s.id}')">
+          <span class="stat-delta zero" id="${s.id}-delta">—</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-period">Prior Mo</span>
+          <input type="number" id="${s.id}-pri" placeholder="—" step="0.1" oninput="recalcStat('${s.id}')">
+        </div>
+      `;
+    }
+    container.appendChild(box);
+  });
+}
+
+function recalcCash(id) {
+  const cashCur = parseFloat(document.getElementById(`${id}-cash-cur`)?.value) || null;
+  const totalCur = parseFloat(document.getElementById(`${id}-total-cur`)?.value) || null;
+  const pri = parseFloat(document.getElementById(`${id}-pri`)?.value) || null;
+
+  const pctEl = document.getElementById(`${id}-pct`);
+  const deltaEl = document.getElementById(`${id}-delta`);
+
+  let pct = null;
+  if (cashCur !== null && totalCur !== null && totalCur > 0) {
+    pct = (cashCur / totalCur) * 100;
+  }
+
+  if (pctEl) pctEl.textContent = pct !== null ? pct.toFixed(1) + '%' : '—';
+
+  if (deltaEl) {
+    if (pct !== null && pri !== null) {
+      const d = pct - pri;
+      const sign = d >= 0 ? '+' : '';
+      deltaEl.textContent = sign + d.toFixed(1) + '%';
+      deltaEl.className = 'stat-delta ' + (d > 0 ? 'pos' : d < 0 ? 'neg' : 'zero');
+    } else {
+      deltaEl.textContent = '—';
+      deltaEl.className = 'stat-delta zero';
+    }
+  }
+}
+
+function recalcBands(prefix) {
+  const count = prefix === 'ev' ? EV_BANDS.length : NEV_BANDS.length;
+  let sumActCur = 0, sumActPri = 0, sumSolCur = 0, sumSolPri = 0;
+  let hasActCur = false, hasActPri = false, hasSolCur = false, hasSolPri = false;
+
+  for (let i = 0; i < count; i++) {
+    const actCur = parseFloat(document.getElementById(`${prefix}-act-cur-${i}`)?.value) || null;
+    const actPri = parseFloat(document.getElementById(`${prefix}-act-pri-${i}`)?.value) || null;
+    const solCur = parseFloat(document.getElementById(`${prefix}-sol-cur-${i}`)?.value) || null;
+    const solPri = parseFloat(document.getElementById(`${prefix}-sol-pri-${i}`)?.value) || null;
+
+    // Deltas per row
+    setDelta(`${prefix}-act-d-${i}`, actCur, actPri, true);
+    setDelta(`${prefix}-sol-d-${i}`, solCur, solPri, true);
+
+    // Months supply = active / sold
+    const mosCur = (actCur !== null && solCur !== null && solCur !== 0) ? actCur / solCur : null;
+    const mosPri = (actPri !== null && solPri !== null && solPri !== 0) ? actPri / solPri : null;
+    const mosCurEl = document.getElementById(`${prefix}-mos-cur-${i}`);
+    const mosPriEl = document.getElementById(`${prefix}-mos-pri-${i}`);
+    if (mosCurEl) mosCurEl.textContent = mosCur !== null ? mosCur.toFixed(2) : '—';
+    if (mosPriEl) mosPriEl.textContent = mosPri !== null ? mosPri.toFixed(2) : '—';
+
+    const mosDEl = document.getElementById(`${prefix}-mos-d-${i}`);
+    if (mosDEl) {
+      if (mosCur !== null && mosPri !== null) {
+        const d = mosCur - mosPri;
+        mosDEl.textContent = (d >= 0 ? '+' : '') + d.toFixed(2);
+        mosDEl.className = 'delta-cell ' + (d > 0 ? 'pos' : d < 0 ? 'neg' : 'zero');
+      } else { mosDEl.textContent = '—'; mosDEl.className = 'delta-cell zero'; }
+    }
+
+    // Accumulate totals
+    if (actCur !== null) { sumActCur += actCur; hasActCur = true; }
+    if (actPri !== null) { sumActPri += actPri; hasActPri = true; }
+    if (solCur !== null) { sumSolCur += solCur; hasSolCur = true; }
+    if (solPri !== null) { sumSolPri += solPri; hasSolPri = true; }
+  }
+
+  // Update totals footer
+  const totActCurEl = document.getElementById(`${prefix}-tot-act-cur`);
+  const totActPriEl = document.getElementById(`${prefix}-tot-act-pri`);
+  const totActDEl  = document.getElementById(`${prefix}-tot-act-d`);
+  const totSolCurEl = document.getElementById(`${prefix}-tot-sol-cur`);
+  const totSolPriEl = document.getElementById(`${prefix}-tot-sol-pri`);
+  const totSolDEl  = document.getElementById(`${prefix}-tot-sol-d`);
+
+  if (totActCurEl) totActCurEl.textContent = hasActCur ? sumActCur.toLocaleString() : '—';
+  if (totActPriEl) totActPriEl.textContent = hasActPri ? sumActPri.toLocaleString() : '—';
+  if (totSolCurEl) totSolCurEl.textContent = hasSolCur ? sumSolCur.toLocaleString() : '—';
+  if (totSolPriEl) totSolPriEl.textContent = hasSolPri ? sumSolPri.toLocaleString() : '—';
+
+  if (totActDEl) {
+    if (hasActCur && hasActPri) {
+      const d = sumActCur - sumActPri;
+      totActDEl.textContent = (d >= 0 ? '+' : '') + d.toLocaleString();
+      totActDEl.style.color = d > 0 ? '#6fcf97' : d < 0 ? '#eb5757' : '#aaa';
+    } else { totActDEl.textContent = '—'; totActDEl.style.color = '#aaa'; }
+  }
+  if (totSolDEl) {
+    if (hasSolCur && hasSolPri) {
+      const d = sumSolCur - sumSolPri;
+      totSolDEl.textContent = (d >= 0 ? '+' : '') + d.toLocaleString();
+      totSolDEl.style.color = d > 0 ? '#6fcf97' : d < 0 ? '#eb5757' : '#aaa';
+    } else { totSolDEl.textContent = '—'; totSolDEl.style.color = '#aaa'; }
+  }
+
+  // Auto-populate Cash % "Total Deals" from the sold total and recalculate
+  const cashTotalEl = document.getElementById(`${prefix}-cash-total-cur`);
+  if (cashTotalEl && hasSolCur) {
+    cashTotalEl.value = sumSolCur;
+    cashTotalEl.style.color = 'var(--muted)'; // visual indicator it's auto-filled
+    recalcCash(`${prefix}-cash`);
+  }
+
+  // Update combined MLS sold tracker
+  updateMlsSoldTracker();
+}
+
+function updateMlsSoldTracker() {
+  // Sum sold across EV and NEV
+  const evCount = EV_BANDS.length;
+  const nevCount = NEV_BANDS.length;
+  let evSold = 0, nevSold = 0, hasEv = false, hasNev = false;
+
+  for (let i = 0; i < evCount; i++) {
+    const v = parseFloat(document.getElementById(`ev-sol-cur-${i}`)?.value) || null;
+    if (v !== null) { evSold += v; hasEv = true; }
+  }
+  for (let i = 0; i < nevCount; i++) {
+    const v = parseFloat(document.getElementById(`nev-sol-cur-${i}`)?.value) || null;
+    if (v !== null) { nevSold += v; hasNev = true; }
+  }
+
+  const evEl  = document.getElementById('tracker-ev-sold');
+  const nevEl = document.getElementById('tracker-nev-sold');
+  const totEl = document.getElementById('tracker-total-sold');
+  const mlsEl = document.getElementById('mls-total');
+
+  if (evEl)  evEl.textContent  = hasEv  ? evSold.toLocaleString()  : '—';
+  if (nevEl) nevEl.textContent = hasNev ? nevSold.toLocaleString() : '—';
+
+  const combined = (hasEv ? evSold : 0) + (hasNev ? nevSold : 0);
+  if (totEl) totEl.textContent = (hasEv || hasNev) ? combined.toLocaleString() : '—';
+
+  // Also pre-fill MLS total on pg11 if it's empty and we have a combined number
+  if (mlsEl && mlsEl.value === '' && (hasEv || hasNev)) {
+    // Don't auto-fill — just highlight as a suggestion
+    mlsEl.placeholder = `EV+NEV combined: ${combined.toLocaleString()} — enter actual MLS total`;
+  }
+}
+
+function recalcStat(id) {
+  const cur = parseFloat(document.getElementById(`${id}-cur`)?.value) || null;
+  const pri = parseFloat(document.getElementById(`${id}-pri`)?.value) || null;
+  setDelta(`${id}-delta`, cur, pri, true);
+}
+
+function setDelta(elId, cur, pri, isAbsolute) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (cur === null || pri === null) {
+    el.textContent = '—'; el.className = (el.className.split(' ')[0]) + ' zero'; return;
+  }
+  const d = cur - pri;
+  const sign = d >= 0 ? '+' : '';
+  el.textContent = sign + d.toFixed(d % 1 === 0 ? 0 : 1);
+  const base = el.className.split(' ')[0];
+  el.className = base + ' ' + (d > 0 ? 'pos' : d < 0 ? 'neg' : 'zero');
+}
+
+// Build pg10 tables on load
+buildBandTable('ev-tbody', EV_BANDS, 'ev');
+buildBandTable('nev-tbody', NEV_BANDS, 'nev');
+buildStatsBlock('ev-stats', EV_STATS);
+buildStatsBlock('nev-stats', NEV_STATS);
+
+// ══════════════════════════════════════════════
+// PAGE 11 — BRAND METRICS
+// ══════════════════════════════════════════════
+const KW_FIELDS = [
+  { id: 'coming-soon', label: 'Coming Soon' },
+  { id: 'active', label: 'Active Listings' },
+  { id: 'new-list', label: 'New Listings' },
+  { id: 'contracted', label: 'Contracted' },
+  { id: 'closed', label: 'Closed', isClosing: true },
+  { id: 'mktshare', label: 'Market Share', isShare: true }
+];
+
+function buildBrandBlock(containerId, brandPrefix) {
+  const container = document.getElementById(containerId);
+  // Show 3 columns: Coming Soon+Active+New / Contracted+Closed / Market Share
+  const groups = [
+    [KW_FIELDS[0], KW_FIELDS[1], KW_FIELDS[2]],
+    [KW_FIELDS[3], KW_FIELDS[4]],
+    [KW_FIELDS[5]]
+  ];
+  groups.forEach(grp => {
+    const col = document.createElement('div');
+    col.className = 'brand-metric';
+    grp.forEach(f => {
+      col.innerHTML += `
+        <div class="bm-label">${f.label}</div>
+        <div class="bm-row">
+          <span class="bm-period">Current</span>
+          <input type="number" id="${brandPrefix}-${f.id}-cur" placeholder="—" oninput="recalcPg11()">
+          <span class="bm-delta zero" id="${brandPrefix}-${f.id}-delta">—</span>
+        </div>
+        <div class="bm-row">
+          <span class="bm-period">Prior Mo</span>
+          <input type="number" id="${brandPrefix}-${f.id}-pri" placeholder="—" oninput="recalcPg11()">
+        </div>
+        ${f.isShare ? `<div class="bm-share" id="${brandPrefix}-share-calc">Calc: —</div>` : ''}
+      `;
+    });
+    container.appendChild(col);
+  });
+}
+
+const IBR_GROUPS = [
+  {
+    gridId: 'ibr-grid-ibuyers',
+    brands: [
+      { id: 'opendoor', label: 'Opendoor' },
+      { id: 'offerpad', label: 'OfferPad' },
+      { id: 'citiea', label: '72SOLD / Just 990 — CITIEA' }
+    ]
+  },
+  {
+    gridId: 'ibr-grid-flatfee',
+    brands: [
+      { id: 'homie', label: 'Homie (Also Flat Fee)' },
+      { id: 'flatfee-other', label: 'Other Flat Fee Brokerages' }
+    ]
+  },
+  {
+    gridId: 'ibr-grid-discount',
+    brands: [
+      { id: 'redfin', label: 'Redfin' }
+    ]
+  }
+];
+
+// Flat list for recalc loops
+const IBR_BRANDS = IBR_GROUPS.flatMap(g => g.brands);
+
+function buildIbrGrid() {
+  IBR_GROUPS.forEach(group => {
+    const grid = document.getElementById(group.gridId);
+    group.brands.forEach(brand => {
+      const div = document.createElement('div');
+      div.className = 'ibr-brand';
+      div.innerHTML = `
+      <div class="ibr-brand-header">${brand.label}</div>
+      <div class="ibr-brand-body">
+        ${['Active','Pending','Closed'].map(metric => `
+          <div class="ibr-row">
+            <span class="ibr-label">${metric}</span>
+            <input type="number" id="ibr-${brand.id}-${metric.toLowerCase()}-cur" placeholder="cur" oninput="recalcPg11()">
+            <span class="ibr-delta zero" id="ibr-${brand.id}-${metric.toLowerCase()}-delta">—</span>
+            <input type="number" id="ibr-${brand.id}-${metric.toLowerCase()}-pri" placeholder="prior" style="margin-left:8px;width:55px;font-size:11px;color:var(--muted)" oninput="recalcPg11()">
+          </div>
+        `).join('')}
+        <div style="border-top:1px solid var(--cream);margin-top:6px;padding-top:6px;">
+          <div class="ibr-row">
+            <span class="ibr-label" style="color:var(--accent);">Mkt Share</span>
+            <span class="ibr-share" id="ibr-${brand.id}-share-cur">—</span>
+            <span class="ibr-delta zero" id="ibr-${brand.id}-share-delta" style="margin-left:auto;font-size:11px;">—</span>
+          </div>
+          <div class="ibr-row" style="margin-top:3px;">
+            <span class="ibr-label" style="font-size:9px;">Prior Mo %</span>
+            <input type="number" id="ibr-${brand.id}-share-pri" placeholder="e.g. 0.45" step="0.01"
+              style="width:70px;font-family:'DM Mono',monospace;font-size:12px;border:none;border-bottom:1px solid var(--cream);background:transparent;outline:none;padding:2px 0;color:var(--muted);"
+              oninput="recalcPg11()">
+            <span style="font-size:10px;color:var(--muted);margin-left:3px;">%</span>
+          </div>
+        </div>
+      </div>
+    `;
+      grid.appendChild(div);
+    });
+  });
+}
+
+function recalcPg11() {
+  const mlsTotal = parseFloat(document.getElementById('mls-total')?.value) || null;
+
+  // KW All + KWSL deltas and share
+  ['kw-all', 'kwsl'].forEach(prefix => {
+    KW_FIELDS.forEach(f => {
+      if (f.isShare) return;
+      const cur = parseFloat(document.getElementById(`${prefix}-${f.id}-cur`)?.value) || null;
+      const pri = parseFloat(document.getElementById(`${prefix}-${f.id}-pri`)?.value) || null;
+      const deltaEl = document.getElementById(`${prefix}-${f.id}-delta`);
+      if (deltaEl) {
+        if (cur !== null && pri !== null) {
+          const d = cur - pri;
+          const sign = d >= 0 ? '+' : '';
+          deltaEl.textContent = sign + d;
+          deltaEl.className = 'bm-delta ' + (d > 0 ? 'pos' : d < 0 ? 'neg' : 'zero');
+        } else { deltaEl.textContent = '—'; deltaEl.className = 'bm-delta zero'; }
+      }
+    });
+    // Market share calc
+    const closedCur = parseFloat(document.getElementById(`${prefix}-closed-cur`)?.value) || null;
+    const closedPri = parseFloat(document.getElementById(`${prefix}-closed-pri`)?.value) || null;
+    const shareCalcEl = document.getElementById(`${prefix}-share-calc`);
+    if (shareCalcEl && mlsTotal && closedCur !== null) {
+      const share = (closedCur / mlsTotal * 100).toFixed(2);
+      shareCalcEl.textContent = `Calc: ${share}%`;
+    } else if (shareCalcEl) { shareCalcEl.textContent = 'Calc: —'; }
+    // Manual share delta
+    const shareCur = parseFloat(document.getElementById(`${prefix}-mktshare-cur`)?.value) || null;
+    const sharePri = parseFloat(document.getElementById(`${prefix}-mktshare-pri`)?.value) || null;
+    const shareDeltaEl = document.getElementById(`${prefix}-mktshare-delta`);
+    if (shareDeltaEl && shareCur !== null && sharePri !== null) {
+      const d = shareCur - sharePri;
+      const sign = d >= 0 ? '+' : '';
+      shareDeltaEl.textContent = sign + d.toFixed(2) + '%';
+      shareDeltaEl.className = 'bm-delta ' + (d > 0 ? 'pos' : d < 0 ? 'neg' : 'zero');
+    }
+  });
+
+  // iBuyer brands
+  IBR_BRANDS.forEach(brand => {
+    ['active','pending','closed'].forEach(metric => {
+      const cur = parseFloat(document.getElementById(`ibr-${brand.id}-${metric}-cur`)?.value) || null;
+      const pri = parseFloat(document.getElementById(`ibr-${brand.id}-${metric}-pri`)?.value) || null;
+      const deltaEl = document.getElementById(`ibr-${brand.id}-${metric}-delta`);
+      if (deltaEl) {
+        if (cur !== null && pri !== null) {
+          const d = cur - pri;
+          const sign = d >= 0 ? '+' : '';
+          deltaEl.textContent = sign + d;
+          deltaEl.className = 'ibr-delta ' + (d > 0 ? 'pos' : d < 0 ? 'neg' : 'zero');
+        } else { deltaEl.textContent = '—'; deltaEl.className = 'ibr-delta zero'; }
+      }
+    });
+    // Current market share: closed ÷ MLS total (auto-calc)
+    const closedCur = parseFloat(document.getElementById(`ibr-${brand.id}-closed-cur`)?.value) || null;
+    const sharePri = parseFloat(document.getElementById(`ibr-${brand.id}-share-pri`)?.value) || null;
+    const shareCurEl = document.getElementById(`ibr-${brand.id}-share-cur`);
+    const shareDeltaEl = document.getElementById(`ibr-${brand.id}-share-delta`);
+    let shareCur = null;
+    if (shareCurEl && mlsTotal && closedCur !== null) {
+      shareCur = (closedCur / mlsTotal) * 100;
+      shareCurEl.textContent = shareCur.toFixed(2) + '%';
+    } else if (shareCurEl) { shareCurEl.textContent = '—'; }
+    // Delta: current auto-calc % minus manually entered prior %
+    if (shareDeltaEl) {
+      if (shareCur !== null && sharePri !== null) {
+        const d = shareCur - sharePri;
+        const sign = d >= 0 ? '+' : '';
+        shareDeltaEl.textContent = sign + d.toFixed(2) + '%';
+        shareDeltaEl.className = 'ibr-delta ' + (d > 0 ? 'pos' : d < 0 ? 'neg' : 'zero');
+      } else { shareDeltaEl.textContent = '—'; shareDeltaEl.className = 'ibr-delta zero'; }
+    }
+  });
+}
+
+// Build pg11 on load
+buildBrandBlock('kw-all-metrics', 'kw-all');
+buildBrandBlock('kwsl-metrics', 'kwsl');
+buildIbrGrid();
+
+// ══════════════════════════════════════════════
+// SAVE / LOAD — OPTION A PERSISTENT DATA
+// ══════════════════════════════════════════════
+function getAllInputIds() {
+  return Array.from(document.querySelectorAll('input[type=number]')).map(el => el.id).filter(Boolean);
+}
+
+function saveData() {
+  const data = { savedAt: new Date().toISOString(), values: {}, links: {} };
+  getAllInputIds().forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value !== '') data.values[id] = el.value;
+  });
+  // Capture link fields separately (not numeric, not in getAllInputIds)
+  const linkIds = [
+    'link-econ-1-title','link-econ-1-source','link-econ-1',
+    'link-econ-2-title','link-econ-2-source','link-econ-2',
+    'link-econ-3-title','link-econ-3-source','link-econ-3',
+    'link-gdrive','link-img-1','link-img-2','link-img-3'
+  ];
+  linkIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value.trim() !== '') data.links[id] = el.value.trim();
+  });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  const month = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).replace(' ', '-');
+  a.href = URL.createObjectURL(blob);
+  a.download = `phoenix-market-data-${month}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  const el = document.getElementById('save-confirm');
+  el.style.opacity = 1;
+  setTimeout(() => el.style.opacity = 0, 2200);
+}
+
+function loadData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.values) throw new Error('Invalid file');
+
+      // Map: prior month current-value fields → this month's prior fields
+      // Convention: field id ending in "-cur-N" maps to "-pri-N" for bands
+      // For Cromford metrics: id-0 (current) maps to id-1 (1mo back)
+      // For pg10/pg11: *-cur fields map to corresponding *-pri fields
+      const mapping = {};
+      Object.keys(data.values).forEach(id => {
+        // Cromford top section: metric-0 → metric-1
+        if (id.match(/^(active|new|contract|sales|sqft|lsr)-0$/)) {
+          mapping[id.replace('-0', '-1')] = data.values[id];
+        }
+        // Band tables: prefix-act-cur-N → prefix-act-pri-N
+        if (id.match(/-(act|sol)-cur-\d+$/)) {
+          mapping[id.replace('-cur-', '-pri-')] = data.values[id];
+        }
+        // Stat boxes: id-cur → id-pri (only those with prior fields)
+        if (id.endsWith('-cur') && !id.match(/(60d|90d)/)) {
+          mapping[id.replace('-cur', '-pri')] = data.values[id];
+        }
+        // KW/KWSL brand fields: prefix-field-cur → prefix-field-pri
+        if (id.match(/^(kw-all|kwsl)-.*-cur$/)) {
+          mapping[id.replace('-cur', '-pri')] = data.values[id];
+        }
+        // iBuyer fields: ibr-brand-metric-cur → ibr-brand-metric-pri
+        if (id.match(/^ibr-.*-cur$/)) {
+          mapping[id.replace('-cur', '-pri')] = data.values[id];
+        }
+      });
+
+      // Restore link fields if present (current month links carry forward)
+      if (data.links) {
+        Object.keys(data.links).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.value = data.links[id];
+            if (id.startsWith('link-img')) previewLink(id, true);
+            else if (id === 'link-econ-1' || id === 'link-econ-2' || id === 'link-econ-3') previewLink(id);
+          }
+        });
+      }
+
+      // Apply mapped prior values
+      let filled = 0;
+      Object.keys(mapping).forEach(targetId => {
+        const el = document.getElementById(targetId);
+        if (el) { el.value = mapping[targetId]; filled++; }
+      });
+
+      // Trigger recalculations
+      ['ev','nev'].forEach(p => recalcBands(p));
+      [...EV_STATS, ...NEV_STATS].filter(s => !s.noPrior).forEach(s => recalcStat(s.id));
+      recalculate();
+      recalcPg11();
+
+      event.target.value = '';
+      const el = document.getElementById('load-confirm');
+      el.textContent = `Loaded — ${filled} prior fields filled`;
+      el.style.opacity = 1;
+      setTimeout(() => el.style.opacity = 0, 3000);
+    } catch(err) {
+      alert('Could not read file. Make sure it is a valid Phoenix Market Data JSON.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════════
+// LINKS TAB — PREVIEW
+// ══════════════════════════════════════════════
+function previewLink(inputId, isImage) {
+  const input = document.getElementById(inputId);
+  const previewId = 'prev-' + inputId.replace('link-', '');
+  const preview = document.getElementById(previewId);
+  if (!input || !preview) return;
+  const url = input.value.trim();
+  if (!url) { preview.style.display = 'none'; return; }
+  preview.innerHTML = `<a href="${url}" target="_blank" style="color:var(--accent);text-decoration:none;">↗ ${url}</a>`;
+  preview.style.display = 'block';
+}
+</script>
+
+<!-- ============================================================
+     TABLEAU SOURCE LINKS — AGENT/INTERNAL USE ONLY
+     Not visible in consumer output. For Claude Agent and
+     automation reference when locating source data.
+     ============================================================
+
+  ACTIVE LISTINGS (weekly current value):
+  https://public.tableau.com/app/profile/michael.james.orr/viz/AL04/ActiveListingWeeklyCounts-ComparedbyYear
+
+  NEW LISTINGS (month-end):
+  https://public.tableau.com/app/profile/michael.james.orr/viz/NL55/NewListingsYTDDaily
+
+  UNDER CONTRACT (weekly current value):
+  https://public.tableau.com/app/profile/michael.james.orr/viz/UC52/ListingsUnderContract-ComparedWeekly
+
+  SOLD HOMES (month-end):
+  https://public.tableau.com/app/profile/michael.james.orr/viz/SM52/SalesperMonth
+
+  AVG $/SQFT (month-end):
+  https://public.tableau.com/app/profile/michael.james.orr/viz/TM52/SalesPriceperSqFt
+
+  LISTING SUCCESS RATE (month-end, enter as whole number e.g. 74):
+  https://public.tableau.com/app/profile/michael.james.orr/viz/LS51/LSR1
+
+  NOTE: All vizes are on Cromford Report member pages and Tableau Public.
+  Data export is blocked (allowDataAccess: false). Manual entry required.
+  Weekly metrics: use closest Saturday to same day-of-month for prior periods.
+  Month-end metrics: use last day of prior months.
+============================================================ -->
+
+</body>
+</html>
