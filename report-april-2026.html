@@ -18,7 +18,7 @@ body{background:#050505;font-family:'Montserrat',sans-serif;color:var(--white);m
 
 /* ── VIEWER CHROME ── */
 .viewer-header{text-align:center;margin-bottom:28px;padding:0 20px;}
-.viewer-header h1{font-size:11px;font-weight:600;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
+.viewer-header h1{font-size:13px;font-weight:600;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
 .viewer-header p{font-size:10px;font-weight:300;letter-spacing:.2em;color:var(--white-dim);text-transform:uppercase;}
 
 .top-controls{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
@@ -66,8 +66,9 @@ body.fullscreen-mode #pageWrapper{
   width:100vw;height:100vh;overflow:hidden;
 }
 body.fullscreen-mode #pageWrapper .page{
-  zoom: calc(100vh / 1056);
   flex-shrink:0;
+  transform-origin: center center;
+  transform: scale(var(--fs-scale, 1));
 }
 /* Spread fullscreen: two pages side by side scaled to fit */
 body.fullscreen-mode #spreadContainer{
@@ -119,11 +120,25 @@ body.fullscreen-mode .fs-exit{display:block;}
   @page { size: 816px 1056px; margin: 0; }
 }
 
-/* ── MOBILE RESPONSIVE — scale handled by JS ── */
+/* ── MOBILE RESPONSIVE ── */
 @media (max-width: 860px) {
   #spreadBtn { display: none !important; }
   .thumb { width: 36px; height: 46px; font-size: 7px; }
-  .page-wrapper { padding: 0; }
+
+  /* Wrapper: flex-centered, comfortable spacing, no horizontal scroll */
+  .page-wrapper {
+    padding: 20px 0 40px;
+    overflow: hidden;
+  }
+
+  /* Page: scale to fit viewport width via CSS custom property set by JS.
+     Scoped to non-fullscreen only — fullscreen has its own zoom+centering rules. */
+  body:not(.fullscreen-mode) .page {
+    flex-shrink: 0;
+    transform-origin: top center;
+    transform: scale(var(--mobile-scale, 1));
+    margin-bottom: calc((var(--mobile-scale, 1) - 1) * 1056px);
+  }
 }
 
 /* ── PAGE ELEMENTS ── */
@@ -152,7 +167,7 @@ body.fullscreen-mode .fs-exit{display:block;}
 .metric-card-label{font-size:7.5px;font-weight:700;letter-spacing:.35em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:5px;}
 .metric-card-val{font-size:28px;font-weight:700;color:var(--white);line-height:1;margin-bottom:5px;}
 .metric-changes{display:flex;gap:8px;flex-wrap:wrap;}
-.metric-change{font-size:9.5px;font-weight:500;letter-spacing:.04em;cursor:default;position:relative;}
+.metric-change{font-size:10px;font-weight:500;letter-spacing:.04em;cursor:default;position:relative;}
 .metric-change .period{color:rgba(245,245,240,.35);}
 .metric-change .val-up{color:var(--up);font-weight:600;}
 .metric-change .val-down{color:var(--down);font-weight:600;}
@@ -201,15 +216,16 @@ body.fullscreen-mode .fs-exit{display:block;}
 
 /* ── DATA TABLE ── */
 .data-table{width:100%;border-collapse:collapse;}
-.data-table th{font-size:7.5px;font-weight:700;letter-spacing:.3em;color:var(--gold-dim);text-transform:uppercase;padding:7px 9px;border-bottom:1px solid var(--border);text-align:left;background:var(--black);}
+.data-table th{font-size:13px;font-weight:700;letter-spacing:.3em;color:var(--gold-dim);text-transform:uppercase;padding:7px 9px;border-bottom:1px solid var(--border);text-align:left;background:var(--black);}
 .data-table th:not(:first-child){text-align:center;}
-.data-table td{padding:6px 9px;border-bottom:1px solid rgba(42,42,42,.6);font-size:11px;font-weight:400;color:rgba(245,245,240,.85);}
+.data-table td{padding:6px 9px;border-bottom:1px solid rgba(42,42,42,.6);font-size:13px;font-weight:400;color:rgba(245,245,240,.85);}
 .data-table td:not(:first-child){text-align:center;}
 .data-table tr:hover td{background:rgba(201,169,110,.04);}
-.td-city{font-weight:600;color:var(--white);}
-.td-up{color:var(--up);font-weight:600;}
-.td-down{color:var(--down);font-weight:600;}
-.td-neutral{color:var(--gold-dim);}
+.td-city{font-size:13px;font-weight:600;color:var(--white);}
+.td-up{font-size:13px;color:var(--up);font-weight:600;}
+.td-down{font-size:13px;color:var(--down);font-weight:600;}
+.td-neutral{font-size:13px;color:var(--gold-dim);}
+.data-table td span{font-size:13px;}
 .td-cmi-high{color:var(--gold);font-weight:700;}
 
 /* ── RATES ── */
@@ -437,7 +453,7 @@ body.fullscreen-mode .fs-exit{display:block;}
     </div>
     <div class="data-box">
       <div class="data-box-title">Market Context</div>
-      <div class="body-text" style="font-size:12px;">New listings entering the market totaled <strong>10,062</strong>, up 10.15% from the <strong>9,135</strong> recorded the prior month but still 3.79% below the <strong>10,458</strong> of the same month last year. Active listings at <strong>23,009</strong> are running 1.77% below the year-ago count of 23,424, meaning the market is absorbing new supply at a pace that keeps the total pool slightly smaller than twelve months back. Months supply has tightened across nearly every East Valley price band, with the sharpest improvement in the $400K to $800K range where sold counts are running well ahead of last month. This is not a market overwhelmed by unsold inventory. It is a market where correctly priced, freshly listed homes are finding buyers.</div>
+      <div class="body-text" style="font-size:11.5px;">New listings entering the market totaled <strong>10,062</strong>, up 10.15% from the <strong>9,135</strong> recorded the prior month but still 3.79% below the <strong>10,458</strong> of the same month last year. Active listings at <strong>23,009</strong> are running 1.77% below the year-ago count of 23,424, meaning the market is absorbing new supply at a pace that keeps the total pool slightly smaller than twelve months back. Months supply has tightened across nearly every East Valley price band, with the sharpest improvement in the $400K to $800K range where sold counts are running well ahead of last month. This is not a market overwhelmed by unsold inventory. It is a market where correctly priced, freshly listed homes are finding buyers.</div>
     </div>
   </div>
   <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">06</span></div>
@@ -567,38 +583,38 @@ body.fullscreen-mode .fs-exit{display:block;}
     <div style="font-size:7.5px;font-weight:300;color:rgba(245,245,240,.3);margin-bottom:5px;">Ahwatukee · Chandler · Chandler Heights · Gilbert · Tempe · Mesa · Apache Junction · Queen Creek · San Tan Valley</div>
     <table class="data-table" style="margin-bottom:6px;">
       <thead><tr><th>Price Range</th><th>Active / Coming Soon</th><th>Sold in Mar</th><th>Months Supply</th></tr></thead>
-      <tbody id="ev-tbody"><tr><td class="td-city">$0–$250K</td><td><span style="font-weight:500;">860</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;28</span></td><td><span style="font-weight:500;">167</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;34</span></td><td><span style="font-weight:500;">5.15</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.53</span></td></tr>
-<tr><td class="td-city">$250K–$400K</td><td><span style="font-weight:500;">1,150</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;56</span></td><td><span style="font-weight:500;">438</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;72</span></td><td><span style="font-weight:500;">2.63</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.67</span></td></tr>
-<tr><td class="td-city">$400K–$500K</td><td><span style="font-weight:500;">1,210</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;2</span></td><td><span style="font-weight:500;">493</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;140</span></td><td><span style="font-weight:500;">2.45</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.97</span></td></tr>
-<tr><td class="td-city">$500K–$600K</td><td><span style="font-weight:500;">886</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;34</span></td><td><span style="font-weight:500;">352</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;84</span></td><td><span style="font-weight:500;">2.52</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.66</span></td></tr>
-<tr><td class="td-city">$600K–$800K</td><td><span style="font-weight:500;">904</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;1</span></td><td><span style="font-weight:500;">343</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;60</span></td><td><span style="font-weight:500;">2.64</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.56</span></td></tr>
-<tr><td class="td-city">$800K–$1M</td><td><span style="font-weight:500;">411</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;34</span></td><td><span style="font-weight:500;">98</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;7</span></td><td><span style="font-weight:500;">4.19</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.60</span></td></tr>
-<tr><td class="td-city">$1M+</td><td><span style="font-weight:500;">521</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;12</span></td><td><span style="font-weight:500;">129</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;33</span></td><td><span style="font-weight:500;">4.04</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.26</span></td></tr>
+      <tbody id="ev-tbody"><tr><td class="td-city" style="font-size:13px;">$0–$250K</td><td><span style="font-weight:500;font-size:13px;">860</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;28</span></td><td><span style="font-weight:500;font-size:13px;">167</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;34</span></td><td><span style="font-weight:500;font-size:13px;">5.15</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.53</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$250K–$400K</td><td><span style="font-weight:500;font-size:13px;">1,150</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;56</span></td><td><span style="font-weight:500;font-size:13px;">438</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;72</span></td><td><span style="font-weight:500;font-size:13px;">2.63</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.67</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$400K–$500K</td><td><span style="font-weight:500;font-size:13px;">1,210</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;2</span></td><td><span style="font-weight:500;font-size:13px;">493</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;140</span></td><td><span style="font-weight:500;font-size:13px;">2.45</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.97</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$500K–$600K</td><td><span style="font-weight:500;font-size:13px;">886</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;34</span></td><td><span style="font-weight:500;font-size:13px;">352</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;84</span></td><td><span style="font-weight:500;font-size:13px;">2.52</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.66</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$600K–$800K</td><td><span style="font-weight:500;font-size:13px;">904</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;1</span></td><td><span style="font-weight:500;font-size:13px;">343</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;60</span></td><td><span style="font-weight:500;font-size:13px;">2.64</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.56</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$800K–$1M</td><td><span style="font-weight:500;font-size:13px;">411</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;34</span></td><td><span style="font-weight:500;font-size:13px;">98</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;7</span></td><td><span style="font-weight:500;font-size:13px;">4.19</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.60</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$1M+</td><td><span style="font-weight:500;font-size:13px;">521</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;12</span></td><td><span style="font-weight:500;font-size:13px;">129</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;33</span></td><td><span style="font-weight:500;font-size:13px;">4.04</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.26</span></td></tr>
 </tbody>
     </table>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;padding:12px 0 4px;border-top:1px solid var(--border);">
-      <div style="font-size:14px;color:rgba(245,245,240,.55);line-height:2.0;">Active DOM: <strong id="ev-adom" style="color:var(--white);">81</strong> <span id="ev-adom-delta" style="color:var(--gold-dim);font-size:11px;">↓ 2</span><br>UC DOM: <strong id="ev-ucdom" style="color:var(--white);">68</strong><br>Closed DOM: <strong id="ev-cdom" style="color:var(--white);">74</strong><br>≤60 Days: <strong id="ev-60d" style="color:var(--white);">59.65</strong>%<br>≤90 Days: <strong id="ev-90d" style="color:var(--white);">70.15</strong>%</div>
-      <div style="font-size:14px;color:rgba(245,245,240,.55);line-height:2.0;">Cash: <strong id="ev-cash-pct" style="color:var(--white);">24.3</strong>%<br>of East Valley Mar Sales</div>
-      <div style="font-size:14px;color:rgba(245,245,240,.55);line-height:2.0;"><strong id="ev-expired" style="color:var(--white);">626</strong><br>East Valley Listings<br>Expired or Cancelled in Mar</div>
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;">Active DOM: <strong id="ev-adom" style="color:var(--white);">81</strong> <span id="ev-adom-delta" style="color:var(--gold-dim);font-size:13px;">↓ 2</span><br>UC DOM: <strong id="ev-ucdom" style="color:var(--white);">68</strong> <span id="ev-ucdom-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--down);">↓&thinsp;3</span><br>Closed DOM: <strong id="ev-cdom" style="color:var(--white);">74</strong> <span id="ev-cdom-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--down);">↓&thinsp;8</span><br>≤60 Days: <strong id="ev-60d" style="color:var(--white);">59.65</strong>%<br>≤90 Days: <strong id="ev-90d" style="color:var(--white);">70.15</strong>%</div>
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;">Cash: <strong id="ev-cash-pct" style="color:var(--white);">20.7</strong>% <span style="color:var(--down);font-size:10px;">↓3.6%</span><br>of East Valley Mar Sales</div>
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;"><strong id="ev-expired" style="color:var(--white);">626</strong> <span id="ev-expired-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--up);">↑&thinsp;178</span><br>East Valley Listings<br>Expired or Cancelled in Mar</div>
     </div>
 
     <div style="font-size:8px;font-weight:700;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:1px;">Northeast Valley</div>
     <div style="font-size:7.5px;font-weight:300;color:rgba(245,245,240,.3);margin-bottom:5px;">Scottsdale · Paradise Valley · Greyhawk · Desert Ridge · Cave Creek · Fountain Hills</div>
     <table class="data-table" style="margin-bottom:6px;">
       <thead><tr><th>Price Range</th><th>Active / Coming Soon</th><th>Sold in Mar</th><th>Months Supply</th></tr></thead>
-      <tbody id="nev-tbody"><tr><td class="td-city">$0–$400K</td><td><span style="font-weight:500;">521</span></td><td><span style="font-weight:500;">109</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;20</span></td><td><span style="font-weight:500;">4.78</span></td></tr>
-<tr><td class="td-city">$400K–$600K</td><td><span style="font-weight:500;">413</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;24</span></td><td><span style="font-weight:500;">124</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;21</span></td><td><span style="font-weight:500;">3.33</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.45</span></td></tr>
-<tr><td class="td-city">$600K–$1M</td><td><span style="font-weight:500;">838</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;10</span></td><td><span style="font-weight:500;">280</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;73</span></td><td><span style="font-weight:500;">2.99</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.01</span></td></tr>
-<tr><td class="td-city">$1M–$2M</td><td><span style="font-weight:500;">931</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;28</span></td><td><span style="font-weight:500;">279</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;73</span></td><td><span style="font-weight:500;">3.34</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.05</span></td></tr>
-<tr><td class="td-city">$2M–$5M</td><td><span style="font-weight:500;">770</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;4</span></td><td><span style="font-weight:500;">161</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;51</span></td><td><span style="font-weight:500;">4.78</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;2.25</span></td></tr>
-<tr><td class="td-city">$5M–$10M</td><td><span style="font-weight:500;">242</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;6</span></td><td><span style="font-weight:500;">31</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;3</span></td><td><span style="font-weight:500;">7.81</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.05</span></td></tr>
-<tr><td class="td-city">$10M+</td><td><span style="font-weight:500;">88</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0</span></td><td><span style="font-weight:500;">9</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0</span></td><td><span style="font-weight:500;">9.78</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.00</span></td></tr>
+      <tbody id="nev-tbody"><tr><td class="td-city" style="font-size:13px;">$0–$400K</td><td><span style="font-weight:500;font-size:13px;">521</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;18</span></td><td><span style="font-weight:500;font-size:13px;">109</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;20</span></td><td><span style="font-weight:500;font-size:13px;">4.78</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.87</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$400K–$600K</td><td><span style="font-weight:500;font-size:13px;">413</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;24</span></td><td><span style="font-weight:500;font-size:13px;">124</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;21</span></td><td><span style="font-weight:500;font-size:13px;">3.33</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.45</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$600K–$1M</td><td><span style="font-weight:500;font-size:13px;">838</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;10</span></td><td><span style="font-weight:500;font-size:13px;">280</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;73</span></td><td><span style="font-weight:500;font-size:13px;">2.99</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.01</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$1M–$2M</td><td><span style="font-weight:500;font-size:13px;">931</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;28</span></td><td><span style="font-weight:500;font-size:13px;">279</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;73</span></td><td><span style="font-weight:500;font-size:13px;">3.34</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.05</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$2M–$5M</td><td><span style="font-weight:500;font-size:13px;">770</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;4</span></td><td><span style="font-weight:500;font-size:13px;">161</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;51</span></td><td><span style="font-weight:500;font-size:13px;">4.78</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;2.25</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$5M–$10M</td><td><span style="font-weight:500;font-size:13px;">242</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;6</span></td><td><span style="font-weight:500;font-size:13px;">31</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;3</span></td><td><span style="font-weight:500;font-size:13px;">7.81</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.05</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$10M+</td><td><span style="font-weight:500;font-size:13px;">88</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0</span></td><td><span style="font-weight:500;font-size:13px;">9</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0</span></td><td><span style="font-weight:500;font-size:13px;">9.78</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.00</span></td></tr>
 </tbody>
     </table>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:6px;padding:12px 0 4px;border-top:1px solid var(--border);">
-      <div style="font-size:14px;color:rgba(245,245,240,.55);line-height:2.0;">Active DOM: <strong id="nev-adom" style="color:var(--white);">108</strong> <span id="nev-adom-delta" style="color:var(--gold-dim);font-size:11px;">↑ 3</span><br>UC DOM: <strong id="nev-ucdom" style="color:var(--white);">83</strong><br>Closed DOM: <strong id="nev-cdom" style="color:var(--white);">84</strong><br>≤60 Days: <strong id="nev-60d" style="color:var(--white);">54.78</strong>%<br>≤90 Days: <strong id="nev-90d" style="color:var(--white);">68.17</strong>%</div>
-      <div style="font-size:14px;color:rgba(245,245,240,.55);line-height:2.0;">Cash: <strong id="nev-cash-pct" style="color:var(--white);">43.40</strong>%<br>of Northeast Valley Mar Sales</div>
-      <div style="font-size:14px;color:rgba(245,245,240,.55);line-height:2.0;"><strong id="nev-expired" style="color:var(--white);">338</strong><br>Northeast Valley Listings<br>Expired or Cancelled in Mar</div>
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;">Active DOM: <strong id="nev-adom" style="color:var(--white);">108</strong> <span id="nev-adom-delta" style="color:var(--gold-dim);font-size:13px;">↑ 3</span><br>UC DOM: <strong id="nev-ucdom" style="color:var(--white);">83</strong> <span id="nev-ucdom-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--up);">↑&thinsp;1</span><br>Closed DOM: <strong id="nev-cdom" style="color:var(--white);">84</strong> <span id="nev-cdom-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--down);">↓&thinsp;4</span><br>≤60 Days: <strong id="nev-60d" style="color:var(--white);">54.78</strong>%<br>≤90 Days: <strong id="nev-90d" style="color:var(--white);">68.17</strong>%</div>
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;">Cash: <strong id="nev-cash-pct" style="color:var(--white);">40.7</strong>% <span style="color:var(--down);font-size:10px;">↓2.7%</span><br>of Northeast Valley Mar Sales</div>
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;"><strong id="nev-expired" style="color:var(--white);">338</strong> <span id="nev-expired-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--up);">↑&thinsp;63</span><br>Northeast Valley Listings<br>Expired or Cancelled in Mar</div>
     </div>
   </div>
   <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">10</span></div>
@@ -617,17 +633,17 @@ body.fullscreen-mode .fs-exit{display:block;}
       <thead>
         <tr>
           <th>Office</th>
-          <th>Active</th>
-          <th>Coming Soon</th>
-          <th>New Listings</th>
-          <th>Contracted</th>
+          <th>Act</th>
+          <th>CS</th>
+          <th>New</th>
+          <th>UC</th>
           <th>Closed</th>
-          <th>Mkt Share</th>
-          <th>MoM Chg</th>
+          <th>MS</th>
+          <th>MoM</th>
         </tr>
       </thead>
-      <tbody id="kw-tbody"><tr><td class="td-city">KW All Offices</td><td><span style="font-weight:500;">1,129</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;14</span></td><td><span style="font-weight:500;">46</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1</span></td><td><span style="font-weight:500;">499</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;30</span></td><td><span style="font-weight:500;">396</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;122</span></td><td><span style="font-weight:500;">629</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;120</span></td><td><span style="font-weight:500;">8.14%</span></td><td class="td-down" style="font-weight:600;">-0.53%</td></tr>
-<tr><td class="td-city">KW Sonoran Living</td><td><span style="font-weight:500;">140</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;8</span></td><td><span style="font-weight:500;">6</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1</span></td><td><span style="font-weight:500;">62</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;3</span></td><td><span style="font-weight:500;">66</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;1</span></td><td><span style="font-weight:500;">81</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;11</span></td><td><span style="font-weight:500;">1.05%</span></td><td class="td-down" style="font-weight:600;">-0.14%</td></tr></tbody>
+      <tbody id="kw-tbody"><tr><td class="td-city">KW All Offices</td><td><span style="font-weight:500;font-size:13px;">1,129</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;14</span></td><td><span style="font-weight:500;font-size:13px;">46</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1</span></td><td><span style="font-weight:500;font-size:13px;">499</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;30</span></td><td><span style="font-weight:500;font-size:13px;">396</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;122</span></td><td><span style="font-weight:500;font-size:13px;">629</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;120</span></td><td><span style="font-weight:500;font-size:13px;">8.14%</span></td><td class="td-down" style="font-weight:600;">-0.53%</td></tr>
+<tr><td class="td-city">KW Sonoran Living</td><td><span style="font-weight:500;font-size:13px;">140</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;8</span></td><td><span style="font-weight:500;font-size:13px;">6</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1</span></td><td><span style="font-weight:500;font-size:13px;">62</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;3</span></td><td><span style="font-weight:500;font-size:13px;">66</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;1</span></td><td><span style="font-weight:500;font-size:13px;">81</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;11</span></td><td><span style="font-weight:500;font-size:13px;">1.05%</span></td><td class="td-down" style="font-weight:600;">-0.14%</td></tr></tbody>
     </table>
 
     <!-- TABLE 2: NON-CONVENTIONAL -->
@@ -643,12 +659,12 @@ body.fullscreen-mode .fs-exit{display:block;}
           <th>MoM Chg</th>
         </tr>
       </thead>
-      <tbody id="ibr-tbody"><tr><td class="td-city">Opendoor</td><td><span style="font-weight:500;">95</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;6</span></td><td><span style="font-weight:500;">52</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;8</span></td><td><span style="font-weight:500;">38</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;6</span></td><td><span style="font-weight:500;">0.49%</span></td><td class="td-down" style="font-weight:600;">-0.05%</td></tr>
-<tr><td class="td-city">Offerpad</td><td><span style="font-weight:500;">15</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;4</span></td><td><span style="font-weight:500;">8</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;6</span></td><td><span style="font-weight:500;">12</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;9</span></td><td><span style="font-weight:500;">0.16%</span></td><td class="td-up" style="font-weight:600;">+0.11%</td></tr>
-<tr><td class="td-city">Citiea</td><td><span style="font-weight:500;">252</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;24</span></td><td><span style="font-weight:500;">83</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1</span></td><td><span style="font-weight:500;">130</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;33</span></td><td><span style="font-weight:500;">1.68%</span></td><td class="td-up" style="font-weight:600;">+0.03%</td></tr>
-<tr><td class="td-city">Redfin</td><td><span style="font-weight:500;">153</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;10</span></td><td><span style="font-weight:500;">33</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;11</span></td><td><span style="font-weight:500;">164</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;69</span></td><td><span style="font-weight:500;">2.12%</span></td><td class="td-up" style="font-weight:600;">+0.50%</td></tr>
-<tr><td class="td-city">Homie</td><td><span style="font-weight:500;">12</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;1</span></td><td><span style="font-weight:500;">3</span></td><td><span style="font-weight:500;">3</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;3</span></td><td><span style="font-weight:500;">0.04%</span></td><td class="td-up" style="font-weight:600;">+0.04%</td></tr>
-<tr><td class="td-city">Flat Fee / Other</td><td><span style="font-weight:500;">158</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;2</span></td><td><span style="font-weight:500;">32</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1</span></td><td><span style="font-weight:500;">34</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;5</span></td><td><span style="font-weight:500;">0.44%</span></td><td class="td-down" style="font-weight:600;">-0.05%</td></tr></tbody>
+      <tbody id="ibr-tbody"><tr><td class="td-city">Opendoor</td><td><span style="font-weight:500;font-size:13px;">95</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;6</span></td><td><span style="font-weight:500;font-size:13px;">52</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;8</span></td><td><span style="font-weight:500;font-size:13px;">38</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;6</span></td><td><span style="font-weight:500;font-size:13px;">0.49%</span></td><td class="td-down" style="font-weight:600;">-0.05%</td></tr>
+<tr><td class="td-city">Offerpad</td><td><span style="font-weight:500;font-size:13px;">15</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;4</span></td><td><span style="font-weight:500;font-size:13px;">8</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;6</span></td><td><span style="font-weight:500;font-size:13px;">12</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;9</span></td><td><span style="font-weight:500;font-size:13px;">0.16%</span></td><td class="td-up" style="font-weight:600;">+0.11%</td></tr>
+<tr><td class="td-city">Citiea</td><td><span style="font-weight:500;font-size:13px;">252</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;24</span></td><td><span style="font-weight:500;font-size:13px;">83</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1</span></td><td><span style="font-weight:500;font-size:13px;">130</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;33</span></td><td><span style="font-weight:500;font-size:13px;">1.68%</span></td><td class="td-up" style="font-weight:600;">+0.03%</td></tr>
+<tr><td class="td-city">Redfin</td><td><span style="font-weight:500;font-size:13px;">153</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;10</span></td><td><span style="font-weight:500;font-size:13px;">33</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;11</span></td><td><span style="font-weight:500;font-size:13px;">164</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;69</span></td><td><span style="font-weight:500;font-size:13px;">2.12%</span></td><td class="td-up" style="font-weight:600;">+0.50%</td></tr>
+<tr><td class="td-city">Homie</td><td><span style="font-weight:500;font-size:13px;">12</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;1</span></td><td><span style="font-weight:500;font-size:13px;">3</span></td><td><span style="font-weight:500;font-size:13px;">3</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;3</span></td><td><span style="font-weight:500;font-size:13px;">0.04%</span></td><td class="td-up" style="font-weight:600;">+0.04%</td></tr>
+<tr><td class="td-city">Flat Fee / Other</td><td><span style="font-weight:500;font-size:13px;">158</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;2</span></td><td><span style="font-weight:500;font-size:13px;">32</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1</span></td><td><span style="font-weight:500;font-size:13px;">34</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;5</span></td><td><span style="font-weight:500;font-size:13px;">0.44%</span></td><td class="td-down" style="font-weight:600;">-0.05%</td></tr></tbody>
     </table>
 
     <div class="two-col" style="margin-top:20px;">
@@ -721,7 +737,7 @@ body.fullscreen-mode .fs-exit{display:block;}
       <div class="rate-cell"><div class="rate-cell-type">30-Year VA</div><div class="rate-cell-val">5.90%</div><div class="rate-cell-change">−0.35% YoY</div></div>
     </div>
     <!-- Rate chart: set rateChartUrl in JSON config, or it renders the canvas placeholder -->
-    <div id="rateChartWrap" style="margin-bottom:16px;height:215px;position:relative;">
+    <div id="rateChartWrap" style="margin-bottom:16px;height:215px;position:relative;cursor:pointer;" onclick="openLightboxDirect(REPORT_CONFIG.rateChartUrl,'Mortgage Rate Trend — MND')" title="Click to expand">
       <canvas id="rateChartCanvas" width="712" height="215" style="display:block;background:var(--panel);border:1px solid var(--border);"></canvas>
       <img id="rateChartImg" src="" alt="Rate Chart" style="display:none;width:100%;height:215px;object-fit:contain;border:1px solid var(--border);">
     </div>
@@ -793,7 +809,7 @@ body.fullscreen-mode .fs-exit{display:block;}
       <div style="background:rgba(10,10,10,.9);padding:20px 24px;"><div style="font-size:9px;font-weight:700;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;">Ahwatukee &amp; Chandler</div><div style="font-size:10px;font-weight:300;color:var(--white-dim);letter-spacing:.1em;">East &amp; Southeast Valley</div></div>
       <div style="background:rgba(10,10,10,.9);padding:20px 24px;"><div style="font-size:9px;font-weight:700;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;">Scottsdale &amp; PV</div><div style="font-size:10px;font-weight:300;color:var(--white-dim);letter-spacing:.1em;">Northeast Valley</div></div>
     </div>
-    <div style="font-size:8px;font-weight:500;letter-spacing:.35em;color:rgba(245,245,240,.3);text-transform:uppercase;">kwsonoranlivingteam.com</div>
+    <div style="font-size:8px;font-weight:500;letter-spacing:.35em;color:rgba(245,245,240,.3);text-transform:uppercase;">stats.mykwsl.com</div>
   </div>
   <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">16</span></div>
 </div>
@@ -988,15 +1004,15 @@ function renderBandTable(tbodyId, prefix, bands) {
       if(delta === 0 || delta === null) return '';
       const arrow = delta > 0 ? '↑' : '↓';
       const val = decimals ? Math.abs(delta).toFixed(2) : Math.abs(delta);
-      return `<span class="${cls}" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">${arrow}&thinsp;${val}</span>`;
+      return `<span class="${cls}" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">${arrow}&thinsp;${val}</span>`;
     }
 
     const tr = document.createElement('tr');
     tr.innerHTML =
-      `<td class="td-city">${label}</td>`
-      +`<td><span style="font-weight:500;">${ac.toLocaleString()}</span>${deltaSpan(actDelta,actClass,false)}</td>`
-      +`<td><span style="font-weight:500;">${sc.toLocaleString()}</span>${deltaSpan(solDelta,solClass,false)}</td>`
-      +`<td><span style="font-weight:500;">${mosCur}</span>${md!==null?deltaSpan(md,mosClass,true):''}</td>`;
+      `<td class="td-city" style="font-size:13px;">${label}</td>`
+      +`<td><span style="font-weight:500;font-size:13px;">${ac.toLocaleString()}</span>${deltaSpan(actDelta,actClass,false)}</td>`
+      +`<td><span style="font-weight:500;font-size:13px;">${sc.toLocaleString()}</span>${deltaSpan(solDelta,solClass,false)}</td>`
+      +`<td><span style="font-weight:500;font-size:13px;">${mosCur}</span>${md!==null?deltaSpan(md,mosClass,true):''}</td>`;
     tb.appendChild(tr);
   });
 }
@@ -1022,13 +1038,23 @@ function updateDomStats(v) {
     const el = document.getElementById(id);
     if(el && val !== undefined) el.textContent = val;
   });
-  // MoM deltas for ADOM
-  const evAdomDelta = parseInt(v['ev-adom-cur']) - parseInt(v['ev-adom-pri']);
-  const nevAdomDelta = parseInt(v['nev-adom-cur']) - parseInt(v['nev-adom-pri']);
-  const evAdomEl = document.getElementById('ev-adom-delta');
-  const nevAdomEl = document.getElementById('nev-adom-delta');
-  if(evAdomEl)  evAdomEl.textContent = (evAdomDelta >= 0 ? '↑ ' : '↓ ') + Math.abs(evAdomDelta);
-  if(nevAdomEl) nevAdomEl.textContent = (nevAdomDelta >= 0 ? '↑ ' : '↓ ') + Math.abs(nevAdomDelta);
+  // MoM deltas for DOM stats and expired
+  function setDomDelta(id, cur, pri, upColor, downColor) {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const d = parseInt(cur) - parseInt(pri);
+    if(isNaN(d)) return;
+    el.textContent = (d >= 0 ? '↑\u2009' : '↓\u2009') + Math.abs(d);
+    el.style.color = d >= 0 ? (upColor || 'var(--up)') : (downColor || 'var(--down)');
+  }
+  setDomDelta('ev-adom-delta',    v['ev-adom-cur'],    v['ev-adom-pri']);
+  setDomDelta('ev-ucdom-delta',   v['ev-ucdom-cur'],   v['ev-ucdom-pri']);
+  setDomDelta('ev-cdom-delta',    v['ev-cdom-cur'],    v['ev-cdom-pri']);
+  setDomDelta('ev-expired-delta', v['ev-expired-cur'], v['ev-expired-pri']);
+  setDomDelta('nev-adom-delta',   v['nev-adom-cur'],   v['nev-adom-pri']);
+  setDomDelta('nev-ucdom-delta',  v['nev-ucdom-cur'],  v['nev-ucdom-pri']);
+  setDomDelta('nev-cdom-delta',   v['nev-cdom-cur'],   v['nev-cdom-pri']);
+  setDomDelta('nev-expired-delta',v['nev-expired-cur'],v['nev-expired-pri']);
 }
 
 function loadMasterJson(e) {
@@ -1162,7 +1188,7 @@ function buildKWRows(v) {
     const arrow = d > 0 ? '↑' : '↓';
     const cls = d > 0 ? 'td-up' : 'td-down';
     const val = isShare ? Math.abs(d).toFixed(2)+'%' : Math.abs(Math.round(d));
-    return `<span class="${cls}" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">${arrow}&thinsp;${val}</span>`;
+    return `<span class="${cls}" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">${arrow}&thinsp;${val}</span>`;
   }
 
   // ── KW TABLE ──
@@ -1191,13 +1217,13 @@ function buildKWRows(v) {
       const chgStr = chgVal !== null ? (chgVal >= 0 ? '+' : '') + chgVal.toFixed(2)+'%' : '—';
       const chgCls = chgVal !== null ? (chgVal >= 0 ? 'td-up' : 'td-down') : '';
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td class="td-city">${r.label}</td>`
-        +`<td><span style="font-weight:500;">${active}</span>${ds(active,activePri,false)}</td>`
-        +`<td><span style="font-weight:500;">${soon}</span>${ds(soon,soonPri,false)}</td>`
-        +`<td><span style="font-weight:500;">${newList}</span>${ds(newList,newListPri,false)}</td>`
-        +`<td><span style="font-weight:500;">${contracted}</span>${ds(contracted,contractedPri,false)}</td>`
-        +`<td><span style="font-weight:500;">${closed}</span>${ds(closed,closedPri,false)}</td>`
-        +`<td><span style="font-weight:500;">${shareStr}</span></td>`
+      tr.innerHTML = `<td class="td-city" style="font-size:13px;">${r.label}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${active}</span>${ds(active,activePri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${soon}</span>${ds(soon,soonPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${newList}</span>${ds(newList,newListPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${contracted}</span>${ds(contracted,contractedPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${closed}</span>${ds(closed,closedPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${shareStr}</span></td>`
         +`<td class="${chgCls}" style="font-weight:600;">${chgStr}</td>`;
       kwTb.appendChild(tr);
     });
@@ -1231,11 +1257,11 @@ function buildKWRows(v) {
       const chgStr = (chgVal >= 0 ? '+' : '') + chgVal.toFixed(2)+'%';
       const chgCls = chgVal >= 0 ? 'td-up' : 'td-down';
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td class="td-city">${r.label}</td>`
-        +`<td><span style="font-weight:500;">${active}</span>${ds(active,activePri,false)}</td>`
-        +`<td><span style="font-weight:500;">${pending}</span>${ds(pending,pendingPri,false)}</td>`
-        +`<td><span style="font-weight:500;">${closed}</span>${ds(closed,closedPri,false)}</td>`
-        +`<td><span style="font-weight:500;">${shareStr}</span></td>`
+      tr.innerHTML = `<td class="td-city" style="font-size:13px;">${r.label}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${active}</span>${ds(active,activePri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${pending}</span>${ds(pending,pendingPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${closed}</span>${ds(closed,closedPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${shareStr}</span></td>`
         +`<td class="${chgCls}" style="font-weight:600;">${chgStr}</td>`;
       ibrTb.appendChild(tr);
     });
@@ -1257,6 +1283,13 @@ function openLightbox(idx) {
   document.getElementById('lightbox').classList.add('open');
 }
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+function openLightboxDirect(url, label) {
+  if(!url) return;
+  document.getElementById('lightboxImg').src = url;
+  document.getElementById('lightboxCaption').textContent = label || '';
+  document.getElementById('lightboxCounter').textContent = '';
+  document.getElementById('lightbox').classList.add('open');
+}
 function lightboxNav(dir) {
   const valid = snapshotImages.map((s,i)=>s.url?i:null).filter(i=>i!==null);
   const cur = valid.indexOf(lightboxIndex);
@@ -1291,7 +1324,7 @@ function renderMarketTable(tbodyId, rows) {
   tb.innerHTML = '';
   rows.forEach(r => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="td-city">${r.city||''}</td><td>${r.priceBand||''}</td><td>${r.active||''}</td><td>${r.uc||''}</td><td>${r.sold||''}</td><td class="${chgClass(r.mos)}">${r.mos||''}</td><td class="${cmiClass(r.cmi)}">${r.cmi||''}</td>`;
+    tr.innerHTML = `<td class="td-city" style="font-size:13px;">${r.city||''}</td><td>${r.priceBand||''}</td><td>${r.active||''}</td><td>${r.uc||''}</td><td>${r.sold||''}</td><td class="${chgClass(r.mos)}">${r.mos||''}</td><td class="${cmiClass(r.cmi)}">${r.cmi||''}</td>`;
     tb.appendChild(tr);
   });
 }
@@ -1302,7 +1335,7 @@ function renderKWTable(tbodyId, rows) {
   tb.innerHTML = '';
   rows.forEach(r => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="td-city">${r.type||r.brokerage||''}</td><td>${r.transactions||r.listings||''}</td><td>${r.marketShare||''}</td><td>${r.avgDom||''}</td><td>${r.avgSpLp||''}</td><td class="${chgClass(r.trend||r.vsKw||'')}">${r.trend||r.vsKw||''}</td>`;
+    tr.innerHTML = `<td class="td-city" style="font-size:13px;">${r.type||r.brokerage||''}</td><td>${r.transactions||r.listings||''}</td><td>${r.marketShare||''}</td><td>${r.avgDom||''}</td><td>${r.avgSpLp||''}</td><td class="${chgClass(r.trend||r.vsKw||'')}">${r.trend||r.vsKw||''}</td>`;
     tb.appendChild(tr);
   });
 }
@@ -1559,7 +1592,7 @@ function drawRateChartPlaceholder() {
   const pts=[[0,160],[80,150],[160,170],[240,140],[320,130],[400,145],[480,125],[560,110],[640,120],[712,105]];
   ctx.beginPath();ctx.strokeStyle='rgba(201,169,110,.3)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
   pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle='rgba(201,169,110,.2)';ctx.font='700 11px Montserrat,sans-serif';ctx.textAlign='center';
+  ctx.fillStyle='rgba(201,169,110,.2)';ctx.font='700 13px Montserrat,sans-serif';ctx.textAlign='center';
   ctx.fillText('MND RATE CHART — Paste imgur URL into rateChartUrl in REPORT_CONFIG to replace', W/2, H/2);
 }
 
@@ -1713,15 +1746,14 @@ function goTo(n) {
 }
 
 function renderSingle() {
-  const isMobile = window.innerWidth < 860;
   const pw = document.getElementById('pageWrapper');
   document.getElementById('spreadContainer').style.display='none';
-  if(!isMobile){
-    pw.style.display='flex';
-    pw.style.flexDirection='row';
-    pw.style.justifyContent='center';
-  }
+  pw.style.display='flex';
+  pw.style.flexDirection='row';
+  pw.style.justifyContent='center';
+  pw.style.alignItems='flex-start';
   showPages(new Set([current]));
+  applyMobileScale();
   document.getElementById('prevBtn').disabled=current===1;
   document.getElementById('nextBtn').disabled=current===TOTAL;
 }
@@ -1885,54 +1917,22 @@ setTimeout(()=>{
 // we size a viewport container to 100vw × aspect-ratio height,
 // then scale the 816×1056 page to fit inside it.
 function applyMobileScale() {
-  const PAGE_W = 816;
-  const PAGE_H = 1056;
-  const ASPECT = PAGE_H / PAGE_W; // ~1.294
   const vw = window.innerWidth;
-  const pw = document.getElementById('pageWrapper');
-
-  if (vw >= 860) {
-    // Desktop: remove all mobile overrides
-    document.querySelectorAll('.page').forEach(p => {
-      p.style.cssText = '';
-    });
-    pw.style.cssText = '';
-    return;
+  const vh = window.innerHeight;
+  const isFS = document.body.classList.contains('fullscreen-mode');
+  if (isFS) {
+    // Fullscreen: fit page to whichever dimension is tighter, as a proper dimensionless number.
+    document.documentElement.style.setProperty('--fs-scale', Math.min(vh / 1056, vw / 816).toFixed(4));
+    document.documentElement.style.removeProperty('--mobile-scale');
+  } else if (vw < 860) {
+    // Mobile non-fullscreen: scale to viewport width.
+    document.documentElement.style.setProperty('--mobile-scale', (vw / 816).toFixed(4));
+    document.documentElement.style.removeProperty('--fs-scale');
+  } else {
+    // Desktop: clear both.
+    document.documentElement.style.removeProperty('--mobile-scale');
+    document.documentElement.style.removeProperty('--fs-scale');
   }
-
-  // Mobile: fit page to viewport width, maintain aspect ratio
-  const containerW = vw;
-  const containerH = Math.round(containerW * ASPECT);
-  const scale = containerW / PAGE_W;
-
-  // Style the wrapper as a fixed-size viewport slot
-  pw.style.cssText = [
-    'padding: 0',
-    'width: ' + containerW + 'px',
-    'height: ' + containerH + 'px',
-    'overflow: hidden',
-    'display: block',
-    'position: relative',
-  ].join(';');
-
-  // Each page sits at top-left of wrapper, scaled down to fit exactly
-  document.querySelectorAll('.page').forEach(p => {
-    p.style.cssText = [
-      'position: absolute',
-      'top: 0',
-      'left: 0',
-      'width: ' + PAGE_W + 'px',
-      'height: ' + PAGE_H + 'px',
-      'transform: scale(' + scale + ')',
-      'transform-origin: top left',
-      'display: none',           // goTo() will override the active one
-      'margin: 0',
-    ].join(';');
-  });
-
-  // Re-show the currently active page
-  const activePage = document.getElementById('page-' + current);
-  if (activePage) activePage.style.display = 'block';
 }
 
 applyMobileScale();
