@@ -1866,21 +1866,30 @@ function toggleSpread() {
 }
 
 // ═══ FULLSCREEN ═══
+let _nativeFullscreen = false;
+
 function enterFullscreen() {
   document.body.classList.add('fullscreen-mode');
-  if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
-  // Re-render current mode so layout is correct going into fullscreen
+  if(document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen()
+      .then(() => { _nativeFullscreen = true; })
+      .catch(() => { _nativeFullscreen = false; /* CSS-only mode — class stays */ });
+  }
   if(spreadMode) renderSpread(); else renderSingle();
 }
 
 function exitFullscreen() {
   document.body.classList.remove('fullscreen-mode');
+  _nativeFullscreen = false;
   if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
   if(spreadMode) renderSpread(); else renderSingle();
 }
 
 document.addEventListener('fullscreenchange',()=>{
-  if(!document.fullscreenElement && document.body.classList.contains('fullscreen-mode')) exitFullscreen();
+  // Only auto-exit when native fullscreen actually ends — not when it was blocked
+  if(!document.fullscreenElement && _nativeFullscreen && document.body.classList.contains('fullscreen-mode')) {
+    exitFullscreen();
+  }
 });
 
 // Touch swipe support

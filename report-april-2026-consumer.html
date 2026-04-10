@@ -179,16 +179,23 @@ body.fullscreen-mode .fs-exit{display:block;}
 .metric-change:hover .mc-tip{display:block;}
 
 /* ── TOC ── */
-.toc-entry{display:flex;align-items:baseline;gap:0;padding:9px 0;border-bottom:1px solid rgba(201,169,110,.08);cursor:pointer;transition:background .15s;}
+.toc-entry{display:flex;align-items:baseline;gap:0;padding:13px 0;border-bottom:1px solid rgba(201,169,110,.08);cursor:pointer;transition:background .15s;}
 .toc-entry:hover{background:rgba(201,169,110,.04);}
-.toc-pg{font-size:13px;font-weight:700;color:var(--gold);min-width:36px;font-family:'Cormorant Garamond',serif;}
-.toc-title{font-size:12px;font-weight:500;color:var(--white);letter-spacing:.04em;flex:4;}
-.toc-sub{font-size:10px;font-weight:300;color:var(--white-dim);display:block;letter-spacing:.02em;}
-.toc-section-label{font-size:7.5px;font-weight:700;letter-spacing:.45em;color:var(--gold-dim);text-transform:uppercase;margin:14px 0 4px;}
+.toc-pg{font-size:16px;font-weight:700;color:var(--gold);min-width:36px;font-family:'Cormorant Garamond',serif;}
+.toc-title{font-size:14px;font-weight:500;color:var(--white);letter-spacing:.04em;flex:4;}
+.toc-sub{font-size:12px;font-weight:300;color:var(--white-dim);display:block;letter-spacing:.02em;}
+.toc-section-label{font-size:9px;font-weight:700;letter-spacing:.45em;color:var(--gold-dim);text-transform:uppercase;margin:14px 0 4px;}
 
 /* ── FACTS ── */
 .facts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
-.fact-card{background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--gold);padding:18px 18px 18px 20px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;cursor:default;}
+.fact-card{background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--gold);padding:18px 18px 18px 20px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;cursor:pointer;}
+.fact-lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:2000;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:40px;}
+.fact-lightbox-overlay.open{display:flex;}
+.fact-lightbox-box{background:#1a1a1a;border:1px solid #c9a96e;padding:48px 52px;max-width:600px;width:100%;position:relative;}
+.fact-lightbox-num{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:300;color:rgba(201,169,110,0.15);line-height:1;margin-bottom:16px;}
+.fact-lightbox-text{font-size:20px;font-weight:400;line-height:1.8;color:rgba(245,245,240,0.88);}
+.fact-lightbox-text strong{color:#c9a96e;font-weight:700;}
+.fact-lightbox-close{position:absolute;top:16px;right:20px;font-size:28px;color:#c9a96e;cursor:pointer;background:none;border:none;line-height:1;}
 .fact-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(201,169,110,.25);border-color:rgba(201,169,110,.4);}
 .fact-num{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:rgba(201,169,110,.15);line-height:1;margin-bottom:3px;}
 .fact-text{font-size:12px;font-weight:400;line-height:1.75;color:rgba(245,245,240,.85);}
@@ -216,7 +223,7 @@ body.fullscreen-mode .fs-exit{display:block;}
 
 /* ── DATA TABLE ── */
 .data-table{width:100%;border-collapse:collapse;}
-.data-table th{font-size:13px;font-weight:700;letter-spacing:.3em;color:var(--gold-dim);text-transform:uppercase;padding:7px 9px;border-bottom:1px solid var(--border);text-align:left;background:var(--black);}
+.data-table th{font-size:11px;font-weight:700;letter-spacing:.3em;color:var(--gold-dim);text-transform:uppercase;padding:7px 9px;border-bottom:1px solid var(--border);text-align:left;background:var(--black);}
 .data-table th:not(:first-child){text-align:center;}
 .data-table td{padding:6px 9px;border-bottom:1px solid rgba(42,42,42,.6);font-size:13px;font-weight:400;color:rgba(245,245,240,.85);}
 .data-table td:not(:first-child){text-align:center;}
@@ -241,9 +248,9 @@ body.fullscreen-mode .fs-exit{display:block;}
 .rate-cell-change{font-size:9px;font-weight:500;color:var(--up);}
 
 /* ── STRATEGY ── */
-.strategy-item{border:1px solid var(--border);background:var(--panel);padding:10px 14px;margin-bottom:7px;display:flex;gap:12px;align-items:flex-start;}
-.strategy-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:rgba(201,169,110,.3);min-width:24px;line-height:1;}
-.strategy-text{font-size:11.5px;font-weight:400;line-height:1.65;color:rgba(245,245,240,.85);}
+.strategy-item{border:1px solid var(--border);background:var(--panel);padding:14px 18px;margin-bottom:7px;display:flex;gap:12px;align-items:flex-start;}
+.strategy-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:rgba(201,169,110,.3);min-width:24px;line-height:1;}
+.strategy-text{font-size:14px;font-weight:400;line-height:1.65;color:rgba(245,245,240,.85);}
 .strategy-text strong{color:var(--gold);font-weight:600;}
 .gdrive-link{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(201,169,110,.35);padding:10px 18px;font-size:9px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);text-decoration:none;margin-top:12px;transition:all .2s;font-family:'Montserrat',sans-serif;}
 .gdrive-link:hover{background:rgba(201,169,110,.1);}
@@ -283,10 +290,18 @@ body.fullscreen-mode .fs-exit{display:block;}
   </div>
 </div>
 
+<div class="fact-lightbox-overlay" id="factLightbox">
+  <div class="fact-lightbox-box">
+    <button class="fact-lightbox-close" onclick="closeFactLightbox()">&#215;</button>
+    <div class="fact-lightbox-num" id="factLightboxNum"></div>
+    <div class="fact-lightbox-text" id="factLightboxText"></div>
+  </div>
+</div>
+
 <!-- FULLSCREEN NAV -->
 <div class="fs-nav" id="fsNav">
   <button onclick="changePage(-1)">&#8592;</button>
-  <span id="fsCounter">1 / 14</span>
+  <span id="fsCounter">1 / 16</span>
   <button onclick="changePage(1)">&#8594;</button>
 </div>
 <button class="fs-exit" onclick="exitFullscreen()">&#215; Exit</button>
@@ -298,7 +313,7 @@ body.fullscreen-mode .fs-exit{display:block;}
 
 <div class="top-controls">
   <button class="nav-btn" id="prevBtn" onclick="changePage(-1)">&#8592;</button>
-  <span class="page-counter" id="pageCounter">1 / 14</span>
+  <span class="page-counter" id="pageCounter">1 / 16</span>
   <button class="nav-btn" id="nextBtn" onclick="changePage(1)">&#8594;</button>
   <button class="view-toggle-btn" id="spreadBtn" onclick="toggleSpread()">&#9635; Book View</button>
   <button class="fullscreen-btn" onclick="enterFullscreen()">&#8599; Full Screen</button>
@@ -442,16 +457,9 @@ body.fullscreen-mode .fs-exit{display:block;}
       <div id="chartTooltip"></div>
       <canvas id="listingsChart" width="710" height="310" style="display:block;background:var(--panel);border:1px solid var(--border);"></canvas>
     </div>
-    <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
-      <label style="font-size:7.5px;font-weight:700;letter-spacing:.3em;color:var(--gold-dim);text-transform:uppercase;cursor:pointer;border:1px solid rgba(201,169,110,.25);padding:5px 10px;">
-        ↑ Load JSON Data
-        <input type="file" id="listingsJsonInput" accept=".json" style="display:none;">
-      </label>
-      <span style="font-size:8px;color:rgba(245,245,240,.2);letter-spacing:.08em;">Upload Cromford calculator JSON to update all data</span>
-    </div>
     <div class="data-box">
       <div class="data-box-title">Market Context</div>
-      <div class="body-text" style="font-size:11.5px;">New listings entering the market totaled <strong>10,062</strong>, up 10.15% from the <strong>9,135</strong> recorded the prior month but still 3.79% below the <strong>10,458</strong> of the same month last year. Active listings at <strong>23,009</strong> are running 1.77% below the year-ago count of 23,424, meaning the market is absorbing new supply at a pace that keeps the total pool slightly smaller than twelve months back. Months supply has tightened across nearly every East Valley price band, with the sharpest improvement in the $400K to $800K range where sold counts are running well ahead of last month. This is not a market overwhelmed by unsold inventory. It is a market where correctly priced, freshly listed homes are finding buyers.</div>
+      <div class="body-text" style="font-size:14px;">New listings entering the market totaled <strong>10,062</strong>, up 10.15% from the <strong>9,135</strong> recorded the prior month but still 3.79% below the <strong>10,458</strong> of the same month last year. Active listings at <strong>23,009</strong> are running 1.77% below the year-ago count of 23,424, meaning the market is absorbing new supply at a pace that keeps the total pool slightly smaller than twelve months back. Months supply has tightened across nearly every East Valley price band, with the sharpest improvement in the $400K to $800K range where sold counts are running well ahead of last month. This is not a market overwhelmed by unsold inventory. It is a market where correctly priced, freshly listed homes are finding buyers.</div>
     </div>
   </div>
   <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">06</span></div>
@@ -465,19 +473,19 @@ body.fullscreen-mode .fs-exit{display:block;}
     <div class="page-label" style="margin-bottom:10px;">Market Intelligence</div>
     <div style="font-size:8px;font-weight:600;letter-spacing:.4em;color:var(--white-dim);text-transform:uppercase;margin-bottom:10px;">4 Facts You Need To Consider</div>
     <div class="facts-grid" style="margin-bottom:14px;">
-      <div class="fact-card">
+      <div class="fact-card" onclick="openFactLightbox('01', 'March closings totaled <strong>7,189</strong>, up <strong>8.48%</strong> from 6,627 at the same point last year. The gain came in a month when mortgage rates were rising and Cromford had expected demand to pull back.')">
         <div class="fact-num">01</div>
         <div class="fact-text">March closings totaled <strong>7,189</strong>, up <strong>8.48%</strong> from 6,627 at the same point last year. The gain came in a month when mortgage rates were rising and Cromford had expected demand to pull back.</div>
       </div>
-      <div class="fact-card">
+      <div class="fact-card" onclick="openFactLightbox('02', 'Active listings across Greater Phoenix stand at <strong>23,009</strong>, down <strong>1.77%</strong> from <strong>23,424</strong> a year ago. Buyers today have fewer homes competing against any given listing than they did twelve months back.')">
         <div class="fact-num">02</div>
         <div class="fact-text">Active listings across Greater Phoenix stand at <strong>23,009</strong>, down <strong>1.77%</strong> from <strong>23,424</strong> a year ago. Buyers today have fewer homes competing against any given listing than they did twelve months back.</div>
       </div>
-      <div class="fact-card">
+      <div class="fact-card" onclick="openFactLightbox('03', 'New home market share fell to <strong>17.1%</strong> in March, the lowest reading since June 2022, while resale closings rose 7.1% year-over-year. The two market segments are moving in opposite directions.')">
         <div class="fact-num">03</div>
         <div class="fact-text">New home market share fell to <strong>17.1%</strong> in March, the lowest reading since June 2022, while resale closings rose 7.1% year-over-year. The two market segments are moving in opposite directions.</div>
       </div>
-      <div class="fact-card">
+      <div class="fact-card" onclick="openFactLightbox('04', 'The listing success rate stands at <strong>75%</strong>, up from 74% the prior month and running 11 percentage points above the 64% recorded just three months ago.')">
         <div class="fact-num">04</div>
         <div class="fact-text">The listing success rate stands at <strong>75%</strong>, up from 74% the prior month and running 11 percentage points above the 64% recorded just three months ago.</div>
       </div>
@@ -575,10 +583,9 @@ body.fullscreen-mode .fs-exit{display:block;}
   <div class="header-rule"></div>
   <div class="content-area" style="padding:24px 48px 16px;">
     <div class="page-label" style="margin-bottom:10px;">Hyper Focused Market</div>
-    <div style="font-size:8px;font-weight:300;letter-spacing:.1em;color:rgba(245,245,240,.35);margin-bottom:10px;">Upload JSON on pg 6 or here: <label style="color:var(--gold);cursor:pointer;border-bottom:1px solid rgba(201,169,110,.3);">↑ Load<input type="file" id="cromfordJsonInput" accept=".json" style="display:none;"></label></div>
 
-    <div style="font-size:8px;font-weight:700;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:1px;">East Valley</div>
-    <div style="font-size:7.5px;font-weight:300;color:rgba(245,245,240,.3);margin-bottom:5px;">Ahwatukee · Chandler · Chandler Heights · Gilbert · Tempe · Mesa · Apache Junction · Queen Creek · San Tan Valley</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:1px;">East Valley</div>
+    <div style="font-size:9px;font-weight:300;color:rgba(245,245,240,.3);margin-bottom:5px;">Ahwatukee · Chandler · Chandler Heights · Gilbert · Tempe · Mesa · Apache Junction · Queen Creek · San Tan Valley</div>
     <table class="data-table" style="margin-bottom:6px;">
       <thead><tr><th>Price Range</th><th>Active / Coming Soon</th><th>Sold in Mar</th><th>Months Supply</th></tr></thead>
       <tbody id="ev-tbody"><tr><td class="td-city" style="font-size:13px;">$0–$250K</td><td><span style="font-weight:500;font-size:13px;">860</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;28</span></td><td><span style="font-weight:500;font-size:13px;">167</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;34</span></td><td><span style="font-weight:500;font-size:13px;">5.15</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.53</span></td></tr>
@@ -596,8 +603,8 @@ body.fullscreen-mode .fs-exit{display:block;}
       <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;"><strong id="ev-expired" style="color:var(--white);">626</strong> <span id="ev-expired-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--up);">↑&thinsp;178</span><br>East Valley Listings<br>Expired or Cancelled in Mar</div>
     </div>
 
-    <div style="font-size:8px;font-weight:700;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:1px;">Northeast Valley</div>
-    <div style="font-size:7.5px;font-weight:300;color:rgba(245,245,240,.3);margin-bottom:5px;">Scottsdale · Paradise Valley · Greyhawk · Desert Ridge · Cave Creek · Fountain Hills</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:1px;">Northeast Valley</div>
+    <div style="font-size:9px;font-weight:300;color:rgba(245,245,240,.3);margin-bottom:5px;">Scottsdale · Paradise Valley · Greyhawk · Desert Ridge · Cave Creek · Fountain Hills</div>
     <table class="data-table" style="margin-bottom:6px;">
       <thead><tr><th>Price Range</th><th>Active / Coming Soon</th><th>Sold in Mar</th><th>Months Supply</th></tr></thead>
       <tbody id="nev-tbody"><tr><td class="td-city" style="font-size:13px;">$0–$400K</td><td><span style="font-weight:500;font-size:13px;">521</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;18</span></td><td><span style="font-weight:500;font-size:13px;">109</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;20</span></td><td><span style="font-weight:500;font-size:13px;">4.78</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.87</span></td></tr>
@@ -631,13 +638,13 @@ body.fullscreen-mode .fs-exit{display:block;}
       <thead>
         <tr>
           <th>Office</th>
-          <th>Act</th>
-          <th>CS</th>
-          <th>New</th>
-          <th>UC</th>
+          <th>Active</th>
+          <th>Coming Soon</th>
+          <th>New Listings</th>
+          <th>Contracted</th>
           <th>Closed</th>
-          <th>MS</th>
-          <th>MoM</th>
+          <th>Mkt Share</th>
+          <th>MoM Chg</th>
         </tr>
       </thead>
       <tbody id="kw-tbody"><tr><td class="td-city">KW All Offices</td><td><span style="font-weight:500;font-size:13px;">1,129</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;14</span></td><td><span style="font-weight:500;font-size:13px;">46</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1</span></td><td><span style="font-weight:500;font-size:13px;">499</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;30</span></td><td><span style="font-weight:500;font-size:13px;">396</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;122</span></td><td><span style="font-weight:500;font-size:13px;">629</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;120</span></td><td><span style="font-weight:500;font-size:13px;">8.14%</span></td><td class="td-down" style="font-weight:600;">-0.53%</td></tr>
@@ -741,7 +748,7 @@ body.fullscreen-mode .fs-exit{display:block;}
     </div>
     <div class="data-box">
       <div class="data-box-title">Market Context</div>
-      <div class="body-text" style="font-size:12px;">After March delivered a <strong>0.65%</strong> rate spike by the 27th, April's first five business days have held inside a range of just <strong>0.04%</strong>. That is a meaningful shift in tone. The dominant force on the bond market right now is the Iran war, and a potential escalation deadline heading into the weekend introduces some volatility risk. But for buyers who spent March watching rates move against them in real time, the early April stillness is a window worth using. FHA at <strong>5.88%</strong> and VA at <strong>5.90%</strong> means price points that were compressing affordability just weeks ago are holding steady today.</div>
+      <div class="body-text" style="font-size:14px;">After March delivered a <strong>0.65%</strong> rate spike by the 27th, April's first five business days have held inside a range of just <strong>0.04%</strong>. That is a meaningful shift in tone. The dominant force on the bond market right now is the Iran war, and a potential escalation deadline heading into the weekend introduces some volatility risk. But for buyers who spent March watching rates move against them in real time, the early April stillness is a window worth using. FHA at <strong>5.88%</strong> and VA at <strong>5.90%</strong> means price points that were compressing affordability just weeks ago are holding steady today.</div>
     </div>
   </div>
   <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">13</span></div>
@@ -1816,22 +1823,41 @@ function toggleSpread() {
 }
 
 // ═══ FULLSCREEN ═══
+let _nativeFullscreen = false;
+
 function enterFullscreen() {
   document.body.classList.add('fullscreen-mode');
-  if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
-  // Re-render current mode so layout is correct going into fullscreen
+  if(document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen()
+      .then(() => { _nativeFullscreen = true; })
+      .catch(() => { _nativeFullscreen = false; /* CSS-only mode — class stays */ });
+  }
   if(spreadMode) renderSpread(); else renderSingle();
 }
 
 function exitFullscreen() {
   document.body.classList.remove('fullscreen-mode');
+  _nativeFullscreen = false;
   if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
   if(spreadMode) renderSpread(); else renderSingle();
 }
 
 document.addEventListener('fullscreenchange',()=>{
-  if(!document.fullscreenElement && document.body.classList.contains('fullscreen-mode')) exitFullscreen();
+  // Only auto-exit when native fullscreen actually ends — not when it was blocked
+  if(!document.fullscreenElement && _nativeFullscreen && document.body.classList.contains('fullscreen-mode')) {
+    exitFullscreen();
+  }
 });
+
+// Touch swipe support
+let _touchStartX = 0;
+document.addEventListener('touchstart', e => {
+  _touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].screenX - _touchStartX;
+  if (Math.abs(dx) > 50) changePage(dx < 0 ? 1 : -1);
+}, { passive: true });
 
 document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'||e.key==='ArrowDown') changePage(1);
@@ -1845,6 +1871,17 @@ document.body.addEventListener('change', function(e) {
     loadMasterJson(e);
   }
 });
+function openFactLightbox(numText, contentHTML) {
+  document.getElementById('factLightboxNum').textContent = numText;
+  document.getElementById('factLightboxText').innerHTML = contentHTML;
+  document.getElementById('factLightbox').classList.add('open');
+}
+function closeFactLightbox() {
+  document.getElementById('factLightbox').classList.remove('close');
+  document.getElementById('factLightbox').classList.remove('open');
+}
+document.getElementById('factLightbox').addEventListener('click', function(e){ if(e.target===this) closeFactLightbox(); });
+
 buildThumbs();
 document.getElementById('prevBtn').disabled=true;
 renderSnapshotGallery();
