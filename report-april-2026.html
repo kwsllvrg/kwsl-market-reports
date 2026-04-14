@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Phoenix Market Report — April 2026 · Agent Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
 <style>
@@ -53,49 +53,12 @@ body.spread-mode .page{display:none;}
   transform-origin:top center;
 }
 
-/* ── FULLSCREEN ── */
-body.fullscreen-mode{padding:0;overflow:hidden;}
-body.fullscreen-mode .viewer-header,
-body.fullscreen-mode .top-controls,
-body.fullscreen-mode .thumb-strip{display:none;}
-/* Single page fullscreen */
-body.fullscreen-mode #pageWrapper{
-  padding:0;background:#000;
-  display:flex!important;
-  align-items:center;justify-content:center;
-  width:100vw;height:100vh;overflow:hidden;
-}
-body.fullscreen-mode #pageWrapper .page{
-  flex-shrink:0;
-  transform-origin: center center;
-  transform: scale(var(--fs-scale, 1));
-}
-/* Spread fullscreen: two pages side by side scaled to fit */
-body.fullscreen-mode #spreadContainer{
-  padding:0!important;background:#000;
-  display:flex!important;
-  flex-direction:row!important;
-  align-items:center;justify-content:center;
-  gap:2px;
-  width:100vw;height:100vh;overflow:hidden;
-  transform:none!important;
-}
-body.fullscreen-mode #spreadContainer .page{
-  zoom: calc(100vh / 1056);
-  flex-shrink:0;
-}
-body.fullscreen-mode .fs-nav{display:flex!important;}
-.fs-nav{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);gap:16px;z-index:200;background:rgba(0,0,0,.7);padding:8px 16px;border:1px solid var(--border);}
-.fs-nav button{background:none;border:none;color:var(--gold);font-size:20px;cursor:pointer;padding:4px 12px;}
-.fs-nav span{font-size:10px;letter-spacing:.2em;color:var(--white-dim);align-self:center;}
-.fs-exit{position:fixed;top:16px;right:20px;background:none;border:1px solid var(--border);color:var(--gold-dim);font-size:10px;letter-spacing:.3em;text-transform:uppercase;padding:6px 14px;cursor:pointer;font-family:'Montserrat',sans-serif;z-index:201;display:none;}
-body.fullscreen-mode .fs-exit{display:block;}
 
 /* ── PRINT / PDF ── */
 @media print {
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   html, body { margin: 0; padding: 0; background: #000 !important; }
-  .viewer-header, .top-controls, .thumb-strip, .fs-nav, .fs-exit { display: none !important; }
+  .viewer-header, .top-controls, .thumb-strip { display: none !important; }
   .page-wrapper {
     display: block !important;
     padding: 0 !important;
@@ -131,9 +94,8 @@ body.fullscreen-mode .fs-exit{display:block;}
     overflow: hidden;
   }
 
-  /* Page: scale to fit viewport width via CSS custom property set by JS.
-     Scoped to non-fullscreen only — fullscreen has its own zoom+centering rules. */
-  body:not(.fullscreen-mode) .page {
+  /* Page: scale to fit viewport width via CSS custom property set by JS. */
+  .page {
     flex-shrink: 0;
     transform-origin: top center;
     transform: scale(var(--mobile-scale, 1));
@@ -298,13 +260,6 @@ body.fullscreen-mode .fs-exit{display:block;}
   </div>
 </div>
 
-<!-- FULLSCREEN NAV -->
-<div class="fs-nav" id="fsNav">
-  <button onclick="changePage(-1)">&#8592;</button>
-  <span id="fsCounter">1 / 16</span>
-  <button onclick="changePage(1)">&#8594;</button>
-</div>
-<button class="fs-exit" onclick="exitFullscreen()">&#215; Exit</button>
 
 <div class="viewer-header">
   <h1>KW Sonoran Living &nbsp;·&nbsp; Agent Edition</h1>
@@ -316,7 +271,7 @@ body.fullscreen-mode .fs-exit{display:block;}
   <span class="page-counter" id="pageCounter">1 / 16</span>
   <button class="nav-btn" id="nextBtn" onclick="changePage(1)">&#8594;</button>
   <button class="view-toggle-btn" id="spreadBtn" onclick="toggleSpread()">&#9635; Book View</button>
-  <button class="fullscreen-btn" onclick="enterFullscreen()">&#8599; Full Screen</button>
+  <button class="fullscreen-btn" onclick="toggleZoom()">⤢ Zoom</button>
   <button class="fullscreen-btn" onclick="downloadPDF()" title="Download as PDF">&#8595; PDF</button>
 </div>
 
@@ -1745,7 +1700,7 @@ function goTo(n) {
   }
   updateCounter();
   updateThumbs();
-  if(!spreadMode && !document.body.classList.contains('fullscreen-mode')) window.scrollTo({top:0,behavior:'smooth'});
+  if(!spreadMode && !_zoomed) window.scrollTo({top:0,behavior:'smooth'});
   if(n===5) setTimeout(drawPhoenixSkyline,50);
   if(n===9) setTimeout(drawSellerCanvas,50);
 }
@@ -1792,8 +1747,8 @@ function renderSpread() {
     sc.style.justifyContent='center';
     sc.style.gap='0';
   }
-  // Scale spread to fit viewport width without scroll (non-fullscreen only)
-  if(!document.body.classList.contains('fullscreen-mode')) {
+  // Scale spread to fit viewport width without scroll (non-zoom only)
+  if(!_zoomed) {
     const totalW = pages.length === 2 ? (816 * 2 + 42) : 816 + 40;
     const vw = window.innerWidth;
     const scale = vw < totalW ? (vw / totalW) : 1;
@@ -1865,32 +1820,97 @@ function toggleSpread() {
   updateThumbs();
 }
 
-// ═══ FULLSCREEN ═══
-let _nativeFullscreen = false;
-
-function enterFullscreen() {
-  document.body.classList.add('fullscreen-mode');
-  if(document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen()
-      .then(() => { _nativeFullscreen = true; })
-      .catch(() => { _nativeFullscreen = false; /* CSS-only mode — class stays */ });
+// ═══ ZOOM / MOBILE SCALE ═══
+function applyMobileScale() {
+  const vw = window.innerWidth;
+  if (vw < 860) {
+    const scale = (vw / 816).toFixed(4);
+    document.documentElement.style.setProperty('--mobile-scale', scale);
+    document.querySelectorAll('.page').forEach(p => {
+      p.style.transform = '';
+      p.style.transformOrigin = '';
+    });
+  } else {
+    document.documentElement.style.removeProperty('--mobile-scale');
+    document.querySelectorAll('.page').forEach(p => {
+      p.style.transform = '';
+      p.style.transformOrigin = '';
+    });
   }
-  if(spreadMode) renderSpread(); else renderSingle();
 }
 
-function exitFullscreen() {
-  document.body.classList.remove('fullscreen-mode');
-  _nativeFullscreen = false;
-  if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
-  if(spreadMode) renderSpread(); else renderSingle();
+let _zoomed = false;
+function toggleZoom() {
+  _zoomed = !_zoomed;
+  const btn = document.querySelector('.fullscreen-btn');
+  const wrapper = document.getElementById('pageWrapper');
+  const thumbStrip = document.getElementById('thumbStrip');
+  const topControls = document.querySelector('.top-controls');
+  const viewerHeader = document.querySelector('.viewer-header');
+
+  if (_zoomed) {
+    btn.textContent = '✕ Exit Zoom';
+    viewerHeader.style.display = 'none';
+    thumbStrip.style.display = 'none';
+    topControls.style.position = 'fixed';
+    topControls.style.top = '0';
+    topControls.style.left = '0';
+    topControls.style.right = '0';
+    topControls.style.zIndex = '9999';
+    topControls.style.background = '#050505';
+    topControls.style.padding = '12px 0';
+    topControls.style.marginBottom = '0';
+    wrapper.style.position = 'fixed';
+    wrapper.style.inset = '0';
+    wrapper.style.top = '60px';
+    wrapper.style.background = '#000';
+    wrapper.style.zIndex = '9000';
+    wrapper.style.display = 'flex';
+    wrapper.style.alignItems = 'center';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    scalePageToFit();
+  } else {
+    btn.textContent = '⤢ Zoom';
+    viewerHeader.style.display = '';
+    thumbStrip.style.display = '';
+    topControls.style.position = '';
+    topControls.style.top = '';
+    topControls.style.left = '';
+    topControls.style.right = '';
+    topControls.style.zIndex = '';
+    topControls.style.background = '';
+    topControls.style.padding = '';
+    topControls.style.marginBottom = '';
+    wrapper.style.position = '';
+    wrapper.style.inset = '';
+    wrapper.style.top = '';
+    wrapper.style.background = '';
+    wrapper.style.zIndex = '';
+    wrapper.style.display = '';
+    wrapper.style.alignItems = '';
+    wrapper.style.justifyContent = '';
+    wrapper.style.overflow = '';
+    document.body.style.overflow = '';
+    document.querySelectorAll('.page').forEach(p => {
+      p.style.transform = '';
+      p.style.transformOrigin = '';
+    });
+    applyMobileScale();
+  }
 }
 
-document.addEventListener('fullscreenchange',()=>{
-  // Only auto-exit when native fullscreen actually ends — not when it was blocked
-  if(!document.fullscreenElement && _nativeFullscreen && document.body.classList.contains('fullscreen-mode')) {
-    exitFullscreen();
-  }
-});
+function scalePageToFit() {
+  if (!_zoomed) return;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight - 60;
+  const scale = Math.min(vw / 816, vh / 1056);
+  document.querySelectorAll('.page').forEach(p => {
+    p.style.transform = `scale(${scale.toFixed(4)})`;
+    p.style.transformOrigin = 'center center';
+  });
+}
 
 // Touch swipe support
 let _touchStartX = 0;
@@ -1905,7 +1925,7 @@ document.addEventListener('touchend', e => {
 document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'||e.key==='ArrowDown') changePage(1);
   if(e.key==='ArrowLeft'||e.key==='ArrowUp') changePage(-1);
-  if(e.key==='f'||e.key==='F') enterFullscreen();
+  if(e.key==='f'||e.key==='F') toggleZoom();
 });
 
 // ═══ JSON FILE INPUT — delegated to body so inputs survive DOM moves ═══
@@ -1947,31 +1967,11 @@ setTimeout(()=>{
   drawRateChartPlaceholder();
 },300);
 
-// ── MOBILE SCALE ──
-// Instead of transform:scale on the page (which leaves ghost space),
-// we size a viewport container to 100vw × aspect-ratio height,
-// then scale the 816×1056 page to fit inside it.
-function applyMobileScale() {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const isFS = document.body.classList.contains('fullscreen-mode');
-  if (isFS) {
-    // Fullscreen: fit page to whichever dimension is tighter, as a proper dimensionless number.
-    document.documentElement.style.setProperty('--fs-scale', Math.min(vh / 1056, vw / 816).toFixed(4));
-    document.documentElement.style.removeProperty('--mobile-scale');
-  } else if (vw < 860) {
-    // Mobile non-fullscreen: scale to viewport width.
-    document.documentElement.style.setProperty('--mobile-scale', (vw / 816).toFixed(4));
-    document.documentElement.style.removeProperty('--fs-scale');
-  } else {
-    // Desktop: clear both.
-    document.documentElement.style.removeProperty('--mobile-scale');
-    document.documentElement.style.removeProperty('--fs-scale');
-  }
-}
-
 applyMobileScale();
-window.addEventListener('resize', applyMobileScale);
+window.addEventListener('resize', () => {
+  applyMobileScale();
+  if (_zoomed) scalePageToFit();
+});
 
 // ── PDF DOWNLOAD ──
 function downloadPDF() {
