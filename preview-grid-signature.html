@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>Grid signature probe — cover + page 10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --basalt:#14100D;--adobe:#1E1712;--elevated:#29201A;--bar:#0F0C09;
+  --grid-minor:#211A13;--grid-major:#3A2E22;--hair:#2C231A;
+  --sand:#F4EFE9;--ash:#B7ABA0;--ash-3:#847869;
+  --amber:#F5A623;--amber-soft:rgba(245,166,35,.13);
+  --up:#8FB89A;--down:#D19595;
+  --display:'Archivo',sans-serif;--sans:'Inter',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#211C17;font-family:var(--sans);color:var(--sand);padding:26px 0 60px;}
+.pv{max-width:816px;margin:0 auto 16px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ash-3);text-transform:uppercase;}
+.pv b{color:var(--amber);font-weight:500;}
+.page{width:816px;height:1056px;position:relative;overflow:hidden;background:var(--basalt);margin:0 auto 40px;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px var(--hair);}
+
+/* ── the plat grid: fine parcel lines + stronger section (mile) lines ── */
+.grid-bg{position:absolute;inset:0;pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg,var(--grid-minor) 0 1px,transparent 1px 34px),
+    repeating-linear-gradient(90deg,var(--grid-minor) 0 1px,transparent 1px 34px),
+    repeating-linear-gradient(0deg,var(--grid-major) 0 1px,transparent 1px 136px),
+    repeating-linear-gradient(90deg,var(--grid-major) 0 1px,transparent 1px 136px);
+  mask-image:radial-gradient(130% 100% at 50% 40%,#000 60%,transparent 100%);}
+
+/* plat margin coordinate ticks (mono) — real PLSS notation for the Salt River meridian */
+.tick{position:absolute;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--ash-3);}
+
+/* ── COVER ── */
+.cov-eyebrow{position:absolute;top:116px;left:52px;display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ash);}
+.cov-eyebrow::before{content:'';width:18px;height:3px;background:var(--amber);}
+.cov-title{position:absolute;top:150px;left:50px;font-family:var(--display);font-variation-settings:'wdth' 113;font-weight:700;font-size:55px;line-height:.92;letter-spacing:.004em;color:var(--sand);text-transform:uppercase;}
+.cov-deck{position:absolute;top:392px;left:52px;width:352px;font-size:14px;line-height:1.6;color:var(--ash);}
+
+/* lit parcels — KW's two service regions marked on the valley plat */
+.parcel{position:absolute;border:1.5px solid var(--amber);}
+.parcel.fill{background:var(--amber-soft);}
+.parcel-lbl{position:absolute;font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.1em;color:var(--amber);text-transform:uppercase;}
+.parcel-sub{position:absolute;font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:var(--ash-3);text-transform:uppercase;}
+
+/* cover stat parcels */
+.cov-stats{position:absolute;left:52px;bottom:150px;display:flex;gap:2px;background:var(--hair);border:1px solid var(--hair);}
+.cov-stat{background:var(--adobe);padding:20px 26px 18px;width:172px;position:relative;}
+.cov-stat.lit{background:var(--elevated);box-shadow:inset 0 0 0 1.5px var(--amber);}
+.cov-stat-val{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:700;font-size:34px;line-height:.9;color:var(--sand);font-variant-numeric:tabular-nums;}
+.cov-stat.lit .cov-stat-val{color:var(--amber);}
+.cov-stat-label{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.1em;color:var(--ash-3);text-transform:uppercase;margin-top:10px;}
+.cov-stat-delta{font-size:11px;font-weight:600;color:var(--down);margin-top:6px;font-variant-numeric:tabular-nums;}
+
+.cov-foot{position:absolute;left:52px;right:52px;bottom:56px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--hair);padding-top:18px;}
+.cov-lock{display:flex;align-items:center;gap:13px;}
+.cov-lock img{height:26px;opacity:.92;}
+.cov-lock span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ash-3);text-transform:uppercase;}
+.cov-pg{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ash-3);}
+
+/* ── shared interior chrome ── */
+.header-bar{position:absolute;top:0;left:0;right:0;height:52px;background:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:1px solid var(--hair);z-index:2;}
+.header-bar img{height:26px;opacity:.9;}
+.header-date{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.08em;color:var(--ash-3);text-transform:uppercase;}
+.footer-bar{position:absolute;bottom:0;left:0;right:0;height:40px;background:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-top:1px solid var(--hair);z-index:2;}
+.footer-text{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ash-3);text-transform:uppercase;}
+.footer-pg{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.06em;color:var(--ash);}
+.content-area{position:absolute;top:53px;left:0;right:0;bottom:41px;padding:24px 48px 16px;z-index:1;}
+
+.page-eyebrow{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.14em;color:var(--ash-3);text-transform:uppercase;display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+.page-eyebrow::before{content:'';width:16px;height:3px;background:var(--amber);}
+.page-title{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:700;font-size:21px;letter-spacing:.006em;color:var(--sand);text-transform:uppercase;line-height:1;margin-bottom:16px;}
+
+/* region section head w/ locator glyph */
+.sec{display:flex;align-items:center;gap:12px;margin-bottom:3px;}
+.loc{display:grid;grid-template-columns:repeat(5,5px);grid-auto-rows:5px;gap:1.5px;flex:none;}
+.loc i{background:var(--grid-major);display:block;}
+.loc i.on{background:var(--amber);}
+.sec-name{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ash);text-transform:uppercase;}
+.sec-sub{font-size:10.5px;color:var(--ash-3);margin:0 0 9px 27px;letter-spacing:.01em;}
+
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.05em;color:var(--ash-3);text-transform:uppercase;padding:5px 10px 6px;border-bottom:1px solid var(--grid-major);text-align:right;white-space:nowrap;}
+.data-table th:first-child{text-align:left;}
+.data-table td{padding:5px 10px;border-bottom:1px solid var(--grid-minor);font-size:13px;color:var(--ash);text-align:right;font-variant-numeric:tabular-nums lining-nums;white-space:nowrap;}
+.data-table td:first-child{text-align:left;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--amber-soft);}
+.data-table td>span:first-child{display:inline-block;min-width:44px;text-align:right;}
+.data-table td .td-up,.data-table td .td-down{display:inline-block;min-width:44px;text-align:right;}
+.data-table td .td-flat{display:inline-block;min-width:44px;text-align:right;margin-left:6px;color:var(--ash-3);font-weight:600;}
+.td-city{color:var(--sand);font-weight:600;}
+.td-up{color:var(--up);font-weight:600;}.td-down{color:var(--down);font-weight:600;}
+/* the 'hot' band — lowest months supply — gets a lit-parcel edge */
+tr.hot td:first-child{box-shadow:inset 3px 0 0 var(--amber);}
+.stat-strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:12px 0 4px;border-top:1px solid var(--grid-major);}
+.stat-col{font-size:12.5px;line-height:1.7;color:var(--ash-3);font-variant-numeric:tabular-nums lining-nums;}
+.stat-col strong{color:var(--sand);font-weight:600;}
+.stat-lead{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ash-3);}
+.fig-source{font-family:var(--mono);font-size:11px;color:var(--ash-3);margin-top:12px;}
+</style></head>
+<body>
+<div class="pv">Grid signature probe &middot; <b>Phoenix survey plat</b> &middot; cover + page 10 &middot; not committed</div>
+
+<!-- ══════ COVER ══════ -->
+<div class="page" id="page-1">
+  <div class="grid-bg"></div>
+  <!-- plat margin coordinate ticks -->
+  <div class="tick" style="top:22px;left:188px;">R3E</div>
+  <div class="tick" style="top:22px;left:324px;">R4E</div>
+  <div class="tick" style="top:22px;left:460px;">R5E</div>
+  <div class="tick" style="top:22px;left:596px;">R6E</div>
+  <div class="tick" style="top:22px;left:732px;">R7E</div>
+  <div class="tick" style="top:190px;left:20px;">T3N</div>
+  <div class="tick" style="top:326px;left:20px;">T2N</div>
+  <div class="tick" style="top:462px;left:20px;">T1N</div>
+  <div class="tick" style="top:598px;left:20px;">T1S</div>
+  <div class="tick" style="top:734px;left:20px;">T2S</div>
+
+  <div class="cov-eyebrow">KW Sonoran Living &middot; June 2026</div>
+  <div class="cov-title">Greater<br>Phoenix<br>Market<br>Report</div>
+  <div class="cov-deck">A survey of the Greater Phoenix residential market — inventory, price, and momentum read across the valley, parcel by parcel. Sourced from the Cromford Report and ARMLS.</div>
+
+  <!-- KW's two service regions, lit as parcels on the valley plat (NE sits up-and-right, as it does on the map) -->
+  <div class="parcel" style="left:646px;top:238px;width:102px;height:102px;"></div>
+  <div class="parcel-lbl" style="left:646px;top:220px;">NE Valley</div>
+  <div class="parcel-sub" style="left:646px;top:346px;">Scottsdale &middot; PV</div>
+  <div class="parcel fill" style="left:510px;top:340px;width:136px;height:136px;"></div>
+  <div class="parcel-lbl" style="left:510px;top:322px;">East + SE Valley</div>
+  <div class="parcel-sub" style="left:510px;top:482px;">Ahwatukee &middot; Chandler &middot; Gilbert</div>
+
+  <!-- stat parcels; Active Listings is the lit (featured) parcel -->
+  <div class="cov-stats">
+    <div class="cov-stat lit">
+      <div class="cov-stat-val" id="cover-active">22,385</div>
+      <div class="cov-stat-label">Active Listings</div>
+      <div class="cov-stat-delta" id="cover-active-delta">-4.70% vs prior mo</div>
+    </div>
+    <div class="cov-stat">
+      <div class="cov-stat-val" id="cover-lsr">72%</div>
+      <div class="cov-stat-label">Success Rate</div>
+      <div class="cov-stat-delta" id="cover-lsr-delta">-2.70% vs prior mo</div>
+    </div>
+    <div class="cov-stat">
+      <div class="cov-stat-val" id="cover-sqft">$300</div>
+      <div class="cov-stat-label">Avg $/SqFt</div>
+      <div class="cov-stat-delta" id="cover-sqft-delta">&minus;1.32% vs prior mo</div>
+    </div>
+  </div>
+
+  <div class="cov-foot">
+    <div class="cov-lock"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living"><span>Ahwatukee &amp; Chandler&nbsp;&nbsp;|&nbsp;&nbsp;Scottsdale &amp; Paradise Valley</span></div>
+    <div class="cov-pg">Sec. 01 &middot; Salt River Meridian</div>
+  </div>
+</div>
+
+<!-- ══════ PAGE 10 ══════ -->
+<div class="page" id="page-10">
+  <div class="grid-bg" style="mask-image:radial-gradient(140% 120% at 50% 50%,#000 40%,transparent 90%);opacity:.5;"></div>
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living"><span class="header-date">June 2026</span></div>
+  <div class="content-area">
+    <div class="page-eyebrow">Greater Phoenix &middot; June 2026</div>
+    <div class="page-title" style="margin-bottom:14px;">Hyper Focused Market</div>
+
+    <div class="sec">
+      <div class="loc"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i></div>
+      <div class="sec-name">East Valley</div>
+    </div>
+    <div class="sec-sub">Ahwatukee &middot; Chandler &middot; Chandler Heights &middot; Gilbert &middot; Tempe &middot; Mesa &middot; Apache Junction &middot; Queen Creek &middot; San Tan Valley</div>
+    <table class="data-table" style="margin-bottom:6px;">
+      <thead><tr><th>Price Range</th><th>Active / Coming Soon</th><th>Sold in May</th><th>Months Supply</th></tr></thead>
+      <tbody id="ev-tbody"><tr><td class="td-city" style="font-size:13px;">$0–$250K</td><td><span style="font-weight:500;font-size:13px;">727</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;67</span></td><td><span style="font-weight:500;font-size:13px;">165</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;22</span></td><td><span style="font-weight:500;font-size:13px;">4.41</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.16</span></td></tr>
+<tr class="hot"><td class="td-city" style="font-size:13px;">$250K–$400K</td><td><span style="font-weight:500;font-size:13px;">1,088</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;36</span></td><td><span style="font-weight:500;font-size:13px;">482</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;11</span></td><td><span style="font-weight:500;font-size:13px;">2.26</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.02</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$400K–$500K</td><td><span style="font-weight:500;font-size:13px;">1,215</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;10</span></td><td><span style="font-weight:500;font-size:13px;">524</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;17</span></td><td><span style="font-weight:500;font-size:13px;">2.32</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.10</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$500K–$600K</td><td><span style="font-weight:500;font-size:13px;">892</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;29</span></td><td><span style="font-weight:500;font-size:13px;">385</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;40</span></td><td><span style="font-weight:500;font-size:13px;">2.32</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.35</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$600K–$800K</td><td><span style="font-weight:500;font-size:13px;">935</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;2</span></td><td><span style="font-weight:500;font-size:13px;">344</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;2</span></td><td><span style="font-weight:500;font-size:13px;">2.72</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.02</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$800K–$1M</td><td><span style="font-weight:500;font-size:13px;">403</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;18</span></td><td><span style="font-weight:500;font-size:13px;">127</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;8</span></td><td><span style="font-weight:500;font-size:13px;">3.17</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.37</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$1M+</td><td><span style="font-weight:500;font-size:13px;">542</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;26</span></td><td><span style="font-weight:500;font-size:13px;">110</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;2</span></td><td><span style="font-weight:500;font-size:13px;">4.93</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.33</span></td></tr>
+</tbody>
+    </table>
+    <div class="stat-strip">
+      <div class="stat-col"><span class="stat-lead">Active DOM:</span> <strong id="ev-adom">83</strong> <span id="ev-adom-delta" style="color:var(--up);font-size:13px;">&uarr;&thinsp;2</span><br><span class="stat-lead">UC DOM:</span> <strong id="ev-ucdom">73</strong><br><span class="stat-lead">Closed DOM:</span> <strong id="ev-cdom">70</strong><br><span class="stat-lead">&le;60 Days:</span> <strong id="ev-60d">59.34</strong>%<br><span class="stat-lead">&le;90 Days:</span> <strong id="ev-90d">75.02</strong>%</div>
+      <div class="stat-col"><span class="stat-lead">Cash:</span> <strong id="ev-cash-pct">19.61</strong>%<br>of East Valley May Sales</div>
+      <div class="stat-col"><strong id="ev-expired">604</strong> <span id="ev-expired-delta" style="color:var(--down);font-size:13px;">&darr;&thinsp;126</span><br>East Valley Listings<br>Expired or Cancelled in May</div>
+    </div>
+
+    <div style="height:1px;background:var(--grid-major);margin:16px 0 13px;"></div>
+    <div class="sec">
+      <div class="loc"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="sec-name">Northeast Valley</div>
+    </div>
+    <div class="sec-sub">Scottsdale &middot; Paradise Valley &middot; Greyhawk &middot; Desert Ridge &middot; Cave Creek &middot; Fountain Hills</div>
+    <table class="data-table" style="margin-bottom:6px;">
+      <thead><tr><th>Price Range</th><th>Active / Coming Soon</th><th>Sold in May</th><th>Months Supply</th></tr></thead>
+      <tbody id="nev-tbody"><tr class="hot"><td class="td-city" style="font-size:13px;">$0–$400K</td><td><span style="font-weight:500;font-size:13px;">531</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;5</span></td><td><span style="font-weight:500;font-size:13px;">108</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;3</span></td><td><span style="font-weight:500;font-size:13px;">4.92</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.18</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$400K–$600K</td><td><span style="font-weight:500;font-size:13px;">375</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;37</span></td><td><span style="font-weight:500;font-size:13px;">121</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;13</span></td><td><span style="font-weight:500;font-size:13px;">3.10</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.03</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$600K–$1M</td><td><span style="font-weight:500;font-size:13px;">777</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;63</span></td><td><span style="font-weight:500;font-size:13px;">243</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;4</span></td><td><span style="font-weight:500;font-size:13px;">3.20</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.20</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$1M–$2M</td><td><span style="font-weight:500;font-size:13px;">762</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;85</span></td><td><span style="font-weight:500;font-size:13px;">230</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;54</span></td><td><span style="font-weight:500;font-size:13px;">3.31</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.33</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$2M–$5M</td><td><span style="font-weight:500;font-size:13px;">617</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;83</span></td><td><span style="font-weight:500;font-size:13px;">140</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;22</span></td><td><span style="font-weight:500;font-size:13px;">4.41</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.52</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$5M–$10M</td><td><span style="font-weight:500;font-size:13px;">208</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;19</span></td><td><span style="font-weight:500;font-size:13px;">29</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;12</span></td><td><span style="font-weight:500;font-size:13px;">7.17</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;6.18</span></td></tr>
+<tr><td class="td-city" style="font-size:13px;">$10M+</td><td><span style="font-weight:500;font-size:13px;">68</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;11</span></td><td><span style="font-weight:500;font-size:13px;">3</span><span class="td-down" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;2</span></td><td><span style="font-weight:500;font-size:13px;">22.67</span><span class="td-up" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;6.87</span></td></tr>
+</tbody>
+    </table>
+    <div class="stat-strip">
+      <div class="stat-col"><span class="stat-lead">Active DOM:</span> <strong id="nev-adom">114</strong> <span id="nev-adom-delta" style="color:var(--up);font-size:13px;">&uarr;&thinsp;5</span><br><span class="stat-lead">UC DOM:</span> <strong id="nev-ucdom">94</strong><br><span class="stat-lead">Closed DOM:</span> <strong id="nev-cdom">93</strong><br><span class="stat-lead">&le;60 Days:</span> <strong id="nev-60d">47.60</strong>%<br><span class="stat-lead">&le;90 Days:</span> <strong id="nev-90d">62.47</strong>%</div>
+      <div class="stat-col"><span class="stat-lead">Cash:</span> <strong id="nev-cash-pct">41.65</strong>%<br>of Northeast Valley May Sales</div>
+      <div class="stat-col"><strong id="nev-expired">496</strong> <span id="nev-expired-delta" style="color:var(--up);font-size:13px;">&uarr;&thinsp;91</span><br>Northeast Valley Listings<br>Expired or Cancelled in May</div>
+    </div>
+    <div class="fig-source">Source: Cromford Report / ARMLS &middot; Data as of Jun 30, 2026 &middot; Amber marks the tightest-supply band</div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;&middot;&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">10</span></div>
+</div>
+</body></html>
