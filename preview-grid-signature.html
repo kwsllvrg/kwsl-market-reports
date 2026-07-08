@@ -43,6 +43,14 @@ body{background:#0D0D0F;font-family:var(--sans);color:var(--sand);padding:26px 0
 .cov-lock img{height:26px;opacity:.92;}
 .cov-lock span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ash-3);text-transform:uppercase;}
 .cov-pg{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ash-3);}
+/* back-cover lit service-area parcels */
+.parcel{position:absolute;border:1.5px solid var(--amber);}
+.parcel.fill{background:var(--amber-soft);}
+.parcel-lbl{position:absolute;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.09em;color:var(--amber);text-transform:uppercase;}
+.parcel-sub{position:absolute;font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;color:var(--ash-3);text-transform:uppercase;}
+.bc-contact{position:absolute;left:52px;bottom:150px;}
+.bc-contact .row{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ash-2,#AEB4BD);text-transform:uppercase;line-height:2;}
+.bc-contact .row.amber{color:var(--amber);}
 
 /* ── interior chrome ── */
 .grid-bg{position:absolute;inset:0;pointer-events:none;
@@ -193,5 +201,52 @@ tr.hot td:first-child{box-shadow:inset 3px 0 0 var(--amber);}
     <div class="fig-source">Source: Cromford Report / ARMLS &middot; Data as of Jun 30, 2026 &middot; Amber marks the tightest-supply band</div>
   </div>
   <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;&middot;&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">10</span></div>
+</div>
+
+<!-- ══════ BACK COVER (page 16) — the other side: KW's turf on the same valley ══════ -->
+<div class="page" id="page-16">
+  <svg class="pgrid" viewBox="0 0 816 1056" preserveAspectRatio="none" aria-hidden="true">
+    <g stroke="#17191D" stroke-width="1">
+      <line x1="372" y1="112" x2="372" y2="1004"/><line x1="520" y1="112" x2="520" y2="1004"/>
+      <line x1="630" y1="112" x2="630" y2="1004"/><line x1="720" y1="112" x2="720" y2="1004"/>
+      <line x1="42" y1="310" x2="778" y2="310"/><line x1="42" y1="520" x2="778" y2="520"/><line x1="42" y1="680" x2="778" y2="680"/>
+    </g>
+    <g stroke="#262A30" stroke-width="1">
+      <line x1="118" y1="112" x2="118" y2="1004"/><line x1="250" y1="112" x2="250" y2="1004"/>
+      <line x1="306" y1="112" x2="306" y2="1004"/><line x1="452" y1="112" x2="452" y2="1004"/>
+      <line x1="576" y1="112" x2="576" y2="1004"/><line x1="676" y1="112" x2="676" y2="1004"/><line x1="760" y1="112" x2="760" y2="1004"/>
+      <line x1="42" y1="150" x2="778" y2="150"/><line x1="42" y1="232" x2="778" y2="232"/>
+      <line x1="42" y1="430" x2="778" y2="430"/><line x1="42" y1="612" x2="778" y2="612"/><line x1="42" y1="742" x2="778" y2="742"/>
+    </g>
+    <polyline points="352,498 434,507 512,515 596,506 680,517 762,510" fill="none" stroke="#2B3A44" stroke-width="2"/>
+    <g class="slbl" text-anchor="middle">
+      <text x="576" y="102">Scottsdale Rd</text><text x="676" y="102">Gilbert Rd</text><text x="760" y="102">Power Rd</text>
+    </g>
+    <g class="slbl" text-anchor="end">
+      <text x="772" y="146">Bell Rd</text><text x="772" y="228">Shea Blvd</text><text x="772" y="608">Baseline Rd</text><text x="772" y="738">Chandler Blvd</text>
+    </g>
+  </svg>
+  <div class="cov-scrim"></div>
+
+  <div class="cov-eyebrow">Greater Phoenix &middot; Maricopa County</div>
+  <div class="cov-title" style="top:158px;">KW<br>Sonoran<br>Living</div>
+
+  <!-- KW's two service areas, accurately placed: NE up-top, East+SE low-and-far-east -->
+  <div class="parcel" style="left:576px;top:150px;width:100px;height:164px;"></div>
+  <div class="parcel-lbl" style="left:576px;top:132px;">NE Valley</div>
+  <div class="parcel-sub" style="left:576px;top:320px;">Scottsdale &middot; Paradise Valley</div>
+  <div class="parcel fill" style="left:430px;top:612px;width:330px;height:150px;"></div>
+  <div class="parcel-lbl" style="left:430px;top:594px;">East + SE Valley</div>
+  <div class="parcel-sub" style="left:430px;top:768px;">Ahwatukee &middot; Chandler &middot; Gilbert</div>
+
+  <div class="bc-contact">
+    <div class="row">Full-service representation across the valley</div>
+    <div class="row amber">stats.mykwsl.com</div>
+  </div>
+
+  <div class="cov-foot">
+    <div class="cov-lock"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living"></div>
+    <div class="cov-pg">See you next month</div>
+  </div>
 </div>
 </body></html>
