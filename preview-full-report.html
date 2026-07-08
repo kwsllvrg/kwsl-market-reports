@@ -387,6 +387,36 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
 .cover-logo-text{font-family:var(--mono);letter-spacing:.1em;color:var(--ink-3);}
 .cover-pg-num{font-family:var(--display);color:rgba(245,166,35,.06);}
 </style>
+<style>
+:root{--sand:#F2F4F7;--ash:#AEB4BD;--ash-3:#6B727C;--grid-minor:#17191D;--grid-major:#262A30;--bar:#08090B;}
+/* ── COVER: Greater Phoenix arterial street grid ── */
+.pgrid{position:absolute;inset:0;width:100%;height:100%;}
+.pgrid .slbl{font-family:'IBM Plex Mono',monospace;font-size:9px;fill:#6B727C;letter-spacing:.03em;}
+.pgrid .river{fill:#7E8792;font-style:italic;}
+.pgrid .dtn{font-family:'IBM Plex Mono',monospace;font-size:9px;fill:#F5A623;letter-spacing:.08em;}
+.pgrid .grand{fill:#8791A0;letter-spacing:.1em;}
+.cov-scrim{position:absolute;left:0;top:78px;width:460px;height:360px;pointer-events:none;
+  background:radial-gradient(120% 90% at 18% 42%,rgba(10,11,13,.86) 0%,rgba(10,11,13,.5) 52%,transparent 82%);}
+.cov-eyebrow{position:absolute;top:128px;left:52px;display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ash);}
+.cov-eyebrow::before{content:'';width:18px;height:3px;background:var(--amber);}
+.cov-title{position:absolute;top:158px;left:50px;font-family:var(--display);font-variation-settings:'wdth' 113;font-weight:700;font-size:55px;line-height:.92;letter-spacing:.004em;color:var(--sand);text-transform:uppercase;}
+.cov-deck{position:absolute;top:368px;left:52px;width:330px;font-size:14px;line-height:1.6;color:var(--ash);}
+.cov-stats{position:absolute;left:52px;bottom:150px;display:flex;gap:2px;background:var(--hair);border:1px solid var(--hair);}
+.cov-stat{background:var(--panel);padding:20px 26px 18px;width:172px;}
+.cov-stat.lit{background:var(--elevated);box-shadow:inset 0 0 0 1.5px var(--amber);}
+.cov-stat-val{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:700;font-size:34px;line-height:.9;color:var(--sand);font-variant-numeric:tabular-nums;}
+.cov-stat.lit .cov-stat-val{color:var(--amber);}
+.cov-stat-label{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.1em;color:var(--ash-3);text-transform:uppercase;margin-top:10px;}
+.cov-stat-delta{font-size:11px;font-weight:600;color:var(--down);margin-top:6px;font-variant-numeric:tabular-nums;}
+.cov-foot{position:absolute;left:52px;right:52px;bottom:56px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--hair);padding-top:18px;}
+.cov-lock{display:flex;align-items:center;gap:13px;}
+.cov-lock img{height:26px;opacity:.92;}
+.cov-lock span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ash-3);text-transform:uppercase;}
+.cov-pg{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ash-3);}
+.bc-contact{position:absolute;left:52px;bottom:150px;}
+.bc-contact .row{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ash-2,#AEB4BD);text-transform:uppercase;line-height:2;}
+.bc-contact .row.amber{color:var(--amber);}
+</style>
 </head>
 <body>
 
@@ -431,35 +461,59 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
 
 <!-- ═══ PAGE 1: COVER ═══ -->
 <div class="page active" id="page-1">
-  <div class="cover-bg"></div><div class="cover-grid"></div>
-  <div class="cover-content">
-    <div class="cover-eyebrow">Greater Phoenix &nbsp;·&nbsp; Residential Real Estate</div>
-    <div class="cover-title">Market<br><em>Report</em></div>
-    <div class="cover-subtitle">June 2026</div>
-    <div class="cover-divider"></div>
-    <div class="cover-stats">
-      <div class="cover-stat">
-        <div class="cover-stat-val" id="cover-active">22,385</div>
-        <div class="cover-stat-label">Active Listings</div>
-        <div class="cover-stat-delta" id="cover-active-delta" style="color:var(--down);">-4.70% vs prior mo</div>
-      </div>
-      <div class="cover-stat">
-        <div class="cover-stat-val" id="cover-lsr">72%</div>
-        <div class="cover-stat-label">Success Rate</div>
-        <div class="cover-stat-delta" id="cover-lsr-delta" style="color:var(--down);">-2.70% vs prior mo</div>
-      </div>
-      <div class="cover-stat">
-        <div class="cover-stat-val" id="cover-sqft">$300</div>
-        <div class="cover-stat-label">Avg $/SqFt</div>
-        <div class="cover-stat-delta" id="cover-sqft-delta" style="color:var(--down);">−1.32% vs prior mo</div>
-      </div>
+  <svg class="pgrid" viewBox="0 0 816 1056" preserveAspectRatio="none" aria-hidden="true">
+    <g stroke="#17191D" stroke-width="1">
+      <line x1="372" y1="112" x2="372" y2="1004"/><line x1="520" y1="112" x2="520" y2="1004"/>
+      <line x1="630" y1="112" x2="630" y2="1004"/><line x1="720" y1="112" x2="720" y2="1004"/>
+      <line x1="42" y1="310" x2="778" y2="310"/><line x1="42" y1="520" x2="778" y2="520"/><line x1="42" y1="680" x2="778" y2="680"/>
+    </g>
+    <g stroke="#262A30" stroke-width="1">
+      <line x1="118" y1="112" x2="118" y2="1004"/><line x1="250" y1="112" x2="250" y2="1004"/>
+      <line x1="306" y1="112" x2="306" y2="1004"/><line x1="452" y1="112" x2="452" y2="1004"/>
+      <line x1="576" y1="112" x2="576" y2="1004"/><line x1="676" y1="112" x2="676" y2="1004"/><line x1="760" y1="112" x2="760" y2="1004"/>
+      <line x1="42" y1="150" x2="778" y2="150"/><line x1="42" y1="232" x2="778" y2="232"/>
+      <line x1="42" y1="430" x2="778" y2="430"/><line x1="42" y1="612" x2="778" y2="612"/><line x1="42" y1="742" x2="778" y2="742"/>
+    </g>
+    <polyline points="352,498 434,507 512,515 596,506 680,517 762,510" fill="none" stroke="#2B3A44" stroke-width="2"/>
+    <g class="slbl" text-anchor="middle">
+      <text x="118" y="102">19th Ave</text><text x="250" y="102">Central</text><text x="306" y="102">7th St</text>
+      <text x="452" y="102">44th St</text><text x="576" y="102">Scottsdale Rd</text><text x="676" y="102">Gilbert Rd</text><text x="760" y="102">Power Rd</text>
+    </g>
+    <g class="slbl" text-anchor="end">
+      <text x="772" y="146">Bell Rd</text><text x="772" y="228">Shea Blvd</text><text x="772" y="426">Indian School Rd</text><text x="772" y="608">Baseline Rd</text><text x="772" y="738">Chandler Blvd</text>
+    </g>
+    <text class="slbl" x="584" y="558" text-anchor="start">Rural Rd</text>
+    <text class="slbl river" x="468" y="492" text-anchor="middle">Salt River</text>
+    <circle cx="250" cy="500" r="3.5" fill="#F5A623"/>
+    <text class="dtn" x="261" y="504" text-anchor="start">Downtown Phoenix</text>
+  </svg>
+  <div class="cov-scrim"></div>
+
+  <div class="cov-eyebrow">KW Sonoran Living &middot; June 2026</div>
+  <div class="cov-title">Greater<br>Phoenix<br>Market<br>Report</div>
+  <div class="cov-deck">The residential market across the whole valley — inventory, price, and momentum from Surprise to Queen Creek, Anthem to Ahwatukee. Sourced from the Cromford Report and ARMLS.</div>
+
+  <div class="cov-stats">
+    <div class="cov-stat lit">
+      <div class="cov-stat-val" id="cover-active">22,385</div>
+      <div class="cov-stat-label">Active Listings</div>
+      <div class="cov-stat-delta" id="cover-active-delta">-4.70% vs prior mo</div>
     </div>
-    <div class="cover-logo-lockup">
-      <img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living">
-      <span class="cover-logo-text">Ahwatukee &amp; Chandler &nbsp;|&nbsp; Scottsdale &amp; Paradise Valley</span>
+    <div class="cov-stat">
+      <div class="cov-stat-val" id="cover-lsr">72%</div>
+      <div class="cov-stat-label">Success Rate</div>
+      <div class="cov-stat-delta" id="cover-lsr-delta">-2.70% vs prior mo</div>
+    </div>
+    <div class="cov-stat">
+      <div class="cov-stat-val" id="cover-sqft">$300</div>
+      <div class="cov-stat-label">Avg $/SqFt</div>
+      <div class="cov-stat-delta" id="cover-sqft-delta">&minus;1.32% vs prior mo</div>
     </div>
   </div>
-  <div class="cover-pg-num">01</div>
+  <div class="cov-foot">
+    <div class="cov-lock"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living"></div>
+    <div class="cov-pg">Greater Phoenix &middot; Maricopa County</div>
+  </div>
 </div>
 
 <!-- ═══ PAGE 2: TOC 1 ═══ -->
@@ -906,22 +960,48 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
 
 <!-- ═══ PAGE 16: AGENT END COVER ═══ -->
 <div class="page" id="page-16">
-  <div style="position:absolute;inset:0;background:var(--black);">
-    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(245,166,35,.05) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(245,166,35,.03) 0%,transparent 50%);"></div>
-    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.03) 1px,transparent 1px);background-size:80px 80px;"></div>
+  <svg class="pgrid" viewBox="0 0 816 1056" preserveAspectRatio="none" aria-hidden="true">
+    <g stroke="#17191D" stroke-width="1">
+      <line x1="102" y1="112" x2="102" y2="1004"/><line x1="278" y1="112" x2="278" y2="1004"/>
+      <line x1="454" y1="112" x2="454" y2="1004"/><line x1="630" y1="112" x2="630" y2="1004"/>
+      <line x1="42" y1="200" x2="778" y2="200"/><line x1="42" y1="545" x2="778" y2="545"/><line x1="42" y1="680" x2="778" y2="680"/>
+    </g>
+    <g stroke="#262A30" stroke-width="1">
+      <line x1="58" y1="112" x2="58" y2="1004"/><line x1="146" y1="112" x2="146" y2="1004"/>
+      <line x1="234" y1="112" x2="234" y2="1004"/><line x1="322" y1="112" x2="322" y2="1004"/>
+      <line x1="410" y1="112" x2="410" y2="1004"/><line x1="498" y1="112" x2="498" y2="1004"/>
+      <line x1="586" y1="112" x2="586" y2="1004"/><line x1="674" y1="112" x2="674" y2="1004"/>
+      <line x1="42" y1="150" x2="778" y2="150"/><line x1="42" y1="255" x2="778" y2="255"/>
+      <line x1="42" y1="360" x2="778" y2="360"/><line x1="42" y1="470" x2="778" y2="470"/>
+      <line x1="42" y1="615" x2="778" y2="615"/><line x1="42" y1="742" x2="778" y2="742"/>
+    </g>
+    <!-- Grand Ave — the staple diagonal, downtown (SE) out to Surprise (NW) -->
+    <line x1="702" y1="502" x2="46" y2="132" stroke="#3E444C" stroke-width="2"/>
+    <text class="slbl grand" x="366" y="300" transform="rotate(-29.4 366 300)">Grand Ave</text>
+    <g class="slbl" text-anchor="middle">
+      <text x="58" y="102">Litchfield Rd</text><text x="146" y="113">Dysart Rd</text><text x="234" y="102">99th Ave</text>
+      <text x="322" y="113">83rd Ave</text><text x="410" y="102">67th Ave</text><text x="498" y="113">51st Ave</text>
+      <text x="586" y="102">35th Ave</text><text x="674" y="113">19th Ave</text>
+    </g>
+    <g class="slbl" text-anchor="end">
+      <text x="772" y="146">Bell Rd</text><text x="772" y="251">Glendale Ave</text><text x="772" y="356">Camelback Rd</text>
+      <text x="772" y="466">McDowell Rd</text><text x="772" y="611">Buckeye Rd</text><text x="772" y="738">Baseline Rd</text>
+    </g>
+  </svg>
+  <div class="cov-scrim"></div>
+
+  <div class="cov-eyebrow">Greater Phoenix &middot; West Valley</div>
+  <div class="cov-title" style="top:158px;">KW<br>Sonoran<br>Living</div>
+
+  <div class="bc-contact">
+    <div class="row">Full-service representation across the valley</div>
+    <div class="row amber">stats.mykwsl.com</div>
   </div>
-  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 64px;text-align:center;">
-    <img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" style="height:60px;opacity:.9;margin-bottom:36px;">
-    <div style="width:60px;height:1px;background:var(--gold);opacity:.5;margin-bottom:36px;"></div>
-    <div style="font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 112;font-size:40px;font-weight:700;letter-spacing:.004em;text-transform:uppercase;color:var(--ink);line-height:1.04;margin-bottom:14px;">Greater <em style="font-style:normal;color:inherit;">Phoenix</em><br>Market Report</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:44px;">June 2026</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);width:400px;margin-bottom:44px;">
-      <div style="background:rgba(10,10,10,.9);padding:20px 24px;"><div style="font-size:9px;font-weight:700;letter-spacing:.06em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;">Ahwatukee &amp; Chandler</div><div style="font-size:10px;font-weight:300;color:var(--white-dim);letter-spacing:.1em;">East &amp; Southeast Valley</div></div>
-      <div style="background:rgba(10,10,10,.9);padding:20px 24px;"><div style="font-size:9px;font-weight:700;letter-spacing:.06em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;">Scottsdale &amp; PV</div><div style="font-size:10px;font-weight:300;color:var(--white-dim);letter-spacing:.1em;">Northeast Valley</div></div>
-    </div>
-    <div style="font-size:8px;font-weight:500;letter-spacing:.06em;color:rgba(245,245,240,.3);text-transform:uppercase;">stats.mykwsl.com</div>
+
+  <div class="cov-foot">
+    <div class="cov-lock"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living"></div>
+    <div class="cov-pg">See you next month</div>
   </div>
-  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">16</span></div>
 </div>
 
 </div><!-- end page-wrapper -->
