@@ -1,0 +1,2244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Phoenix Market Report — July 2026 · Agent Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#08090B;--dark:#0A0B0D;--panel:#111316;--elevated:#181B1F;--border:#20242A;
+  --gold:#9B9A94;--gold-light:#F2F4F7;--gold-dim:#6B727C;
+  --amber:#F5A623;
+  --white:#F2F4F7;--white-dim:rgba(242,244,247,0.62);--white-faint:rgba(242,244,247,0.10);
+  --up:#8FB89A;--down:#D19595;--steel:#A0BFDF;
+  --ink:#F2F4F7;--ink-2:#AEB4BD;--ink-3:#6B727C;--hair:#20242A;--hair-soft:#15181C;
+  --page-w:816px;--page-h:1056px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#050505;font-family:'Inter',-apple-system,sans-serif;color:var(--white);min-height:100vh;padding:40px 0 80px;}
+
+/* ── VIEWER CHROME ── */
+.viewer-header{text-align:center;margin-bottom:28px;padding:0 20px;}
+.viewer-header h1{font-size:13px;font-weight:600;letter-spacing:.07em;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
+.viewer-header p{font-size:10px;font-weight:300;letter-spacing:.05em;color:var(--white-dim);text-transform:uppercase;}
+
+.top-controls{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
+.nav-btn{background:none;border:1px solid var(--border);color:var(--gold);width:36px;height:36px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.nav-btn:hover{border-color:var(--gold);background:var(--white-faint);}
+.nav-btn:disabled{opacity:.2;cursor:default;}
+.page-counter{font-size:10px;font-weight:500;letter-spacing:.06em;color:var(--white-dim);min-width:80px;text-align:center;}
+.view-toggle-btn{background:none;border:1px solid var(--border);color:var(--gold-dim);padding:8px 16px;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:'Inter',-apple-system,sans-serif;transition:all .2s;}
+.view-toggle-btn:hover{border-color:var(--gold);color:var(--gold);}
+.fullscreen-btn{background:none;border:1px solid var(--border);color:var(--gold-dim);padding:8px 16px;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:'Inter',-apple-system,sans-serif;transition:all .2s;}
+.fullscreen-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+.thumb-strip{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;padding:0 20px;max-width:900px;margin-left:auto;margin-right:auto;}
+.thumb{width:44px;height:57px;background:var(--panel);border:1px solid var(--border);cursor:pointer;font-size:8px;font-weight:600;color:var(--white-dim);display:flex;align-items:center;justify-content:center;transition:all .2s;letter-spacing:.05em;}
+.thumb:hover{border-color:var(--gold-dim);color:var(--gold);}
+.thumb.active{border-color:var(--gold);color:var(--gold);}
+
+/* ── SINGLE PAGE MODE ── */
+.page-wrapper{display:flex;justify-content:center;padding:0 20px;}
+.page{width:var(--page-w);height:var(--page-h);background:var(--dark);position:relative;overflow:hidden;display:none;box-shadow:0 40px 120px rgba(0,0,0,.8),0 0 0 1px var(--border);}
+.page.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SPREAD / BOOK MODE ── */
+body.spread-mode .page-wrapper{flex-direction:column;align-items:center;gap:24px;}
+body.spread-mode .spread-row{display:flex;gap:2px;justify-content:center;perspective:2000px;}
+body.spread-mode .page{display:none;}
+.spread-row{display:none;}
+/* Spread container: scale two 816px pages to fit viewport width */
+#spreadContainer{
+  display:none;
+  transform-origin:top center;
+}
+
+
+/* ── PRINT / PDF ── */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { margin: 0; padding: 0; background: #000 !important; }
+  .viewer-header, .top-controls, .thumb-strip { display: none !important; }
+  .page-wrapper {
+    display: block !important;
+    padding: 0 !important;
+    width: 816px !important;
+  }
+  .page {
+    display: block !important;
+    width: 816px !important;
+    height: 1056px !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    transform: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+  .page:last-child { page-break-after: auto !important; break-after: auto !important; }
+  #spreadContainer { display: none !important; }
+  @page { size: 816px 1056px; margin: 0; }
+}
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 860px) {
+  #spreadBtn { display: none !important; }
+  .thumb { width: 36px; height: 46px; font-size: 7px; }
+
+  /* Wrapper: flex-centered, comfortable spacing, no horizontal scroll */
+  .page-wrapper {
+    padding: 20px 0 40px;
+    overflow: hidden;
+  }
+
+  /* Page: scale to fit viewport width via CSS custom property set by JS. */
+  .page {
+    flex-shrink: 0;
+    transform-origin: top center;
+    transform: scale(var(--mobile-scale, 1));
+    margin-bottom: calc((var(--mobile-scale, 1) - 1) * 1056px);
+  }
+}
+
+/* ── PAGE ELEMENTS ── */
+.gold-rule{width:100%;height:1px;background:var(--gold);opacity:.4;}
+.gold-rule-thin{width:100%;height:1px;background:var(--gold);opacity:.15;}
+.page-label{font-size:8px;font-weight:700;letter-spacing:.07em;color:var(--gold);text-transform:uppercase;}
+.section-title{font-family:'Archivo',sans-serif;font-size:36px;font-weight:300;color:var(--white);line-height:1.1;}
+.section-title em{color:var(--gold);font-style:italic;}
+.body-text{font-size:13px;font-weight:300;line-height:1.9;color:rgba(245,245,240,.88);}
+.body-text strong{color:var(--gold);font-weight:600;}
+.header-bar{position:absolute;top:0;left:0;right:0;height:52px;background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:1px solid var(--border);}
+.header-logo-img{height:28px;opacity:.85;}
+.header-date{font-size:8px;font-weight:500;letter-spacing:.06em;color:var(--gold-dim);text-transform:uppercase;}
+.header-rule{position:absolute;top:52px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.3;}
+.footer-bar{position:absolute;bottom:0;left:0;right:0;height:40px;background:var(--black);display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-top:1px solid var(--border);}
+.footer-text{font-size:7.5px;font-weight:400;letter-spacing:.06em;color:rgba(245,245,240,.25);text-transform:uppercase;}
+.footer-pg{font-size:8px;font-weight:600;letter-spacing:.05em;color:var(--gold-dim);}
+.content-area{position:absolute;top:53px;left:0;right:0;bottom:41px;padding:36px 52px;overflow:hidden;}
+.data-box{border:1px solid var(--border);background:var(--panel);padding:20px 24px;}
+.data-box-title{font-size:7.5px;font-weight:700;letter-spacing:.07em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.pink-box{background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.2);padding:16px 18px;}
+.pink-box-title{font-size:8px;font-weight:700;letter-spacing:.07em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(245,166,35,.2);}
+.metric-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.metric-card{background:var(--panel);border:1px solid var(--border);padding:16px 18px;}
+.metric-card-label{font-size:7.5px;font-weight:700;letter-spacing:.06em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:5px;}
+.metric-card-val{font-size:28px;font-weight:700;color:var(--white);line-height:1;margin-bottom:5px;}
+.metric-changes{display:flex;gap:8px;flex-wrap:wrap;}
+.metric-change{font-size:10px;font-weight:500;letter-spacing:.04em;cursor:default;position:relative;}
+.metric-change .period{color:rgba(245,245,240,.35);}
+.metric-change .val-up{color:var(--up);font-weight:600;}
+.metric-change .val-down{color:var(--down);font-weight:600;}
+.metric-change .val-flat{color:var(--gold-dim);font-weight:600;}
+
+/* Hover tooltip */
+.mc-tip{display:none;position:absolute;bottom:130%;left:50%;transform:translateX(-50%);background:rgba(8,8,8,.97);border:1px solid var(--gold-dim);padding:6px 10px;white-space:nowrap;z-index:50;font-size:10px;font-weight:400;color:var(--white);letter-spacing:.05em;pointer-events:none;}
+.mc-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--gold-dim);}
+.metric-change:hover .mc-tip{display:block;}
+
+/* ── TOC ── */
+.toc-entry{display:flex;align-items:baseline;gap:0;padding:13px 0;border-bottom:1px solid rgba(245,166,35,.08);cursor:pointer;transition:background .15s;}
+.toc-entry:hover{background:rgba(245,166,35,.04);}
+.toc-pg{font-size:16px;font-weight:700;color:var(--gold);min-width:36px;font-family:'Archivo',sans-serif;}
+.toc-title{font-size:14px;font-weight:500;color:var(--white);letter-spacing:.04em;flex:4;}
+.toc-sub{font-size:12px;font-weight:300;color:var(--white-dim);display:block;letter-spacing:.02em;}
+.toc-section-label{font-size:9px;font-weight:700;letter-spacing:.07em;color:var(--gold-dim);text-transform:uppercase;margin:14px 0 4px;}
+
+/* ── FACTS ── */
+.facts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.fact-card{background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--gold);padding:18px 18px 18px 20px;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;cursor:pointer;}
+.fact-lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:2000;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:40px;}
+.fact-lightbox-overlay.open{display:flex;}
+.fact-lightbox-box{background:#111316;border:1px solid #F5A623;padding:48px 52px;max-width:600px;width:100%;position:relative;}
+.fact-lightbox-num{font-family:'Archivo',sans-serif;font-size:72px;font-weight:300;color:rgba(245,166,35,0.15);line-height:1;margin-bottom:16px;}
+.fact-lightbox-text{font-size:20px;font-weight:400;line-height:1.8;color:rgba(245,245,240,0.88);}
+.fact-lightbox-text strong{color:#F5A623;font-weight:700;}
+.fact-lightbox-close{position:absolute;top:16px;right:20px;font-size:28px;color:#F5A623;cursor:pointer;background:none;border:none;line-height:1;}
+.fact-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(245,166,35,.25);border-color:rgba(245,166,35,.4);}
+.fact-num{font-family:'Archivo',sans-serif;font-size:38px;font-weight:300;color:rgba(245,166,35,.15);line-height:1;margin-bottom:3px;}
+.fact-text{font-size:12px;font-weight:400;line-height:1.75;color:rgba(245,245,240,.85);}
+.fact-text strong{color:var(--gold);font-weight:700;}
+
+/* ── CHART HOVER TOOLTIP ── */
+#chartTooltip{display:none;position:absolute;background:rgba(8,8,8,.95);border:1px solid var(--gold-dim);padding:8px 12px;font-size:10.5px;font-weight:400;color:var(--white);pointer-events:none;z-index:100;letter-spacing:.05em;line-height:1.7;}
+#chartTooltip strong{color:var(--gold);}
+
+/* ── SNAPSHOT GALLERY ── */
+.lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+.lightbox-overlay.open{display:flex;}
+.lightbox-img{max-width:90vw;max-height:80vh;object-fit:contain;border:1px solid var(--border);}
+.lightbox-caption{font-size:10px;font-weight:500;letter-spacing:.06em;color:var(--gold-dim);text-transform:uppercase;}
+.lightbox-close{position:absolute;top:20px;right:28px;font-size:28px;color:var(--gold);cursor:pointer;background:none;border:none;line-height:1;}
+.lightbox-nav{display:flex;gap:16px;align-items:center;}
+.lightbox-nav button{background:none;border:1px solid var(--border);color:var(--gold);width:38px;height:38px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.lightbox-nav button:hover{border-color:var(--gold);}
+.lightbox-counter{font-size:9px;letter-spacing:.06em;color:var(--white-dim);}
+.snapshot-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;}
+.snapshot-thumb{background:var(--panel);border:1px solid var(--border);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;}
+.snapshot-thumb:hover{border-color:var(--gold);}
+.snapshot-thumb img{width:100%;height:100%;object-fit:cover;opacity:.9;}
+.snapshot-thumb-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.72);font-size:7.5px;font-weight:600;letter-spacing:.05em;color:var(--gold);text-transform:uppercase;padding:4px 7px;text-align:center;}
+
+/* ── DATA TABLE ── */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--gold-dim);text-transform:uppercase;padding:7px 9px;border-bottom:1px solid var(--border);text-align:left;background:var(--black);}
+.data-table th:not(:first-child){text-align:center;}
+.data-table td{padding:6px 9px;border-bottom:1px solid rgba(42,42,42,.6);font-size:13px;font-weight:400;color:rgba(245,245,240,.85);}
+.data-table td:not(:first-child){text-align:center;}
+.data-table tr:hover td{background:rgba(245,166,35,.04);}
+.td-city{font-size:13px;font-weight:600;color:var(--white);}
+.td-up{font-size:13px;color:var(--up);font-weight:600;}
+.td-down{font-size:13px;color:var(--down);font-weight:600;}
+.td-neutral{font-size:13px;color:var(--gold-dim);}
+.data-table td span{font-size:13px;}
+.td-cmi-high{color:var(--gold);font-weight:700;}
+
+/* ── RATES ── */
+.rate-hero{display:flex;align-items:flex-end;gap:22px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.rate-big{font-size:72px;font-weight:800;color:var(--white);line-height:1;}
+.rate-big span{color:var(--gold);}
+.rate-context p{font-size:10px;font-weight:500;letter-spacing:.04em;color:var(--white-dim);text-transform:uppercase;line-height:2;}
+.rate-context p strong{color:var(--gold-light);}
+.rate-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-bottom:18px;}
+.rate-cell{background:var(--panel);padding:13px 15px;}
+.rate-cell-type{font-size:8px;font-weight:600;letter-spacing:.05em;color:var(--white-dim);text-transform:uppercase;margin-bottom:5px;}
+.rate-cell-val{font-size:22px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:3px;}
+.rate-cell-change{font-size:9px;font-weight:500;color:var(--up);}
+
+/* ── STRATEGY ── */
+.strategy-item{border:1px solid var(--border);background:var(--panel);padding:14px 18px;margin-bottom:7px;display:flex;gap:12px;align-items:flex-start;}
+.strategy-num{font-family:'Archivo',sans-serif;font-size:28px;font-weight:300;color:rgba(245,166,35,.3);min-width:24px;line-height:1;}
+.strategy-text{font-size:14px;font-weight:400;line-height:1.65;color:rgba(245,245,240,.85);}
+.strategy-text strong{color:var(--gold);font-weight:600;}
+.gdrive-link{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(245,166,35,.35);padding:10px 18px;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;margin-top:12px;transition:all .2s;font-family:'Inter',-apple-system,sans-serif;}
+.gdrive-link:hover{background:rgba(245,166,35,.1);}
+
+/* ── COVER ── */
+#page-1{background:var(--black);}
+.cover-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(245,166,35,.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(245,166,35,.04) 0%,transparent 50%);}
+.cover-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:80px 80px;}
+.cover-content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:80px 64px;}
+.cover-eyebrow{font-size:9px;font-weight:600;letter-spacing:.08em;color:var(--gold);text-transform:uppercase;margin-bottom:24px;}
+.cover-title{font-family:'Archivo',sans-serif;font-size:72px;font-weight:300;line-height:1;color:var(--white);margin-bottom:8px;}
+.cover-title em{color:var(--gold);font-style:italic;}
+.cover-subtitle{font-family:'Archivo',sans-serif;font-size:28px;font-weight:300;color:var(--white-dim);font-style:italic;margin-bottom:48px;}
+.cover-divider{width:80px;height:1px;background:var(--gold);opacity:.6;margin-bottom:48px;}
+.cover-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);width:520px;margin-bottom:52px;}
+.cover-stat{background:rgba(10,10,10,.9);padding:24px 26px;}
+.cover-stat-val{font-size:32px;font-weight:700;color:var(--gold);line-height:1;margin-bottom:6px;}
+.cover-stat-label{font-size:8px;font-weight:500;letter-spacing:.05em;color:var(--white-dim);text-transform:uppercase;margin-bottom:6px;}
+.cover-stat-delta{font-size:9px;font-weight:600;letter-spacing:.05em;margin-top:4px;}
+.cover-logo-lockup{display:flex;align-items:center;gap:16px;border:1px solid rgba(245,166,35,.2);padding:12px 20px;}
+.cover-logo-lockup img{height:32px;opacity:.85;}
+.cover-logo-text{font-size:9px;font-weight:700;letter-spacing:.06em;color:var(--white);text-transform:uppercase;opacity:.7;}
+.cover-pg-num{font-family:'Archivo',sans-serif;font-size:120px;font-weight:300;color:rgba(245,166,35,.06);line-height:1;position:absolute;right:64px;bottom:40px;}
+</style>
+
+<style>
+/* ===== COMMAND-CENTER OVERRIDES (appended; win by cascade order) ===== */
+body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
+:root{--sans:'Inter',-apple-system,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;--display:'Archivo',sans-serif;}
+
+/* viewer chrome */
+.viewer-header h1{font-family:var(--mono);color:var(--ink-2);letter-spacing:.14em;font-weight:500;}
+.viewer-header p{font-family:var(--mono);color:var(--ink-3);letter-spacing:.1em;}
+.nav-btn{border-color:var(--hair);color:var(--ink-2);border-radius:0;}
+.nav-btn:hover{border-color:var(--amber);background:transparent;color:var(--amber);}
+.page-counter{font-family:var(--mono);color:var(--ink-3);}
+.view-toggle-btn,.fullscreen-btn{border-color:var(--hair);color:var(--ink-3);font-family:var(--mono);}
+.view-toggle-btn:hover,.fullscreen-btn:hover{border-color:var(--amber);color:var(--amber);}
+.thumb{background:var(--panel);border-color:var(--hair);color:var(--ink-3);font-family:var(--mono);}
+.thumb:hover{border-color:var(--ink-2);color:var(--ink-2);}
+.thumb.active{border-color:var(--amber);color:var(--amber);}
+
+/* page + chrome */
+.page{background:var(--dark);}
+.header-bar,.footer-bar{background:var(--black);border-color:var(--hair);}
+.header-date{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.08em;color:var(--ink-3);}
+.header-rule{background:var(--hair);}
+.footer-text{font-family:var(--mono);font-size:10.5px;font-weight:400;letter-spacing:.06em;color:var(--ink-3);}
+.footer-pg{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.06em;color:var(--ink-2);}
+
+/* rules */
+.gold-rule,.gold-rule-thin{background:var(--hair);}
+
+/* page identity: eyebrow-with-amber-tick */
+.page-label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.09em;color:var(--ink-2);display:flex;align-items:center;gap:10px;}
+.page-label::before{content:'';width:16px;height:3px;background:var(--amber);flex:none;}
+
+/* display headlines */
+.section-title{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:700;color:var(--ink);letter-spacing:.005em;text-transform:uppercase;}
+.section-title em{color:inherit;font-style:normal;}
+
+/* body */
+.body-text{font-size:13px;font-weight:400;line-height:1.6;color:var(--ink-2);}
+.body-text strong{color:var(--ink);font-weight:600;}
+
+/* section sub-labels (valleys / KW / brokerage) */
+.sec-head{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink-2);text-transform:uppercase;display:flex;align-items:center;gap:9px;margin-bottom:2px;}
+.sec-head::before{content:'';width:12px;height:3px;background:var(--amber);flex:none;}
+.sec-sub{font-size:10.5px;font-weight:400;color:var(--ink-3);margin-bottom:9px;letter-spacing:.01em;}
+
+/* data-box / callouts */
+.data-box{background:var(--panel);border-color:var(--hair);}
+.data-box-title{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.06em;color:var(--ink-3);border-color:var(--hair);}
+.pink-box{background:var(--panel);border-color:var(--hair);}
+.pink-box-title{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.06em;color:var(--ink-2);border-color:var(--hair);}
+
+/* metric cards -> instrument cells */
+.metric-card{background:transparent;border:none;border-bottom:1px solid var(--hair);padding:16px 20px 18px 0;}
+.metric-row{gap:0;}
+.metric-row .metric-card:nth-child(2){border-left:1px solid var(--hair);padding-left:22px;}
+.metric-card-label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--ink-3);}
+.metric-card-val{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:700;font-size:32px;color:var(--ink);font-variant-numeric:tabular-nums lining-nums;}
+.metric-changes{display:grid;grid-template-columns:repeat(2,auto);justify-content:start;column-gap:22px;row-gap:5px;}
+.metric-change{font-size:12px;font-variant-numeric:tabular-nums lining-nums;}
+.metric-change .period{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);}
+.metric-change .val-up{color:var(--up);}.metric-change .val-down{color:var(--down);}.metric-change .val-flat{color:var(--ink-3);}
+.mc-tip{background:var(--elevated);border-color:var(--hair);color:var(--ink);font-size:12px;}
+.mc-tip::after{border-top-color:var(--hair);}
+.mc-tip strong{color:var(--ink);}
+
+/* TOC */
+.toc-entry{border-color:var(--hair-soft);}
+.toc-entry:hover{background:rgba(245,166,35,.04);}
+.toc-pg{font-family:var(--mono);font-weight:600;color:var(--amber);font-size:13px;}
+.toc-title{color:var(--ink);font-weight:500;}
+.toc-sub{color:var(--ink-3);}
+.toc-section-label{font-family:var(--mono);font-weight:500;letter-spacing:.07em;color:var(--ink-3);}
+
+/* facts */
+.fact-card{background:transparent;border:none;border-top:1px solid var(--hair);border-left:none;padding:14px 16px 14px 0;}
+.fact-card:hover{transform:none;box-shadow:none;border-color:var(--amber);background:transparent;}
+.fact-num{font-family:var(--mono);font-weight:500;font-size:15px;color:var(--ink-3);}
+.fact-text{font-size:12.5px;line-height:1.55;color:var(--ink-2);}
+.fact-text strong{color:var(--ink);}
+.fact-lightbox-box{background:var(--elevated);border-color:var(--hair);}
+.fact-lightbox-num{font-family:var(--display);color:rgba(245,166,35,.2);}
+.fact-lightbox-text strong{color:var(--amber);}
+.fact-lightbox-close{color:var(--ink-2);}
+
+/* tooltips + lightbox */
+#chartTooltip{background:var(--elevated);border-color:var(--hair);color:var(--ink);}
+#chartTooltip strong{color:var(--amber);}
+.lightbox-caption{font-family:var(--mono);color:var(--ink-3);}
+.lightbox-close,.lightbox-nav button{color:var(--ink-2);border-color:var(--hair);}
+.lightbox-nav button:hover{border-color:var(--amber);}
+
+/* snapshot gallery */
+.snapshot-thumb{background:var(--panel);border-color:var(--hair);}
+.snapshot-thumb:hover{border-color:var(--ink-3);}
+.snapshot-thumb-label{background:rgba(0,0,0,.72);font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;color:var(--ink-2);}
+
+/* DATA TABLE — terminal doctrine */
+.data-table th{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.05em;color:var(--ink-3);border-color:var(--hair);text-align:right;background:transparent;padding:5px 10px 6px;}
+.data-table th:first-child{text-align:left;}
+.data-table td{border-color:var(--hair-soft);color:var(--ink-2);text-align:right;font-variant-numeric:tabular-nums lining-nums;padding:5px 10px;}
+.data-table td:first-child{text-align:left;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:rgba(245,166,35,.05);}
+.td-city{color:var(--ink);font-weight:600;}
+.td-up{color:var(--up);}.td-down{color:var(--down);}.td-neutral{color:var(--ink-3);}
+.td-cmi-high{color:var(--amber);}
+.data-table td>span:first-child{display:inline-block;min-width:44px;text-align:right;}
+.data-table td .td-up,.data-table td .td-down{display:inline-block;min-width:44px;text-align:right;}
+.data-table td .td-flat{display:inline-block;min-width:44px;text-align:right;margin-left:6px;color:var(--ink-3);font-weight:600;}
+
+/* rates */
+.rate-hero{border-color:var(--hair);}
+.rate-big{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+.rate-big span{color:var(--amber);}
+.rate-context p{font-family:var(--mono);letter-spacing:.06em;color:var(--ink-3);font-size:10px;line-height:2;}
+.rate-context p strong{color:var(--ink-2);}
+.rate-grid{background:var(--hair);}
+.rate-cell{background:var(--panel);}
+.rate-cell-type{font-family:var(--mono);letter-spacing:.06em;color:var(--ink-3);}
+.rate-cell-val{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+.rate-cell-change{color:var(--up);font-family:var(--mono);font-size:9px;}
+
+/* strategy */
+.strategy-item{background:transparent;border:none;border-bottom:1px solid var(--hair);padding:13px 0;}
+.strategy-num{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:700;color:var(--ink-3);font-size:20px;}
+.strategy-text{color:var(--ink-2);}
+.strategy-text strong{color:var(--ink);}
+.gdrive-link{border-color:rgba(245,166,35,.4);color:var(--amber);font-family:var(--mono);letter-spacing:.08em;border-radius:0;}
+.gdrive-link:hover{background:rgba(245,166,35,.1);}
+
+/* cover */
+#page-1{background:var(--black);}
+.cover-bg,.cover-grid{display:none;}
+.cover-eyebrow{font-family:var(--mono);font-weight:500;letter-spacing:.14em;color:var(--ink-3);display:flex;align-items:center;gap:10px;}
+.cover-eyebrow::before{content:'';width:20px;height:3px;background:var(--amber);flex:none;}
+.cover-title{font-family:var(--display);font-variation-settings:'wdth' 115;font-weight:700;font-size:62px;letter-spacing:.004em;color:var(--ink);text-transform:uppercase;line-height:.92;}
+.cover-title em{color:inherit;font-style:normal;}
+.cover-subtitle{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.12em;color:var(--ink-3);font-style:normal;text-transform:uppercase;}
+.cover-divider{background:var(--amber);opacity:1;width:40px;}
+.cover-stats{background:var(--hair);width:540px;}
+.cover-stat{background:var(--panel);}
+.cover-stat-val{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+.cover-stat-label{font-family:var(--mono);letter-spacing:.08em;color:var(--ink-3);}
+.cover-logo-lockup{border-color:var(--hair);}
+.cover-logo-text{font-family:var(--mono);letter-spacing:.1em;color:var(--ink-3);}
+.cover-pg-num{font-family:var(--display);color:rgba(245,166,35,.06);}
+</style>
+<style>
+:root{--sand:#F2F4F7;--ash:#AEB4BD;--ash-3:#6B727C;--grid-minor:#17191D;--grid-major:#262A30;--bar:#08090B;}
+/* ── COVER: Greater Phoenix arterial street grid ── */
+.pgrid{position:absolute;inset:0;width:100%;height:100%;}
+.pgrid .slbl{font-family:'IBM Plex Mono',monospace;font-size:9px;fill:#6B727C;letter-spacing:.03em;}
+.pgrid .river{fill:#7E8792;font-style:italic;}
+.pgrid .dtn{font-family:'IBM Plex Mono',monospace;font-size:9px;fill:#F5A623;letter-spacing:.08em;}
+.pgrid .grand{fill:#8791A0;letter-spacing:.1em;}
+.cov-scrim{position:absolute;left:0;top:78px;width:460px;height:360px;pointer-events:none;
+  background:radial-gradient(120% 90% at 18% 42%,rgba(10,11,13,.86) 0%,rgba(10,11,13,.5) 52%,transparent 82%);}
+.cov-eyebrow{position:absolute;top:128px;left:52px;display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ash);}
+.cov-eyebrow::before{content:'';width:18px;height:3px;background:var(--amber);}
+.cov-title{position:absolute;top:158px;left:50px;font-family:var(--display);font-variation-settings:'wdth' 113;font-weight:700;font-size:55px;line-height:.92;letter-spacing:.004em;color:var(--sand);text-transform:uppercase;}
+.cov-deck{position:absolute;top:368px;left:52px;width:330px;font-size:14px;line-height:1.6;color:var(--ash);}
+.cov-stats{position:absolute;left:52px;bottom:150px;display:flex;gap:2px;background:var(--hair);border:1px solid var(--hair);}
+.cov-stat{background:var(--panel);padding:20px 26px 18px;width:172px;}
+.cov-stat.lit{background:var(--elevated);box-shadow:inset 0 0 0 1.5px var(--amber);}
+.cov-stat-val{font-family:var(--display);font-variation-settings:'wdth' 112;font-weight:700;font-size:34px;line-height:.9;color:var(--sand);font-variant-numeric:tabular-nums;}
+.cov-stat.lit .cov-stat-val{color:var(--amber);}
+.cov-stat-label{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.1em;color:var(--ash-3);text-transform:uppercase;margin-top:10px;}
+.cov-stat-delta{font-size:11px;font-weight:600;color:var(--down);margin-top:6px;font-variant-numeric:tabular-nums;}
+.cov-foot{position:absolute;left:52px;right:52px;bottom:56px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--hair);padding-top:18px;}
+.cov-lock{display:flex;align-items:center;gap:13px;}
+.cov-lock img{height:26px;opacity:.92;}
+.cov-lock span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ash-3);text-transform:uppercase;}
+.cov-pg{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ash-3);}
+.bc-contact{position:absolute;left:52px;bottom:150px;}
+.bc-contact .row{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ash-2,#AEB4BD);text-transform:uppercase;line-height:2;}
+.bc-contact .row.amber{color:var(--amber);}
+</style>
+</head>
+<body>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">&#215;</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+  <div class="lightbox-nav">
+    <button onclick="lightboxNav(-1)">&#8592;</button>
+    <span class="lightbox-counter" id="lightboxCounter"></span>
+    <button onclick="lightboxNav(1)">&#8594;</button>
+  </div>
+</div>
+
+<div class="fact-lightbox-overlay" id="factLightbox">
+  <div class="fact-lightbox-box">
+    <button class="fact-lightbox-close" onclick="closeFactLightbox()">&#215;</button>
+    <div class="fact-lightbox-num" id="factLightboxNum"></div>
+    <div class="fact-lightbox-text" id="factLightboxText"></div>
+  </div>
+</div>
+
+
+<div class="viewer-header">
+  <h1>KW Sonoran Living &nbsp;·&nbsp; Agent Edition</h1>
+  <p>Greater Phoenix Market Report &nbsp;·&nbsp; July 2026</p>
+</div>
+
+<div class="top-controls">
+  <button class="nav-btn" id="prevBtn" onclick="changePage(-1)">&#8592;</button>
+  <span class="page-counter" id="pageCounter">1 / 16</span>
+  <button class="nav-btn" id="nextBtn" onclick="changePage(1)">&#8594;</button>
+  <button class="view-toggle-btn" id="spreadBtn" onclick="toggleSpread()">&#9635; Book View</button>
+  <button class="fullscreen-btn" onclick="toggleZoom()">⤢ Zoom</button>
+  <button class="fullscreen-btn" onclick="downloadPDF()" title="Download as PDF">&#8595; PDF</button>
+</div>
+
+<div class="thumb-strip" id="thumbStrip"></div>
+
+<div class="page-wrapper" id="pageWrapper">
+
+<!-- ═══ PAGE 1: COVER ═══ -->
+<div class="page active" id="page-1">
+  <svg class="pgrid" viewBox="0 0 816 1056" preserveAspectRatio="none" aria-hidden="true">
+    <g stroke="#17191D" stroke-width="1">
+      <line x1="372" y1="112" x2="372" y2="1004"/><line x1="520" y1="112" x2="520" y2="1004"/>
+      <line x1="630" y1="112" x2="630" y2="1004"/><line x1="720" y1="112" x2="720" y2="1004"/>
+      <line x1="42" y1="310" x2="778" y2="310"/><line x1="42" y1="520" x2="778" y2="520"/><line x1="42" y1="680" x2="778" y2="680"/>
+    </g>
+    <g stroke="#262A30" stroke-width="1">
+      <line x1="118" y1="112" x2="118" y2="1004"/><line x1="250" y1="112" x2="250" y2="1004"/>
+      <line x1="306" y1="112" x2="306" y2="1004"/><line x1="452" y1="112" x2="452" y2="1004"/>
+      <line x1="576" y1="112" x2="576" y2="1004"/><line x1="676" y1="112" x2="676" y2="1004"/><line x1="760" y1="112" x2="760" y2="1004"/>
+      <line x1="42" y1="150" x2="778" y2="150"/><line x1="42" y1="232" x2="778" y2="232"/>
+      <line x1="42" y1="430" x2="778" y2="430"/><line x1="42" y1="612" x2="778" y2="612"/><line x1="42" y1="742" x2="778" y2="742"/>
+    </g>
+    <polyline points="352,498 434,507 512,515 596,506 680,517 762,510" fill="none" stroke="#2B3A44" stroke-width="2"/>
+    <g class="slbl" text-anchor="middle">
+      <text x="118" y="102">19th Ave</text><text x="250" y="102">Central</text><text x="306" y="102">7th St</text>
+      <text x="452" y="102">44th St</text><text x="576" y="102">Scottsdale Rd</text><text x="676" y="102">Gilbert Rd</text><text x="760" y="102">Power Rd</text>
+    </g>
+    <g class="slbl" text-anchor="end">
+      <text x="772" y="146">Bell Rd</text><text x="772" y="228">Shea Blvd</text><text x="772" y="426">Indian School Rd</text><text x="772" y="608">Baseline Rd</text><text x="772" y="738">Chandler Blvd</text>
+    </g>
+    <text class="slbl" x="584" y="558" text-anchor="start">Rural Rd</text>
+    <text class="slbl river" x="468" y="492" text-anchor="middle">Salt River</text>
+    <circle cx="250" cy="500" r="3.5" fill="#F5A623"/>
+    <text class="dtn" x="261" y="504" text-anchor="start">Downtown Phoenix</text>
+  </svg>
+  <div class="cov-scrim"></div>
+
+  <div class="cov-eyebrow">KW Sonoran Living &middot; July 2026</div>
+  <div class="cov-title">Greater<br>Phoenix<br>Market<br>Report</div>
+  <div class="cov-deck">The residential market across the whole valley — inventory, price, and momentum from Surprise to Queen Creek, Anthem to Ahwatukee. Sourced from the Cromford Report and ARMLS.</div>
+
+  <div class="cov-stats">
+    <div class="cov-stat lit">
+      <div class="cov-stat-val" id="cover-active">21,546</div>
+      <div class="cov-stat-label">Active Listings</div>
+      <div class="cov-stat-delta" id="cover-active-delta">−3.7% vs prior mo</div>
+    </div>
+    <div class="cov-stat">
+      <div class="cov-stat-val" id="cover-lsr">69%</div>
+      <div class="cov-stat-label">Success Rate</div>
+      <div class="cov-stat-delta" id="cover-lsr-delta">−4.2% vs prior mo</div>
+    </div>
+    <div class="cov-stat">
+      <div class="cov-stat-val" id="cover-sqft">$304</div>
+      <div class="cov-stat-label">Avg $/SqFt</div>
+      <div class="cov-stat-delta" id="cover-sqft-delta">+1.4% vs prior mo</div>
+    </div>
+  </div>
+  <div class="cov-foot">
+    <div class="cov-lock"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living"></div>
+    <div class="cov-pg">Greater Phoenix &middot; Maricopa County</div>
+  </div>
+</div>
+
+<!-- ═══ PAGE 2: TOC 1 ═══ -->
+<div class="page" id="page-2">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area">
+    <div class="page-label" style="margin-bottom:6px;">Table of Contents</div>
+    <div class="section-title" style="font-size:26px;margin-bottom:16px;">What's <em>Inside</em></div>
+    <div class="toc-section-label">Pages 1 – 9</div>
+    <div class="toc-entry" onclick="goTo(1)"><span class="toc-pg">01</span><span class="toc-title">Cover<span class="toc-sub">Greater Phoenix Market Report &nbsp;·&nbsp; July 2026</span></span></div>
+    <div class="toc-entry" onclick="goTo(2)"><span class="toc-pg">02</span><span class="toc-title">Table of Contents<span class="toc-sub">Pages 1–9</span></span></div>
+    <div class="toc-entry" onclick="goTo(3)"><span class="toc-pg">03</span><span class="toc-title">Table of Contents<span class="toc-sub">Pages 10–16</span></span></div>
+    <div class="toc-entry" onclick="goTo(4)"><span class="toc-pg">04</span><span class="toc-title">Our Perspective<span class="toc-sub">Two Markets. One Metro. &nbsp;·&nbsp; Editor's Market Analysis</span></span></div>
+    <div class="toc-entry" onclick="goTo(6)"><span class="toc-pg">06</span><span class="toc-title">Active &amp; New Listings<span class="toc-sub">Local Market Data &nbsp;·&nbsp; ARMLS Residential</span></span></div>
+    <div class="toc-entry" onclick="goTo(7)"><span class="toc-pg">07</span><span class="toc-title">4 Facts You Need To Consider<span class="toc-sub">Market Intelligence &nbsp;·&nbsp; What The Heck Is Going On</span></span></div>
+    <div class="toc-entry" onclick="goTo(8)"><span class="toc-pg">08</span><span class="toc-title">Property Movement &amp; CMI<span class="toc-sub">Under Contract · Sold · $/SqFt · Market Snapshot Gallery</span></span></div>
+    <div class="toc-entry" onclick="goTo(9)"><span class="toc-pg">09</span><span class="toc-title">Seller Reality Check<span class="toc-sub">The Window Has a Close Date &nbsp;·&nbsp; Pricing Intelligence</span></span></div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">02</span></div>
+</div>
+
+<!-- ═══ PAGE 3: TOC 2 ═══ -->
+<div class="page" id="page-3">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area">
+    <div class="page-label" style="margin-bottom:6px;">Table of Contents</div>
+    <div class="section-title" style="font-size:26px;margin-bottom:16px;">What's <em>Inside</em></div>
+    <div class="toc-section-label">Pages 10 – 16 &nbsp;·&nbsp; Agent Version</div>
+    <div class="toc-entry" onclick="goTo(10)"><span class="toc-pg">10</span><span class="toc-title">Hyper Focused Market<span class="toc-sub">East Valley &amp; Northeast Valley &nbsp;·&nbsp; Price Band Breakdown</span></span></div>
+    <div class="toc-entry" onclick="goTo(11)"><span class="toc-pg">11</span><span class="toc-title">Non-Conventional Market Watch<span class="toc-sub">Cash Buyers · iBuyers · Discount &amp; Flat-Fee Brokerages</span></span></div>
+    <div class="toc-entry" onclick="goTo(12)"><span class="toc-pg">12</span><span class="toc-title">Economic Development<span class="toc-sub">Phoenix Keeps Building &nbsp;·&nbsp; Jobs, Investment &amp; Growth</span></span></div>
+    <div class="toc-entry" onclick="goTo(13)"><span class="toc-pg">13</span><span class="toc-title">Interest Rates<span class="toc-sub">30-Year Fixed &amp; Rate Context &nbsp;·&nbsp; Mortgage News Daily</span></span></div>
+    <div class="toc-entry" onclick="goTo(14)"><span class="toc-pg">14</span><span class="toc-title">Marketing Strategies — Part 1<span class="toc-sub">Your Monthly Content Suite &nbsp;·&nbsp; Google Drive Link</span></span></div>
+    <div class="toc-entry" onclick="goTo(15)"><span class="toc-pg">15</span><span class="toc-title">Marketing Strategies — Part 2<span class="toc-sub">Tools, Conversations &amp; Distribution Guide</span></span></div>
+    <div class="toc-entry" onclick="goTo(16)"><span class="toc-pg">16</span><span class="toc-title">End<span class="toc-sub">KW Sonoran Living &nbsp;·&nbsp; Office Locations &amp; Contact</span></span></div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">03</span></div>
+</div>
+
+<!-- ═══ PAGE 4: PERSPECTIVE ═══ -->
+<div class="page" id="page-4">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area">
+    <div style="font-size:8px;font-weight:700;letter-spacing:.08em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;">Our Perspective</div>
+    <div style="font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 112;font-size:38px;font-weight:700;line-height:1.02;letter-spacing:.004em;text-transform:uppercase;color:var(--ink);margin-bottom:6px;">Two Markets.<br><em style="font-style:normal;color:inherit;">One Metro.</em></div>
+    <div style="font-family:'Inter',sans-serif;font-size:15px;font-weight:400;color:var(--ink-2);margin-bottom:20px;">What the data is actually telling you this month.</div>
+    <div class="gold-rule" style="margin-bottom:18px;opacity:.2;"></div>
+    <div class="body-text" style="margin-bottom:13px;">June closed with <strong>6,601</strong> ARMLS residential sales across Greater Phoenix. A separate count of Maricopa County affidavits placed total closed transactions at <strong>6,988</strong>, up <strong>5.6%</strong> from the <strong>6,620</strong> recorded in June 2025, with <strong>5,887</strong> resale closings representing a <strong>12.3%</strong> gain over last year and <strong>1,101</strong> new home closings, down <strong>20.1%</strong> from the <strong>1,378</strong> recorded a year ago. June carried one extra working day, worth roughly five percent, so resale volume cleared that bar while new construction fell well short of it.</div>
+    <div class="body-text" style="margin-bottom:13px;">Price per square foot for the reporting period came in at <strong>$303.80</strong>, up from <strong>$299.72</strong> the prior month and higher than a year ago. The Maricopa County median sales price landed at <strong>$475,000</strong> for June, down <strong>1.0%</strong> from June 2025 and down <strong>1.0%</strong> from May, which reads as flat in nominal terms. The resale median rose <strong>1.1%</strong> year over year to <strong>$465,000</strong> while the new home median fell <strong>3.4%</strong> to <strong>$510,365</strong>. With inflation running above four percent, a home worth the same dollars today as a year ago has quietly become more affordable in real terms.</div>
+    <div class="body-text" style="margin-bottom:13px;">Active listings stand at <strong>21,546</strong>, which is <strong>6.2% lower</strong> than the <strong>22,959</strong> counted at this same point last year. Buyers today are choosing from roughly <strong>1,413 fewer</strong> homes than twelve months ago, and supply has thinned fastest at the top of the market, where some luxury owners pull their listings for the summer and wait to relist in the fall. New listings totaled <strong>7,687</strong>, down <strong>7.3%</strong> from May. Homes under contract eased to <strong>6,905</strong>, and the listing success rate slipped to <strong>69%</strong>, three points below May.</div>
+    <div class="body-text" style="margin-bottom:13px;">New home market share fell to <strong>15.8%</strong> in June, down from the <strong>20.8%</strong> builders held a year ago, a loss of more than a fifth of their share as buyers keep shifting toward resale homes. The price picture splits cleanly by segment. Measured over the last three and a half years, the value of homes under <strong>$500,000</strong> has fallen about <strong>7%</strong>, while homes over <strong>$3 million</strong> have gained roughly <strong>17%</strong>. Strength at the very top is being paid for with equity and stock market wealth, not financing.</div>
+    <div class="body-text">The Cromford Market Index shows <strong>8 of 18</strong> monitored cities moving in a direction favorable to sellers, while <strong>10</strong> are moving toward buyers, though the average index is unchanged on the month and has barely moved in four months. Fountain Hills, Scottsdale, and Paradise Valley posted the largest moves toward sellers, driven by summer listings coming off the market rather than by fresh demand. Tempe and much of the Southeast Valley moved toward buyers. Above <strong>$1 million</strong> the market favors sellers, while below it most buyers hold negotiating room that grows with distance from central Phoenix.</div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">04</span></div>
+</div>
+
+<!-- ═══ PAGE 5: PHOENIX SKYLINE ═══ -->
+<div class="page" id="page-5">
+  <canvas id="phoenixCanvas" width="816" height="1056" style="position:absolute;inset:0;display:block;"></canvas>
+  <div style="position:absolute;bottom:80px;left:64px;right:64px;text-align:center;">
+    <div style="font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 112;font-size:46px;font-weight:700;color:#F2F4F7;letter-spacing:.02em;text-transform:uppercase;text-shadow:0 2px 20px rgba(0,0,0,.8);">Greater <em style="font-style:normal;color:inherit;">Phoenix</em></div>
+    <div style="font-size:9px;font-weight:500;letter-spacing:.08em;color:rgba(245,166,35,.7);text-transform:uppercase;margin-top:6px;">Maricopa County &nbsp;·&nbsp; July 2026</div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">05</span></div>
+</div>
+
+<!-- ═══ PAGE 6: LISTINGS CHART ═══ -->
+<div class="page" id="page-6">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area">
+    <div class="page-label" style="margin-bottom:8px;">Local Market</div>
+    <div class="section-title" style="font-size:24px;margin-bottom:10px;">Active &amp; New <em>Listings</em></div>
+    <div style="font-size:9px;font-weight:300;letter-spacing:.04em;color:var(--white-dim);margin-bottom:14px;text-transform:uppercase;">Greater Phoenix &nbsp;·&nbsp; ARMLS Residential &nbsp;·&nbsp; 5 Comparison Points</div>
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-card-label">Active Listings</div>
+        <div class="metric-card-val" id="activeVal">21,546</div>
+        <div class="metric-changes">
+          <div class="metric-change"><span class="period">1mo </span><span class="val-down">−3.7%</span><div class="mc-tip"><strong>1 Month Ago:</strong> 22,385 units</div></div>
+          <div class="metric-change"><span class="period">3mo </span><span class="val-down">−9.1%</span><div class="mc-tip"><strong>3 Months Ago:</strong> 23,705 units</div></div>
+          <div class="metric-change"><span class="period">6mo </span><span class="val-up">+3.9%</span><div class="mc-tip"><strong>6 Months Ago:</strong> 20,746 units</div></div>
+          <div class="metric-change"><span class="period">12mo </span><span class="val-down">−6.2%</span><div class="mc-tip"><strong>12 Months Ago:</strong> 22,959 units</div></div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-card-label">New Listings</div>
+        <div class="metric-card-val" id="newVal">7,687</div>
+        <div class="metric-changes">
+          <div class="metric-change"><span class="period">1mo </span><span class="val-down">−7.3%</span><div class="mc-tip"><strong>1 Month Ago:</strong> 8,294 units</div></div>
+          <div class="metric-change"><span class="period">3mo </span><span class="val-down">−24.1%</span><div class="mc-tip"><strong>3 Months Ago:</strong> 10,126 units</div></div>
+          <div class="metric-change"><span class="period">6mo </span><span class="val-up">+32.0%</span><div class="mc-tip"><strong>6 Months Ago:</strong> 5,824 units</div></div>
+          <div class="metric-change"><span class="period">12mo </span><span class="val-up">+0.9%</span><div class="mc-tip"><strong>12 Months Ago:</strong> 7,622 units</div></div>
+        </div>
+      </div>
+    </div>
+    <!-- Chart with tooltip -->
+    <div style="position:relative;margin-bottom:14px;">
+      <div id="chartTooltip"></div>
+      <canvas id="listingsChart" width="710" height="310" style="display:block;background:var(--panel);"></canvas>
+    </div>
+    <div class="data-box">
+      <div class="data-box-title">Market Context</div>
+      <div class="body-text" style="font-size:14px;">New listings entering the market totaled <strong>7,687</strong> in June, down <strong>7.3%</strong> from the <strong>8,294</strong> recorded in May and below the pace of a year ago. Active listings at <strong>21,546</strong> are running <strong>6.2%</strong> under the year-ago count of <strong>22,959</strong>, meaning buyers are competing against a supply pool roughly <strong>1,413 homes</strong> tighter than twelve months back. Months supply has held firm across most East Valley price bands, with the steadiest demand concentrated in the $400K to $800K range. New seller supply continues to enter below last year’s pace, which keeps inventory constrained even as demand eases along normal seasonal lines. This remains a market where correctly priced homes find buyers and overpriced listings wait.</div>
+    </div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">06</span></div>
+</div>
+
+<!-- ═══ PAGE 7: 4 FACTS ═══ -->
+<div class="page" id="page-7">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area">
+    <div class="page-label" style="margin-bottom:10px;">Market Intelligence</div>
+    <div class="sec-head" style="margin-bottom:12px;">4 Facts You Need To Consider</div>
+    <div class="facts-grid" style="margin-bottom:14px;">
+      <div class="fact-card" onclick="openFactLightbox('01', 'June closings totaled <strong>6,601</strong> ARMLS sales across Greater Phoenix, and a Maricopa County affidavit count placed total closed transactions at <strong>6,988</strong>, up <strong>5.6%</strong> from June 2025. Resale closings rose <strong>12.3%</strong> year over year while new home closings fell <strong>20.1%</strong>.')">
+        <div class="fact-num">01</div>
+        <div class="fact-text">June closings totaled <strong>6,601</strong> ARMLS sales across Greater Phoenix, and a Maricopa County affidavit count placed total closed transactions at <strong>6,988</strong>, up <strong>5.6%</strong> from June 2025. Resale closings rose <strong>12.3%</strong> year over year while new home closings fell <strong>20.1%</strong>.</div>
+      </div>
+      <div class="fact-card" onclick="openFactLightbox('02', 'Active listings across Greater Phoenix stand at <strong>21,546</strong>, down <strong>6.2%</strong> from <strong>22,959</strong> a year ago. Buyers today are choosing from roughly <strong>1,413 fewer homes</strong> than twelve months back, with supply thinning fastest at the top of the market.')">
+        <div class="fact-num">02</div>
+        <div class="fact-text">Active listings across Greater Phoenix stand at <strong>21,546</strong>, down <strong>6.2%</strong> from <strong>22,959</strong> a year ago. Buyers today are choosing from roughly <strong>1,413 fewer homes</strong> than twelve months back, with supply thinning fastest at the top of the market.</div>
+      </div>
+      <div class="fact-card" onclick="openFactLightbox('03', 'New home market share reached <strong>15.8%</strong> in June, down from <strong>20.8%</strong> a year ago. New home median prices fell <strong>3.4%</strong> year over year to <strong>$510,365</strong>, while resale median prices rose <strong>1.1%</strong> to <strong>$465,000</strong>.'s 15.3% but well below the <strong>21.2%</strong> achieved in May 2025. New home median prices fell 2.9% year-over-year; resale median prices rose 0.3%.')">
+        <div class="fact-num">03</div>
+        <div class="fact-text">New home market share reached <strong>15.8%</strong> in June, down from <strong>20.8%</strong> a year ago. New home median prices fell <strong>3.4%</strong> year over year to <strong>$510,365</strong>, while resale median prices rose <strong>1.1%</strong> to <strong>$465,000</strong>.</div>
+      </div>
+      <div class="fact-card" onclick="openFactLightbox('04', 'The listing success rate stands at <strong>69%</strong>, down from <strong>72%</strong> in May but still above the <strong>66%</strong> recorded a year ago. Homes under contract eased to <strong>6,905</strong> as demand softened along normal seasonal lines.')">
+        <div class="fact-num">04</div>
+        <div class="fact-text">The listing success rate stands at <strong>69%</strong>, down from <strong>72%</strong> in May but still above the <strong>66%</strong> recorded a year ago. Homes under contract eased to <strong>6,905</strong> as demand softened along normal seasonal lines.</div>
+      </div>
+    </div>
+    <div style="height:1px;background:var(--hair);margin:22px 0 16px;"></div>
+    <div class="sec-head" style="margin-bottom:12px;">What The Heck Is Going On</div>
+    <div class="body-text" style="margin-bottom:9px;font-size:12px;">June landed in a market that is steady without being exciting. Rates stayed elevated and the resale market absorbed them. <strong>6,601</strong> ARMLS sales closed and Maricopa County affidavits recorded <strong>6,988</strong> transactions, a <strong>5.6%</strong> gain over June 2025. June carried one extra working day worth about five percent, so the headline growth cleared that bar mostly on the strength of resale. Resale closings rose <strong>12.3%</strong> year over year while new home closings came in at <strong>1,101</strong>, down <strong>20.1%</strong>, as buyers kept shifting away from new construction.</div>
+    <div class="body-text" style="margin-bottom:9px;font-size:12px;">Pricing is stable in nominal terms and softer in real ones. Price per square foot at <strong>$303.80</strong> is up from <strong>$299.72</strong> in May, and the Maricopa median of <strong>$475,000</strong> is down only <strong>1.0%</strong> from a year ago, which reads as flat. The segment split remains the clearest signal, with the resale median up <strong>1.1%</strong> and the new home median down <strong>3.4%</strong>. Case-Shiller told the same story from a distance, with Phoenix the only major metro to decline month over month and down <strong>1.65%</strong> on the year while the national average rose.</div>
+    <div class="body-text" style="font-size:12px;">Supply is falling and demand has eased, holding the balance in a narrow range. Active listings at <strong>21,546</strong> are nearly <strong>1,413 fewer</strong> than a year ago, which limits buyer leverage in the core resale market, yet CMI data still shows <strong>10 of 18</strong> cities drifting toward buyers. The <strong>69%</strong> listing success rate belongs to homes priced to current comparables, not to peak valuations or new construction discounts. Above <strong>$1 million</strong> the story is different, with demand tied to equity and stock market wealth. The louder alarms, a spike in FHA delinquencies and rising foreclosure notices, are mostly noise, the first a technical reporting change and the second still running about half of normal levels.</div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">07</span></div>
+</div>
+
+<!-- ═══ PAGE 8: PROPERTY MOVEMENT / CMI ═══ -->
+<div class="page" id="page-8">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area">
+    <div class="page-label" style="margin-bottom:12px;">Property Movement</div>
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-card-label">Under Contract</div>
+        <div class="metric-card-val">6,905</div>
+        <div class="metric-changes">
+          <div class="metric-change"><span class="period">1mo </span><span class="val-down">−12.5%</span><div class="mc-tip"><strong>1 Month Ago:</strong> 7,887 units</div></div>
+          <div class="metric-change"><span class="period">3mo </span><span class="val-down">−20.9%</span><div class="mc-tip"><strong>3 Months Ago:</strong> 8,724 units</div></div>
+          <div class="metric-change"><span class="period">6mo </span><span class="val-up">+31.6%</span><div class="mc-tip"><strong>6 Months Ago:</strong> 5,245 units</div></div>
+          <div class="metric-change"><span class="period">12mo </span><span class="val-up">+3.5%</span><div class="mc-tip"><strong>12 Months Ago:</strong> 6,672 units</div></div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-card-label">Sold Homes</div>
+        <div class="metric-card-val">6,601</div>
+        <div class="metric-changes">
+          <div class="metric-change"><span class="period">1mo </span><span class="val-down">−5.0%</span><div class="mc-tip"><strong>1 Month Ago:</strong> 6,950 units</div></div>
+          <div class="metric-change"><span class="period">3mo </span><span class="val-down">−8.3%</span><div class="mc-tip"><strong>3 Months Ago:</strong> 7,197 units</div></div>
+          <div class="metric-change"><span class="period">6mo </span><span class="val-up">+13.2%</span><div class="mc-tip"><strong>6 Months Ago:</strong> 5,833 units</div></div>
+          <div class="metric-change"><span class="period">12mo </span><span class="val-up">+6.9%</span><div class="mc-tip"><strong>12 Months Ago:</strong> 6,175 units</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-card-label">Avg $/SqFt</div>
+        <div class="metric-card-val">$304</div>
+        <div class="metric-changes">
+          <div class="metric-change"><span class="period">1mo </span><span class="val-up">+1.4%</span><div class="mc-tip"><strong>1 Month Ago:</strong> $299.72/sqft</div></div>
+          <div class="metric-change"><span class="period">3mo </span><span class="val-down">−3.8%</span><div class="mc-tip"><strong>3 Months Ago:</strong> $315.64/sqft</div></div>
+          <div class="metric-change"><span class="period">6mo </span><span class="val-up">+0.1%</span><div class="mc-tip"><strong>6 Months Ago:</strong> $303.61/sqft</div></div>
+          <div class="metric-change"><span class="period">12mo </span><span class="val-up">+3.4%</span><div class="mc-tip"><strong>12 Months Ago:</strong> $293.84/sqft</div></div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-card-label">Listing Success Rate</div>
+        <div class="metric-card-val">69<span style="font-size:15px;font-weight:400;color:var(--white-dim)">%</span></div>
+        <div class="metric-changes">
+          <div class="metric-change"><span class="period">1mo </span><span class="val-down">−4.2%</span><div class="mc-tip"><strong>1 Month Ago:</strong> 72% success rate</div></div>
+          <div class="metric-change"><span class="period">3mo </span><span class="val-down">−8.0%</span><div class="mc-tip"><strong>3 Months Ago:</strong> 75% success rate</div></div>
+          <div class="metric-change"><span class="period">6mo </span><span class="val-up">+7.8%</span><div class="mc-tip"><strong>6 Months Ago:</strong> 64% success rate</div></div>
+          <div class="metric-change"><span class="period">12mo </span><span class="val-up">+4.5%</span><div class="mc-tip"><strong>12 Months Ago:</strong> 66% success rate</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="gold-rule-thin" style="margin-bottom:10px;"></div>
+    <div style="position:relative;margin-bottom:6px;">
+      <div id="movementChartTooltip" style="position:absolute;pointer-events:none;z-index:10;"></div>
+      <canvas id="movementChart" width="710" height="220" style="display:block;background:var(--panel);"></canvas>
+    </div>
+    <div style="font-size:8px;font-weight:600;letter-spacing:.06em;color:var(--white-dim);text-transform:uppercase;margin-bottom:6px;">Market Snapshot &nbsp;<span style="font-size:7px;color:var(--gold-dim);letter-spacing:.035em;">&nbsp;Click to expand</span></div>
+    <div class="snapshot-gallery" id="snapshotGallery"></div>
+    <div style="display:none;margin-top:7px;font-size:7.5px;color:rgba(245,166,35,.25);letter-spacing:.05em;text-transform:uppercase;">Paste imgur image URLs into snapshotImages[ ] in the JSON config to activate gallery</div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">08</span></div>
+</div>
+
+<!-- ═══ PAGE 9: SELLER REALITY CHECK ═══ -->
+<div class="page" id="page-9">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area">
+    <div class="page-label" style="margin-bottom:10px;">Seller Reality Check</div>
+    <div class="section-title" style="font-size:28px;margin-bottom:20px;">The Window<br><em>Has a Close Date.</em></div>
+    <div class="body-text" style="margin-bottom:14px;font-size:12.5px;">June closed with <strong>6,601</strong> homes sold across Greater Phoenix, and Maricopa County affidavits recorded <strong>6,988</strong> transactions, up <strong>5.6%</strong> from a year ago. The listing success rate stands at <strong>69%</strong>. Homes under contract total <strong>6,905</strong>, and active listings sit at <strong>21,546</strong>, which is <strong>6.2%</strong> below the <strong>22,959</strong> counted at this same point in 2025, so buyers are choosing from roughly <strong>1,413 fewer</strong> homes than a year ago. Closed days on market in the East Valley run <strong>72 days</strong>. Sellers who enter this summer window with accurate pricing are not waiting on the market. The market is waiting on them.</div>
+    <div style="position:relative;margin:0 0 14px;">
+      <canvas id="sellerCanvas" width="712" height="295" style="display:block;"></canvas>
+    </div>
+    <div class="body-text" style="font-size:12.5px;">The <strong>69%</strong> listing success rate is not spread evenly across all listings. It belongs to homes that entered priced to reflect current competition, not last year’s peak expectations and not the headline average distorted by ultra-luxury closings. Price per square foot is <strong>$303.80</strong>, and volume remains firm across most East Valley price bands with the steadiest demand in the $400K to $800K range, so the market is providing real support for accurately priced sellers. What erodes that support is time. A home that sits long enough to need a price cut is already competing against fresher entries while losing the buyers who were most motivated at launch. With <strong>55%</strong> of June closings including seller concessions and early July already running at <strong>58.4%</strong>, entering correctly priced is not just a strategy. It is a defense against negotiating away the very margin a discount brokerage would have cost up front.</div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">09</span></div>
+</div>
+
+<!-- ═══ PAGE 10: HYPER FOCUSED ═══ -->
+<div class="page" id="page-10">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area" style="padding:24px 48px 16px;">
+    <div class="page-label" style="margin-bottom:10px;">Hyper Focused Market</div>
+
+    <div class="sec-head">East Valley</div>
+    <div class="sec-sub">Ahwatukee · Chandler · Chandler Heights · Gilbert · Tempe · Mesa · Apache Junction · Queen Creek · San Tan Valley</div>
+    <table class="data-table" style="margin-bottom:6px;">
+      <thead><tr><th>Price Range</th><th>Active / Coming Soon</th><th>Sold in June</th><th>Months Supply</th></tr></thead>
+      <tbody id="ev-tbody"><tr><td class="td-city">$0–$250K</td><td><span style="font-weight:500;">717</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;10</span></td><td><span style="font-weight:500;">132</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;33</span></td><td><span style="font-weight:500;">5.43</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;1.03</span></td></tr>
+<tr><td class="td-city">$250K–$400K</td><td><span style="font-weight:500;">1,068</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;20</span></td><td><span style="font-weight:500;">449</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;33</span></td><td><span style="font-weight:500;">2.38</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.12</span></td></tr>
+<tr><td class="td-city">$400K–$500K</td><td><span style="font-weight:500;">1,185</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;30</span></td><td><span style="font-weight:500;">494</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;30</span></td><td><span style="font-weight:500;">2.40</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.08</span></td></tr>
+<tr><td class="td-city">$500K–$600K</td><td><span style="font-weight:500;">881</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;11</span></td><td><span style="font-weight:500;">336</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;49</span></td><td><span style="font-weight:500;">2.62</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.31</span></td></tr>
+<tr><td class="td-city">$600K–$800K</td><td><span style="font-weight:500;">895</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;40</span></td><td><span style="font-weight:500;">297</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;47</span></td><td><span style="font-weight:500;">3.01</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.30</span></td></tr>
+<tr><td class="td-city">$800K–$1M</td><td><span style="font-weight:500;">425</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;22</span></td><td><span style="font-weight:500;">124</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;3</span></td><td><span style="font-weight:500;">3.43</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.25</span></td></tr>
+<tr><td class="td-city">$1M+</td><td><span style="font-weight:500;">544</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;2</span></td><td><span style="font-weight:500;">141</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;31</span></td><td><span style="font-weight:500;">3.86</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1.07</span></td></tr></tbody>
+    </table>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;padding:12px 0 4px;border-top:1px solid var(--border);">
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;">Active DOM: <strong id="ev-adom" style="color:var(--white);">86</strong> <span id="ev-adom-delta" style="color:var(--up);font-size:13px;">↑ 3</span><br>UC DOM: <strong id="ev-ucdom" style="color:var(--white);">76</strong> <span id="ev-ucdom-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--up);">&uarr;&thinsp;5</span><br>Closed DOM: <strong id="ev-cdom" style="color:var(--white);">72</strong> <span id="ev-cdom-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--down);">&darr;&thinsp;1</span><br>&le;60 Days: <strong id="ev-60d" style="color:var(--white);">58.64</strong>%<br>&le;90 Days: <strong id="ev-90d" style="color:var(--white);">74.91</strong>%</div>
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;">Cash: <strong id="ev-cash-pct" style="color:var(--white);">18.45</strong>% <span style="color:var(--down);font-size:10px;">&darr;1.16%</span><br>of East Valley June Sales</div>
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;"><strong id="ev-expired" style="color:var(--white);">645</strong> <span id="ev-expired-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--down);">&darr;&thinsp;126</span><br>East Valley Listings<br>Expired or Cancelled in June</div>
+    </div>
+
+    <div class="sec-head">Northeast Valley</div>
+    <div class="sec-sub">Scottsdale · Paradise Valley · Greyhawk · Desert Ridge · Cave Creek · Fountain Hills</div>
+    <table class="data-table" style="margin-bottom:6px;">
+      <thead><tr><th>Price Range</th><th>Active / Coming Soon</th><th>Sold in June</th><th>Months Supply</th></tr></thead>
+      <tbody id="nev-tbody"><tr><td class="td-city">$0–$400K</td><td><span style="font-weight:500;">484</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;47</span></td><td><span style="font-weight:500;">89</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;19</span></td><td><span style="font-weight:500;">5.44</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.52</span></td></tr>
+<tr><td class="td-city">$400K–$600K</td><td><span style="font-weight:500;">354</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;21</span></td><td><span style="font-weight:500;">108</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;13</span></td><td><span style="font-weight:500;">3.28</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.18</span></td></tr>
+<tr><td class="td-city">$600K–$1M</td><td><span style="font-weight:500;">713</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;64</span></td><td><span style="font-weight:500;">232</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;11</span></td><td><span style="font-weight:500;">3.07</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.12</span></td></tr>
+<tr><td class="td-city">$1M–$2M</td><td><span style="font-weight:500;">636</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;126</span></td><td><span style="font-weight:500;">253</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;23</span></td><td><span style="font-weight:500;">2.51</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.80</span></td></tr>
+<tr><td class="td-city">$2M–$5M</td><td><span style="font-weight:500;">509</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;108</span></td><td><span style="font-weight:500;">128</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;12</span></td><td><span style="font-weight:500;">3.98</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;0.43</span></td></tr>
+<tr><td class="td-city">$5M–$10M</td><td><span style="font-weight:500;">167</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;41</span></td><td><span style="font-weight:500;">22</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;7</span></td><td><span style="font-weight:500;">7.59</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;0.42</span></td></tr>
+<tr><td class="td-city">$10M+</td><td><span style="font-weight:500;">51</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;17</span></td><td><span style="font-weight:500;">3</span></td><td><span style="font-weight:500;">17.00</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;5.67</span></td></tr></tbody>
+    </table>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:6px;padding:12px 0 4px;border-top:1px solid var(--border);">
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;">Active DOM: <strong id="nev-adom" style="color:var(--white);">117</strong> <span id="nev-adom-delta" style="color:var(--up);font-size:13px;">↑ 3</span><br>UC DOM: <strong id="nev-ucdom" style="color:var(--white);">99</strong> <span id="nev-ucdom-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--gold-dim);">&mdash;</span><br>Closed DOM: <strong id="nev-cdom" style="color:var(--white);">100</strong> <span id="nev-cdom-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--up);">&uarr;&thinsp;7</span><br>&le;60 Days: <strong id="nev-60d" style="color:var(--white);">44.91</strong>%<br>&le;90 Days: <strong id="nev-90d" style="color:var(--white);">60.96</strong>%</div>
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;">Cash: <strong id="nev-cash-pct" style="color:var(--white);">35.45</strong>% <span style="color:var(--down);font-size:10px;">&darr;6.20%</span><br>of Northeast Valley June Sales</div>
+      <div style="font-size:13px;color:rgba(245,245,240,.55);line-height:2.0;"><strong id="nev-expired" style="color:var(--white);">583</strong> <span id="nev-expired-delta" style="font-size:13px;font-weight:600;margin-left:4px;opacity:.85;color:var(--up);">&uarr;&thinsp;91</span><br>Northeast Valley Listings<br>Expired or Cancelled in June</div>
+    </div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">10</span></div>
+</div>
+
+<!-- ═══ PAGE 11: MARKET SHARE COMPARISON ═══ -->
+<div class="page" id="page-11">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area" style="padding:24px 48px 16px;">
+    <div class="page-label" style="margin-bottom:14px;">Market Share Comparison</div>
+
+    <!-- TABLE 1: KW DETAILED -->
+    <div class="sec-head" style="margin-bottom:6px;">Keller Williams</div>
+    <table class="data-table" style="margin-bottom:24px;">
+      <thead>
+        <tr>
+          <th>Office</th>
+          <th>Active</th>
+          <th>Coming Soon</th>
+          <th>New Listings</th>
+          <th>Contracted</th>
+          <th>Closed</th>
+          <th>Mkt Share</th>
+          <th>MoM Chg</th>
+        </tr>
+      </thead>
+      <tbody id="kw-tbody"><tr><td class="td-city">KW All Offices</td><td><span style="font-weight:500;">1017</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;27</span></td><td><span style="font-weight:500;">30</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;3</span></td><td><span style="font-weight:500;">397</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;27</span></td><td><span style="font-weight:500;">413</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;109</span></td><td><span style="font-weight:500;">626</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;19</span></td><td><span style="font-weight:500;">8.62%</span></td><td class="td-up" style="font-weight:600;">+0.08%</td></tr>
+<tr><td class="td-city">KW Sonoran Living</td><td><span style="font-weight:500;">116</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;2</span></td><td><span style="font-weight:500;">6</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;3</span></td><td><span style="font-weight:500;">55</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;5</span></td><td><span style="font-weight:500;">71</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;19</span></td><td><span style="font-weight:500;">104</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;23</span></td><td><span style="font-weight:500;">1.43%</span></td><td class="td-up" style="font-weight:600;">+0.36%</td></tr></tbody>
+    </table>
+
+    <!-- TABLE 2: NON-CONVENTIONAL -->
+    <div class="sec-head" style="margin-bottom:6px;">Non-Conventional &amp; Discount Brokerages</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Brokerage</th>
+          <th>Active</th>
+          <th>Pending</th>
+          <th>Closed</th>
+          <th>Mkt Share</th>
+          <th>MoM Chg</th>
+        </tr>
+      </thead>
+      <tbody id="ibr-tbody"><tr><td class="td-city">Opendoor</td><td><span style="font-weight:500;">182</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;33</span></td><td><span style="font-weight:500;">72</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;11</span></td><td><span style="font-weight:500;">66</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;17</span></td><td><span style="font-weight:500;">1.00%</span></td><td class="td-up" style="font-weight:600;">+0.35%</td></tr>
+<tr><td class="td-city">Offerpad</td><td><span style="font-weight:500;">32</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;14</span></td><td><span style="font-weight:500;">6</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;4</span></td><td><span style="font-weight:500;">10</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;1</span></td><td><span style="font-weight:500;">0.15%</span></td><td class="td-up" style="font-weight:600;">+0.03%</td></tr>
+<tr><td class="td-city">Citiea</td><td><span style="font-weight:500;">206</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;5</span></td><td><span style="font-weight:500;">62</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;1</span></td><td><span style="font-weight:500;">92</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;10</span></td><td><span style="font-weight:500;">1.39%</span></td><td class="td-up" style="font-weight:600;">+0.04%</td></tr>
+<tr><td class="td-city">Redfin</td><td><span style="font-weight:500;">141</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;13</span></td><td><span style="font-weight:500;">13</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;13</span></td><td><span style="font-weight:500;">139</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;2</span></td><td><span style="font-weight:500;">2.11%</span></td><td class="td-up" style="font-weight:600;">+0.30%</td></tr>
+<tr><td class="td-city">Homie</td><td><span style="font-weight:500;">8</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;3</span></td><td><span style="font-weight:500;">3</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;3</span></td><td><span style="font-weight:500;">1</span></td><td><span style="font-weight:500;">0.02%</span></td><td class="td-up" style="font-weight:600;">+0.01%</td></tr>
+<tr><td class="td-city">Flat Fee / Other</td><td><span style="font-weight:500;">114</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;15</span></td><td><span style="font-weight:500;">30</span><span class="td-down" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↓&thinsp;7</span></td><td><span style="font-weight:500;">40</span><span class="td-up" style="font-size:9px;font-weight:600;margin-left:6px;opacity:.85;">↑&thinsp;7</span></td><td><span style="font-weight:500;">0.61%</span></td><td class="td-up" style="font-weight:600;">+0.17%</td></tr></tbody>
+    </table>
+
+    <div class="two-col" style="margin-top:20px;">
+      <div class="pink-box">
+        <div class="pink-box-title">KW Sonoran Living</div>
+        <div class="body-text" style="font-size:11.5px;">Full-service representation, negotiation expertise, and market intelligence that flat-fee models cannot replicate. When every price band under $2M is declining, having the right advocate in your corner is not a line item: it is the outcome.</div>
+      </div>
+      <div class="pink-box">
+        <div class="pink-box-title">The Discount Broker Reality</div>
+        <div class="body-text" style="font-size:11.5px;">In a market where <strong>55%</strong> of June closings included seller concessions, with early July already near <strong>58%</strong> — the agent you hire to protect your equity matters more than ever. Discount representation in a market where the majority of closings already carry a concession is a compounding cost, not a savings.</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">11</span></div>
+</div>
+
+<!-- ═══ PAGE 12: ECONOMIC DEVELOPMENT ═══ -->
+<div class="page" id="page-12">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area">
+    <div class="page-label" style="margin-bottom:16px;">Economic Development</div>
+    <div class="section-title" style="margin-bottom:28px;font-size:24px;">Phoenix Keeps <em>Building.</em></div>
+    <div class="data-box" style="margin-bottom:18px;" id="econ-box-1">
+      <div class="data-box-title" id="econ-source-1">KJZZ</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div id="econ-headline-1" style="font-size:13px;font-weight:600;color:var(--gold);">Arizona home insurance rates rose 71% over 6 years amid disasters and inflation</div>
+        <a id="econ-link-1" href="https://www.kjzz.org/business/2026-06-17/arizona-home-insurance-rates-rose-71-over-6-years-due-to-increase-in-natural-disasters-inflation" target="_blank" style="font-size:8px;font-weight:700;letter-spacing:.05em;color:var(--gold-dim);text-transform:uppercase;text-decoration:none;border:1px solid rgba(245,166,35,.2);padding:3px 8px;">Read Story &#8599;</a>
+      </div>
+      <div id="econ-body-1" class="body-text" style="font-size:12px;">Arizona home insurance rates rose 71% over six years, one of the steepest jumps in the nation, driven by inflation and a surge in natural disasters. Homeowners now average about $2,225 a year, with wildfire the top risk. For Greater Phoenix, rising premiums add to monthly carrying costs and chip away at affordability, leaving buyers less room for principal and interest.</div>
+    </div>
+    <div class="data-box" style="margin-bottom:18px;" id="econ-box-2">
+      <div class="data-box-title" id="econ-source-2">Taylor Morrison</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div id="econ-headline-2" style="font-size:13px;font-weight:600;color:var(--gold);">Berkshire Hathaway to acquire Scottsdale’s Taylor Morrison Home Corporation for $8.5 billion</div>
+        <a id="econ-link-2" href="https://investors.taylormorrison.com/news-and-events/news/news-details/2026/Berkshire-Hathaway-to-Acquire-Taylor-Morrison-Home-Corporation-for-8-5-Billion/default.aspx" target="_blank" style="font-size:8px;font-weight:700;letter-spacing:.05em;color:var(--gold-dim);text-transform:uppercase;text-decoration:none;border:1px solid rgba(245,166,35,.2);padding:3px 8px;">Read Story &#8599;</a>
+      </div>
+      <div id="econ-body-2" class="body-text" style="font-size:12px;">Berkshire Hathaway agreed to acquire Scottsdale-based homebuilder Taylor Morrison in an all-cash deal valuing it at about $8.5 billion, or $72.50 per share, a 24% premium. Taylor Morrison stays led by its current team but goes private. For Greater Phoenix, it keeps a major builder’s headquarters and jobs local, backed by Berkshire’s capital, and signals confidence in housing.</div>
+    </div>
+    <div class="data-box" id="econ-box-3">
+      <div class="data-box-title" id="econ-source-3">ABC15</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div id="econ-headline-3" style="font-size:13px;font-weight:600;color:var(--gold);">Amazon takes over Phoenix storefronts for a new grocery service</div>
+        <a id="econ-link-3" href="https://www.abc15.com/news/business/amazon-takes-over-vacant-storefronts-for-30-minute-grocery-delivery" target="_blank" style="font-size:8px;font-weight:700;letter-spacing:.05em;color:var(--gold-dim);text-transform:uppercase;text-decoration:none;border:1px solid rgba(245,166,35,.2);padding:3px 8px;">Read Story &#8599;</a>
+      </div>
+      <div id="econ-body-3" class="body-text" style="font-size:12px;">Amazon is converting vacant Greater Phoenix storefronts into hubs for 30-minute grocery delivery, including two Phoenix sites and two in Scottsdale, with liquor licenses filed and openings starting in August. Reusing empty retail returns commercial buildings to active use and adds a delivery grocery amenity near homes, supporting neighborhood activity and housing demand.</div>
+    </div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">12</span></div>
+</div>
+
+<!-- ═══ PAGE 13: INTEREST RATES ═══ -->
+<div class="page" id="page-13">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area">
+    <div class="page-label" style="margin-bottom:12px;">Interest Rates</div>
+    <div class="rate-hero">
+      <div class="rate-big"><span>6</span>.63<span style="font-size:32px;font-weight:300;color:var(--white-dim)">%</span></div>
+      <div class="rate-context">
+        <p><strong>30-Year Fixed</strong> &nbsp;·&nbsp; As of July 7, 2026</p>
+        <p>52-Week Range: <strong>5.99% — 6.85%</strong></p>
+        <p>Year-Over-Year: <strong style="color:var(--up);">−0.16%</strong></p>
+        <p>Source: Mortgage News Daily</p>
+      </div>
+    </div>
+    <div class="rate-grid">
+      <div class="rate-cell"><div class="rate-cell-type">15-Year Fixed</div><div class="rate-cell-val">6.17%</div><div class="rate-cell-change">+0.18% YoY</div></div>
+      <div class="rate-cell"><div class="rate-cell-type">30-Year FHA</div><div class="rate-cell-val">6.20%</div><div class="rate-cell-change">−0.09% YoY</div></div>
+      <div class="rate-cell"><div class="rate-cell-type">30-Year VA</div><div class="rate-cell-val">6.22%</div><div class="rate-cell-change">−0.08% YoY</div></div>
+    </div>
+    <!-- Rate chart: set rateChartUrl in JSON config, or it renders the canvas placeholder -->
+    <div id="rateChartWrap" style="margin-bottom:16px;height:215px;position:relative;cursor:pointer;" onclick="openLightboxDirect(REPORT_CONFIG.rateChartUrl,'Mortgage Rate Trend — MND')" title="Click to expand">
+      <canvas id="rateChartCanvas" width="712" height="215" style="display:block;background:var(--panel);"></canvas>
+      <img id="rateChartImg" src="" alt="Rate Chart" style="display:none;width:100%;height:215px;object-fit:contain;border:1px solid var(--border);">
+    </div>
+    <div class="data-box">
+      <div class="data-box-title">Market Context</div>
+      <div class="body-text" style="font-size:14px;">The Federal Reserve held its benchmark at 3.50% to 3.75% on June 17, as it has all year, but Kevin Warsh’s first meeting as chair brought a hawkish turn, with the updated projections now leaning toward a hike rather than a cut. Bond yields climbed on that message and on renewed oil supply fears tied to the Iran conflict, lifting the 10-year Treasury from about 4.49% at the start of July to roughly 4.57% by July 8 and pulling mortgage rates up with it. At <strong>6.63%</strong> as of July 7, the 30-year fixed sits in the upper third of its 52-week range of <strong>5.99%–6.85%</strong> and just 16 basis points below where it stood a year ago. A soft June jobs report of only 57,000 new payrolls would normally ease rates, but oil-driven inflation is overriding it, so the summer relief many buyers hoped for has not arrived. For Greater Phoenix buyers in the core <strong>$350K–$550K</strong> range, that means budgeting around a rate near 6.6% rather than 6%, with the odds now tilted toward the Fed’s next move being up.</div>
+    </div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">13</span></div>
+</div>
+
+<!-- ═══ PAGE 14: MARKETING STRATEGIES 1 ═══ -->
+<div class="page" id="page-14">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area">
+    <div class="page-label" style="margin-bottom:8px;">Marketing Strategies — Part 1</div>
+    <div class="section-title" style="font-size:22px;margin-bottom:10px;">Your <em>Content Suite</em></div>
+    <a class="gdrive-link" href="https://docs.google.com/document/d/1iSKmXVnHRiLW4kFCj4K-a-XRZmUp6j0ywj8nM1ibtO0/edit?usp=sharing" id="gdriveLinkBtn" target="_blank">&#9651; &nbsp;Open Full Marketing Suite in Google Drive</a>
+    <div style="margin-top:13px;">
+      <div class="strategy-item"><div class="strategy-num">01</div><div class="strategy-text"><strong>Consumer Edition Available For Your Use</strong> — The consumer version of this month's market report is ready to share with your clients and prospects.</div></div>
+      <div class="strategy-item"><div class="strategy-num">02</div><div class="strategy-text"><strong>5 One-Minute Market Update Reel Scripts</strong> — Camera-ready conversations for each of the month's five key market themes. Hook, data, close.</div></div>
+      <div class="strategy-item"><div class="strategy-num">03</div><div class="strategy-text"><strong>20 Social Media Reel Ideas &amp; 5 Carousel Post Ideas</strong> — 20 reel concepts with caption copy and 5 carousel post breakdowns with slide-by-slide structure.</div></div>
+    </div>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">14</span></div>
+</div>
+
+<!-- ═══ PAGE 15: MARKETING STRATEGIES 2 ═══ -->
+<div class="page" id="page-15">
+  <div class="header-bar"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living" class="header-logo-img"><span class="header-date">July 2026</span></div>
+  <div class="header-rule"></div>
+  <div class="content-area">
+    <div class="page-label" style="margin-bottom:8px;">Marketing Strategies — Part 2</div>
+    <div class="section-title" style="font-size:22px;margin-bottom:12px;">Tools &amp; <em>Conversations</em></div>
+    <div class="strategy-item"><div class="strategy-num">04</div><div class="strategy-text"><strong>7-Minute YouTube Script</strong> — Full script with timestamps, section prompts, and B-roll callouts ready for recording.</div></div>
+    <div class="strategy-item"><div class="strategy-num">05</div><div class="strategy-text"><strong>5 Weekly Email Newsletters</strong> — One per week. Hook, market data value, CTA. Economic development woven into weeks 3 and 4.</div></div>
+    <div class="strategy-item"><div class="strategy-num">06</div><div class="strategy-text"><strong>10 Market Data Conversations &amp; Objection Handlers</strong> — Data-driven responses to the objections this month's numbers specifically generate.</div></div>
+    <div class="gold-rule-thin" style="margin:12px 0;"></div>
+    <div class="two-col">
+      <div class="pink-box">
+        <div class="pink-box-title">Content Distribution Ratio</div>
+        <div class="body-text" style="font-size:13px;line-height:2;"><strong>80%</strong> — Tactical market data<br><strong>20%</strong> — Economic development<br>1 of 5 reels on econ dev<br>2 of 10 social posts on econ dev<br>2 of 5 newsletters on econ dev</div>
+      </div>
+      <div class="pink-box">
+        <div class="pink-box-title">Monthly Schedule</div>
+        <div class="body-text" style="font-size:13px;line-height:2;">Week 1 — Rate environment<br>Week 2 — Listing success data<br>Week 3 — Geographic breakdown<br>Week 4 — Spring pipeline signal<br>Week 5 — Economic development</div>
+      </div>
+    </div>
+    <a class="gdrive-link" href="https://docs.google.com/document/d/1iSKmXVnHRiLW4kFCj4K-a-XRZmUp6j0ywj8nM1ibtO0/edit?usp=sharing" id="gdriveLinkBtn2" target="_blank" style="margin-top:12px;">&#9651; &nbsp;Open Full Marketing Suite in Google Drive</a>
+  </div>
+  <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">15</span></div>
+</div>
+
+<!-- ═══ PAGE 16: AGENT END COVER ═══ -->
+<div class="page" id="page-16">
+  <svg class="pgrid" viewBox="0 0 816 1056" preserveAspectRatio="none" aria-hidden="true">
+    <g stroke="#17191D" stroke-width="1">
+      <line x1="102" y1="112" x2="102" y2="1004"/><line x1="278" y1="112" x2="278" y2="1004"/>
+      <line x1="454" y1="112" x2="454" y2="1004"/><line x1="630" y1="112" x2="630" y2="1004"/>
+      <line x1="42" y1="200" x2="778" y2="200"/><line x1="42" y1="545" x2="778" y2="545"/><line x1="42" y1="680" x2="778" y2="680"/>
+    </g>
+    <g stroke="#262A30" stroke-width="1">
+      <line x1="58" y1="112" x2="58" y2="1004"/><line x1="146" y1="112" x2="146" y2="1004"/>
+      <line x1="234" y1="112" x2="234" y2="1004"/><line x1="322" y1="112" x2="322" y2="1004"/>
+      <line x1="410" y1="112" x2="410" y2="1004"/><line x1="498" y1="112" x2="498" y2="1004"/>
+      <line x1="586" y1="112" x2="586" y2="1004"/><line x1="674" y1="112" x2="674" y2="1004"/>
+      <line x1="42" y1="150" x2="778" y2="150"/><line x1="42" y1="255" x2="778" y2="255"/>
+      <line x1="42" y1="360" x2="778" y2="360"/><line x1="42" y1="470" x2="778" y2="470"/>
+      <line x1="42" y1="615" x2="778" y2="615"/><line x1="42" y1="742" x2="778" y2="742"/>
+    </g>
+    <!-- Grand Ave — the staple diagonal, downtown (SE) out to Surprise (NW) -->
+    <line x1="702" y1="502" x2="46" y2="132" stroke="#3E444C" stroke-width="2"/>
+    <text class="slbl grand" x="366" y="300" transform="rotate(-29.4 366 300)">Grand Ave</text>
+    <g class="slbl" text-anchor="middle">
+      <text x="58" y="102">Litchfield Rd</text><text x="146" y="113">Dysart Rd</text><text x="234" y="102">99th Ave</text>
+      <text x="322" y="113">83rd Ave</text><text x="410" y="102">67th Ave</text><text x="498" y="113">51st Ave</text>
+      <text x="586" y="102">35th Ave</text><text x="674" y="113">19th Ave</text>
+    </g>
+    <g class="slbl" text-anchor="end">
+      <text x="772" y="146">Bell Rd</text><text x="772" y="251">Glendale Ave</text><text x="772" y="356">Camelback Rd</text>
+      <text x="772" y="466">McDowell Rd</text><text x="772" y="611">Buckeye Rd</text><text x="772" y="738">Baseline Rd</text>
+    </g>
+  </svg>
+  <div class="cov-scrim"></div>
+
+  <div class="cov-eyebrow">Greater Phoenix</div>
+  <div class="cov-title" style="top:158px;">KW<br>Sonoran<br>Living</div>
+
+  <div class="bc-contact">
+    <div class="row">Full-service representation across the valley</div>
+    <div class="row" style="margin-top:12px;">Ahwatukee &middot; Chandler</div>
+    <div class="row amber"><a href="https://kwphoenix.kw.com/" style="color:inherit;text-decoration:none;">kwphoenix.kw.com</a></div>
+    <div class="row" style="margin-top:8px;">Scottsdale &middot; Paradise Valley</div>
+    <div class="row amber"><a href="https://kellerwilliamsscottsdale.com" style="color:inherit;text-decoration:none;">kellerwilliamsscottsdale.com</a></div>
+  </div>
+
+  <div class="cov-foot">
+    <div class="cov-lock"><img src="https://i.imgur.com/mlWAinf.png" alt="KW Sonoran Living"></div>
+    <div class="cov-pg">See you next month</div>
+  </div>
+</div>
+
+</div><!-- end page-wrapper -->
+
+<!-- Spread container — pages move here in book mode -->
+<div id="spreadContainer" style="display:none;padding:0 20px;overflow-x:auto;"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// MONTHLY CONFIG — update this JSON object each month
+// All URLs, links, and chart data live here
+// ═══════════════════════════════════════════════════════════
+const REPORT_CONFIG = {
+  // Google Drive link to marketing suite
+  gdriveUrl: "https://docs.google.com/document/d/1iSKmXVnHRiLW4kFCj4K-a-XRZmUp6j0ywj8nM1ibtO0/edit?usp=sharing",
+
+  // Page 8 Market Snapshot gallery
+  snapshotImages: [
+    {
+        "url": "https://i.imgur.com/97AMEPn.png",
+        "label": "CMI Cities Overview"
+    },
+    {
+        "url": "https://i.imgur.com/VBGuJhG.png",
+        "label": "Price Band Breakdown"
+    },
+    {
+        "url": "https://i.imgur.com/oc9JbCb.png",
+        "label": "Concise Market Snapshot"
+    }
+],
+
+  // Page 12 article links
+  econLinks: [
+    {
+        "url": "https://www.kjzz.org/business/2026-06-17/arizona-home-insurance-rates-rose-71-over-6-years-due-to-increase-in-natural-disasters-inflation",
+        "source": "KJZZ"
+    },
+    {
+        "url": "https://investors.taylormorrison.com/news-and-events/news/news-details/2026/Berkshire-Hathaway-to-Acquire-Taylor-Morrison-Home-Corporation-for-8-5-Billion/default.aspx",
+        "source": "Taylor Morrison"
+    },
+    {
+        "url": "https://www.abc15.com/news/business/amazon-takes-over-vacant-storefronts-for-30-minute-grocery-delivery",
+        "source": "ABC15"
+    }
+],
+
+  // Page 13 rate chart — paste imgur URL of MND chart screenshot
+  rateChartUrl: "https://i.imgur.com/jkebjv2.png",
+
+  // Page 6 chart — 5 data points oldest→newest
+  listingsData: [
+    {
+        "label": "Jul 25",
+        "activeListings": 22959,
+        "newListings": 7622
+    },
+    {
+        "label": "Jan 26",
+        "activeListings": 20746,
+        "newListings": 5824
+    },
+    {
+        "label": "Apr 26",
+        "activeListings": 23705,
+        "newListings": 10126
+    },
+    {
+        "label": "Jun 26",
+        "activeListings": 22385,
+        "newListings": 8294
+    },
+    {
+        "label": "Jul 26",
+        "activeListings": 21546,
+        "newListings": 7687
+    }
+]
+};
+
+// Apply config on load
+function applyConfig(cfg) {
+  // GDrive links
+  const gd = cfg.gdriveUrl || "#";
+  document.getElementById('gdriveLinkBtn').href = gd;
+  document.getElementById('gdriveLinkBtn2').href = gd;
+
+  // Econ links
+  if(cfg.econLinks) {
+    cfg.econLinks.forEach((l, i) => {
+      const n = i + 1;
+      const el = document.getElementById(`econ-link-${n}`);
+      const sl = document.getElementById(`econ-source-${n}`);
+      const hl = document.getElementById(`econ-headline-${n}`);
+      const bl = document.getElementById(`econ-body-${n}`);
+      if(el && l.url) { el.href = l.url; el.style.opacity = '1'; }
+      if(sl && l.source) sl.textContent = l.source;
+      if(hl && l.headline) hl.textContent = l.headline;
+      if(bl && l.body) bl.textContent = l.body;
+    });
+  }
+
+  // Rate chart
+  if(cfg.rateChartUrl) {
+    document.getElementById('rateChartImg').src = cfg.rateChartUrl;
+    document.getElementById('rateChartImg').style.display = 'block';
+    document.getElementById('rateChartCanvas').style.display = 'none';
+  } else {
+    drawRateChartPlaceholder();
+  }
+
+  // Snapshot gallery
+  if(cfg.snapshotImages) {
+    snapshotImages.length = 0;
+    cfg.snapshotImages.forEach(s => snapshotImages.push(s));
+    renderSnapshotGallery();
+  }
+
+  // Listings chart
+  if(cfg.listingsData && cfg.listingsData.length) {
+    drawListingsChart(
+      cfg.listingsData.map(d=>d.label),
+      cfg.listingsData.map(d=>d.activeListings),
+      cfg.listingsData.map(d=>d.newListings)
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// MASTER JSON UPLOAD — one file loads everything
+// ═══════════════════════════════════════════════════════════
+// ── PRICE BAND LABELS — match Cromford calculator exactly ──
+const EV_BANDS  = ['$0–$250K','$250K–$400K','$400K–$500K','$500K–$600K','$600K–$800K','$800K–$1M','$1M+'];
+const NEV_BANDS = ['$0–$400K','$400K–$600K','$600K–$1M','$1M–$2M','$2M–$5M','$5M–$10M','$10M+'];
+
+function pct(cur, pri) {
+  if(!pri || pri == 0) return '—';
+  const d = ((cur - pri) / pri * 100);
+  return (d >= 0 ? '+' : '') + d.toFixed(1) + '%';
+}
+
+function mosDelta(curAct, curSol, priAct, priSol) {
+  if(!curSol || !priSol) return null;
+  const cur = curAct / curSol;
+  const pri = priAct / priSol;
+  const delta = cur - pri;
+  // Cap absurd deltas (data entry errors in prior period)
+  if(Math.abs(delta) > 20) return null;
+  return delta;
+}
+
+function fmtMos(act, sol) {
+  if(!sol) return '—';
+  return (act / sol).toFixed(2);
+}
+
+function fmtDelta(d, isUp) {
+  if(d === null || d === undefined) return '';
+  const arrow = d >= 0 ? ' ↑ ' : ' ↓ ';
+  return arrow + Math.abs(d).toFixed(2);
+}
+
+function renderBandTable(tbodyId, prefix, bands) {
+  const tb = document.getElementById(tbodyId);
+  if(!tb || !window._cromfordValues) return;
+  const v = window._cromfordValues;
+  tb.innerHTML = '';
+  bands.forEach((label, i) => {
+    const ac = parseInt(v[prefix+'-act-cur-'+i]) || 0;
+    const ap = parseInt(v[prefix+'-act-pri-'+i]) || 0;
+    const sc = parseInt(v[prefix+'-sol-cur-'+i]) || 0;
+    const sp = parseInt(v[prefix+'-sol-pri-'+i]) || 0;
+    const actDelta = ac - ap;
+    const solDelta = sc - sp;
+    const mosCur = fmtMos(ac, sc);
+    const md = mosDelta(ac, sc, ap, sp);
+
+    const actClass = actDelta > 0 ? 'td-up' : actDelta < 0 ? 'td-down' : '';
+    const solClass = solDelta > 0 ? 'td-up' : solDelta < 0 ? 'td-down' : '';
+    const mosClass = md !== null ? (md >= 0 ? 'td-up' : 'td-down') : '';
+
+    function deltaSpan(delta, cls, decimals) {
+      if(delta === 0 || delta === null) return '';
+      const arrow = delta > 0 ? '↑' : '↓';
+      const val = decimals ? Math.abs(delta).toFixed(2) : Math.abs(delta);
+      return `<span class="${cls}" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">${arrow}&thinsp;${val}</span>`;
+    }
+
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      `<td class="td-city" style="font-size:13px;">${label}</td>`
+      +`<td><span style="font-weight:500;font-size:13px;">${ac.toLocaleString()}</span>${deltaSpan(actDelta,actClass,false)}</td>`
+      +`<td><span style="font-weight:500;font-size:13px;">${sc.toLocaleString()}</span>${deltaSpan(solDelta,solClass,false)}</td>`
+      +`<td><span style="font-weight:500;font-size:13px;">${mosCur}</span>${md!==null?deltaSpan(md,mosClass,true):''}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function updateDomStats(v) {
+  const map = {
+    'ev-adom':  v['ev-adom-cur'],
+    'ev-ucdom': v['ev-ucdom-cur'],
+    'ev-cdom':  v['ev-cdom-cur'],
+    'ev-60d':   v['ev-60d-cur'],
+    'ev-90d':   v['ev-90d-cur'],
+    'ev-expired': v['ev-expired-cur'],
+    'ev-cash-pct': v['ev-cash-pri'],
+    'nev-adom':  v['nev-adom-cur'],
+    'nev-ucdom': v['nev-ucdom-cur'],
+    'nev-cdom':  v['nev-cdom-cur'],
+    'nev-60d':   v['nev-60d-cur'],
+    'nev-90d':   v['nev-90d-cur'],
+    'nev-expired': v['nev-expired-cur'],
+    'nev-cash-pct': v['nev-cash-pri'],
+  };
+  Object.entries(map).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if(el && val !== undefined) el.textContent = val;
+  });
+  // MoM deltas for DOM stats and expired
+  function setDomDelta(id, cur, pri, upColor, downColor) {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const d = parseInt(cur) - parseInt(pri);
+    if(isNaN(d)) return;
+    el.textContent = (d >= 0 ? '↑\u2009' : '↓\u2009') + Math.abs(d);
+    el.style.color = d >= 0 ? (upColor || 'var(--up)') : (downColor || 'var(--down)');
+  }
+  setDomDelta('ev-adom-delta',    v['ev-adom-cur'],    v['ev-adom-pri']);
+  setDomDelta('ev-ucdom-delta',   v['ev-ucdom-cur'],   v['ev-ucdom-pri']);
+  setDomDelta('ev-cdom-delta',    v['ev-cdom-cur'],    v['ev-cdom-pri']);
+  setDomDelta('ev-expired-delta', v['ev-expired-cur'], v['ev-expired-pri']);
+  setDomDelta('nev-adom-delta',   v['nev-adom-cur'],   v['nev-adom-pri']);
+  setDomDelta('nev-ucdom-delta',  v['nev-ucdom-cur'],  v['nev-ucdom-pri']);
+  setDomDelta('nev-cdom-delta',   v['nev-cdom-cur'],   v['nev-cdom-pri']);
+  setDomDelta('nev-expired-delta',v['nev-expired-cur'],v['nev-expired-pri']);
+}
+
+function loadMasterJson(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const v = data.values || data;
+
+      // ── Apply links from calculator JSON if present ──
+      if(data.links) {
+        const lnks = data.links;
+        const cfg = {};
+        if(lnks['link-econ-1'] || lnks['link-econ-2'] || lnks['link-econ-3']) {
+          cfg.econLinks = [
+            { url: lnks['link-econ-1'] || '', source: [lnks['link-econ-1-source'], lnks['link-econ-1-title']].filter(Boolean).join(' · ') || 'Story 1' },
+            { url: lnks['link-econ-2'] || '', source: [lnks['link-econ-2-source'], lnks['link-econ-2-title']].filter(Boolean).join(' · ') || 'Story 2' },
+            { url: lnks['link-econ-3'] || '', source: [lnks['link-econ-3-source'], lnks['link-econ-3-title']].filter(Boolean).join(' · ') || 'Story 3' }
+          ];
+        }
+        if(lnks['link-gdrive']) cfg.gdriveUrl = lnks['link-gdrive'];
+        if(lnks['link-img-1'] || lnks['link-img-2'] || lnks['link-img-3']) {
+          cfg.snapshotImages = [
+            { url: lnks['link-img-1'] || '', label: 'CMI Cities Overview' },
+            { url: lnks['link-img-2'] || '', label: 'Price Band Breakdown' },
+            { url: lnks['link-img-3'] || '', label: 'Concise Market Snapshot' }
+          ];
+        }
+        if(Object.keys(cfg).length) applyConfig(cfg);
+      }
+
+      // Store values globally so renderBandTable can access them
+      window._cromfordValues = v;
+
+      // ── Cover stats (current month + delta vs prior) ──
+      const activeCover = parseInt(v['active-0']);
+      const activeCoverPri = parseInt(v['active-1']);
+      const sqftCover = parseFloat(v['sqft-0']);
+      const sqftCoverPri = parseFloat(v['sqft-1']);
+      const lsrCover = parseFloat(v['lsr-0']);
+      const lsrCoverPri = parseFloat(v['lsr-1']);
+
+      function setCoverStat(valId, deltaId, cur, pri, fmt) {
+        const valEl = document.getElementById(valId);
+        const deltaEl = document.getElementById(deltaId);
+        if(valEl && cur) valEl.textContent = fmt(cur);
+        if(deltaEl && cur && pri) {
+          const pctChg = ((cur - pri) / Math.abs(pri)) * 100;
+          const sign = pctChg >= 0 ? '+' : '';
+          const up = pctChg >= 0;
+          deltaEl.textContent = sign + pctChg.toFixed(1) + '% vs prior mo';
+          deltaEl.style.color = up ? '#8FB89A' : '#D19595';
+        }
+      }
+      setCoverStat('cover-active','cover-active-delta', activeCover, activeCoverPri, v=>v.toLocaleString());
+      setCoverStat('cover-sqft','cover-sqft-delta', sqftCover, sqftCoverPri, v=>'$'+Math.round(v));
+      setCoverStat('cover-lsr','cover-lsr-delta', lsrCover, lsrCoverPri, v=>Math.round(v)+'%');
+
+      // ── Listings chart (pg 6) ──
+      const labels = [], active = [], newL = [];
+      const keys = ['active-4','active-3','active-2','active-1','active-0'];
+      const newKeys = ['new-4','new-3','new-2','new-1','new-0'];
+      const lbls = REPORT_CONFIG.listingsData.map(d=>d.label);
+      for(let i=0;i<5;i++){
+        labels.push(lbls[i] || ('T-'+(4-i)));
+        active.push(parseInt(v[keys[i]]) || REPORT_CONFIG.listingsData[i].activeListings);
+        newL.push(parseInt(v[newKeys[i]]) || REPORT_CONFIG.listingsData[i].newListings);
+      }
+      drawListingsChart(labels, active, newL);
+
+      // ── Movement chart (pg 8) ──
+      const contractKeys = ['contract-4','contract-3','contract-2','contract-1','contract-0'];
+      const salesKeys    = ['sales-4','sales-3','sales-2','sales-1','sales-0'];
+      const sqftKeys     = ['sqft-4','sqft-3','sqft-2','sqft-1','sqft-0'];
+      const lsrKeys      = ['lsr-4','lsr-3','lsr-2','lsr-1','lsr-0'];
+      const mvCanvas = document.getElementById('movementChart');
+      if(mvCanvas) {
+        const def = mvCanvas._movementData || { contract:[6672, 5245, 8724, 7887, 6905], sold:[6175, 5833, 7197, 6950, 6601], sqft:[293.84, 303.61, 315.64, 299.72, 303.8], lsr:[66.0, 64.0, 75.0, 72.0, 69.0] };
+        mvCanvas._movementData = {
+          labels: labels,
+          contract: contractKeys.map((k,i)=>parseInt(v[k])||def.contract[i]),
+          sold:     salesKeys.map((k,i)=>parseInt(v[k])||def.sold[i]),
+          sqft:     sqftKeys.map((k,i)=>parseFloat(v[k])||def.sqft[i]),
+          lsr:      lsrKeys.map((k,i)=>parseFloat(v[k])||def.lsr[i])
+        };
+        drawMovementChart();
+      }
+
+
+      const activeCur = parseInt(v['active-0']);
+      const soldCur   = parseInt(v['sales-0']);
+      const sqftCur   = parseFloat(v['sqft-0']);
+      const lsrCur    = parseFloat(v['lsr-0']);
+      const ucCur     = parseInt(v['contract-0']);
+      if(activeCur) {
+        document.querySelectorAll('.stat-active').forEach(el=>el.textContent=activeCur.toLocaleString());
+      }
+      if(soldCur)   document.querySelectorAll('.stat-sold').forEach(el=>el.textContent=soldCur.toLocaleString());
+      if(sqftCur)   document.querySelectorAll('.stat-sqft').forEach(el=>el.textContent='$'+Math.round(sqftCur));
+      if(lsrCur)    document.querySelectorAll('.stat-lsr').forEach(el=>el.textContent=Math.round(lsrCur)+'%');
+      if(ucCur)     document.querySelectorAll('.stat-uc').forEach(el=>el.textContent=ucCur.toLocaleString());
+
+      // ── Pg 10 band tables ──
+      renderBandTable('ev-tbody', 'ev', EV_BANDS);
+      renderBandTable('nev-tbody', 'nev', NEV_BANDS);
+      updateDomStats(v);
+
+      // ── Pg 11 KW/iBuyer table ──
+      buildKWRows(v);
+
+      alert('Data loaded.');
+    } catch(err) {
+      alert('JSON error: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function buildKWRows(v) {
+  const totalClosed = parseInt(v['sales-0']) || 7148;
+  const totalClosedPri = parseInt(v['sales-1']) || 7195;
+
+  function ds(cur, pri, isShare) {
+    // Returns a small colored delta span
+    const c = parseFloat(cur), p = parseFloat(pri);
+    if(isNaN(c) || isNaN(p) || p === 0) return '';
+    const d = c - p;
+    if(d === 0) return '';
+    const arrow = d > 0 ? '↑' : '↓';
+    const cls = d > 0 ? 'td-up' : 'td-down';
+    const val = isShare ? Math.abs(d).toFixed(2)+'%' : Math.abs(Math.round(d));
+    return `<span class="${cls}" style="font-size:13px;font-weight:600;margin-left:6px;opacity:.85;">${arrow}&thinsp;${val}</span>`;
+  }
+
+  // ── KW TABLE ──
+  const kwTb = document.getElementById('kw-tbody');
+  if(kwTb) {
+    kwTb.innerHTML = '';
+    const kwRows = [
+      { label: 'KW All Offices',    prefix: 'kw-all', shareKey: 'kw-all-mktshare' },
+      { label: 'KW Sonoran Living', prefix: 'kwsl',   shareKey: 'kwsl-mktshare'   },
+    ];
+    kwRows.forEach(r => {
+      const active     = v[r.prefix+'-active-cur']       || '—';
+      const activePri  = v[r.prefix+'-active-pri']       || '0';
+      const soon       = v[r.prefix+'-coming-soon-cur']  || '—';
+      const soonPri    = v[r.prefix+'-coming-soon-pri']  || '0';
+      const newList    = v[r.prefix+'-new-list-cur']     || '—';
+      const newListPri = v[r.prefix+'-new-list-pri']     || '0';
+      const contracted    = v[r.prefix+'-contracted-cur']  || '—';
+      const contractedPri = v[r.prefix+'-contracted-pri']  || '0';
+      const closed     = v[r.prefix+'-closed-cur']       || '—';
+      const closedPri  = v[r.prefix+'-closed-pri']       || '0';
+      const shareCur = parseFloat(v[r.shareKey+'-cur']) || 0;
+      const sharePri = parseFloat(v[r.shareKey+'-pri']) || 0;
+      const shareStr = shareCur ? shareCur.toFixed(2)+'%' : '—';
+      const chgVal = shareCur && sharePri ? shareCur - sharePri : null;
+      const chgStr = chgVal !== null ? (chgVal >= 0 ? '+' : '') + chgVal.toFixed(2)+'%' : '—';
+      const chgCls = chgVal !== null ? (chgVal >= 0 ? 'td-up' : 'td-down') : '';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="td-city" style="font-size:13px;">${r.label}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${active}</span>${ds(active,activePri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${soon}</span>${ds(soon,soonPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${newList}</span>${ds(newList,newListPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${contracted}</span>${ds(contracted,contractedPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${closed}</span>${ds(closed,closedPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${shareStr}</span><span class="td-flat">&mdash;</span></td>`
+        +`<td class="${chgCls}" style="font-weight:600;">${chgStr}</td>`;
+      kwTb.appendChild(tr);
+    });
+  }
+
+  // ── IBR TABLE ──
+  const ibrTb = document.getElementById('ibr-tbody');
+  if(ibrTb) {
+    ibrTb.innerHTML = '';
+    const ibrRows = [
+      { label: 'Opendoor',         prefix: 'ibr-opendoor'      },
+      { label: 'Offerpad',         prefix: 'ibr-offerpad'      },
+      { label: 'Citiea',           prefix: 'ibr-citiea'        },
+      { label: 'Redfin',           prefix: 'ibr-redfin'        },
+      { label: 'Homie',            prefix: 'ibr-homie'         },
+      { label: 'Flat Fee / Other', prefix: 'ibr-flatfee-other' },
+    ];
+    ibrRows.forEach(r => {
+      const active    = v[r.prefix+'-active-cur']  || '0';
+      const activePri = v[r.prefix+'-active-pri']  || '0';
+      const pending   = v[r.prefix+'-pending-cur'] || '—';
+      const pendingPri= v[r.prefix+'-pending-pri'] || '0';
+      const closed    = parseInt(v[r.prefix+'-closed-cur'])  || 0;
+      const closedPri = parseInt(v[r.prefix+'-closed-pri'])  || 0;
+      const shareCur = totalClosed ? (closed / totalClosed * 100) : 0;
+      const sharePri_stored = parseFloat(v[r.prefix+'-share-pri']);
+      const sharePri = !isNaN(sharePri_stored) ? sharePri_stored
+                      : (totalClosedPri ? closedPri / totalClosedPri * 100 : 0);
+      const shareStr = shareCur.toFixed(2)+'%';
+      const chgVal = shareCur - sharePri;
+      const chgStr = (chgVal >= 0 ? '+' : '') + chgVal.toFixed(2)+'%';
+      const chgCls = chgVal >= 0 ? 'td-up' : 'td-down';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="td-city" style="font-size:13px;">${r.label}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${active}</span>${ds(active,activePri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${pending}</span>${ds(pending,pendingPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${closed}</span>${ds(closed,closedPri,false)}</td>`
+        +`<td><span style="font-weight:500;font-size:13px;">${shareStr}</span><span class="td-flat">&mdash;</span></td>`
+        +`<td class="${chgCls}" style="font-weight:600;">${chgStr}</td>`;
+      ibrTb.appendChild(tr);
+    });
+  }
+}
+
+// ═══ LIGHTBOX ═══
+const snapshotImages = [...REPORT_CONFIG.snapshotImages];
+let lightboxIndex = 0;
+
+function openLightbox(idx) {
+  const img = snapshotImages[idx];
+  if(!img || !img.url) return;
+  lightboxIndex = idx;
+  document.getElementById('lightboxImg').src = img.url;
+  document.getElementById('lightboxCaption').textContent = img.label;
+  const valid = snapshotImages.filter(i=>i.url).length;
+  document.getElementById('lightboxCounter').textContent = (idx+1) + ' / ' + valid;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+function openLightboxDirect(url, label) {
+  if(!url) return;
+  document.getElementById('lightboxImg').src = url;
+  document.getElementById('lightboxCaption').textContent = label || '';
+  document.getElementById('lightboxCounter').textContent = '';
+  document.getElementById('lightbox').classList.add('open');
+}
+function lightboxNav(dir) {
+  const valid = snapshotImages.map((s,i)=>s.url?i:null).filter(i=>i!==null);
+  const cur = valid.indexOf(lightboxIndex);
+  const next = valid[(cur+dir+valid.length)%valid.length];
+  if(next !== undefined) openLightbox(next);
+}
+document.getElementById('lightbox').addEventListener('click', function(e){ if(e.target===this) closeLightbox(); });
+
+function renderSnapshotGallery() {
+  const gallery = document.getElementById('snapshotGallery');
+  gallery.innerHTML = '';
+  snapshotImages.forEach((img, i) => {
+    const div = document.createElement('div');
+    div.className = 'snapshot-thumb';
+    div.onclick = () => openLightbox(i);
+    if(img.url) {
+      div.innerHTML = `<img src="${img.url}" alt="${img.label}"><div class="snapshot-thumb-label">${img.label}</div>`;
+    } else {
+      div.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px;"><div style="font-size:18px;color:rgba(245,166,35,.18);">◈</div><div style="font-size:7px;font-weight:600;letter-spacing:.05em;color:rgba(245,166,35,.22);text-transform:uppercase;text-align:center;">${img.label}</div></div><div class="snapshot-thumb-label">${img.label}</div>`;
+    }
+    gallery.appendChild(div);
+  });
+}
+
+// ═══ TABLE RENDERERS ═══
+function cmiClass(v) { const n=parseFloat(v); return n>110?'td-cmi-high':n<90?'td-down':'td-neutral'; }
+function chgClass(v) { const s=String(v); return s.startsWith('+')? 'td-up': (s.startsWith('-')||s.startsWith('−'))? 'td-down': ''; }
+
+function renderMarketTable(tbodyId, rows) {
+  const tb = document.getElementById(tbodyId);
+  if(!tb) return;
+  tb.innerHTML = '';
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="td-city" style="font-size:13px;">${r.city||''}</td><td>${r.priceBand||''}</td><td>${r.active||''}</td><td>${r.uc||''}</td><td>${r.sold||''}</td><td class="${chgClass(r.mos)}">${r.mos||''}</td><td class="${cmiClass(r.cmi)}">${r.cmi||''}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function renderKWTable(tbodyId, rows) {
+  const tb = document.getElementById(tbodyId);
+  if(!tb) return;
+  tb.innerHTML = '';
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="td-city" style="font-size:13px;">${r.type||r.brokerage||''}</td><td>${r.transactions||r.listings||''}</td><td>${r.marketShare||''}</td><td>${r.avgDom||''}</td><td>${r.avgSpLp||''}</td><td class="${chgClass(r.trend||r.vsKw||'')}">${r.trend||r.vsKw||''}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+// ═══ LISTINGS CHART — 5 points with hover tooltip ═══
+function drawListingsChart(labels, activeData, newData) {
+  const canvas = document.getElementById('listingsChart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const L = labels || REPORT_CONFIG.listingsData.map(d=>d.label);
+  const A = activeData || REPORT_CONFIG.listingsData.map(d=>d.activeListings);
+  const N = newData || REPORT_CONFIG.listingsData.map(d=>d.newListings);
+
+  const pad = {l:60, r:52, t:28, b:44};
+  const cW = W - pad.l - pad.r;
+  const cH = H - pad.t - pad.b;
+
+  ctx.fillStyle='#111316'; ctx.fillRect(0,0,W,H);
+
+  const allV = [...A, ...N].filter(v=>v!=null);
+  const minV = Math.min(...allV)*0.92;
+  const maxV = Math.max(...allV)*1.05;
+  const n = L.length;
+
+  function xp(i){ return pad.l + (i/(n-1))*cW; }
+  function yp(v){ return pad.t + cH - ((v-minV)/(maxV-minV))*cH; }
+
+  // Grid
+  for(let t=0;t<=4;t++){
+    const y=pad.t+(t/4)*cH;
+    const v=maxV-(t/4)*(maxV-minV);
+    ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    ctx.fillStyle='rgba(245,245,240,.3)';ctx.font='9px "IBM Plex Mono",monospace';ctx.textAlign='right';
+    ctx.fillText(Math.round(v).toLocaleString(), pad.l-6, y+3);
+  }
+
+  // Vertical reference lines
+  for(let i=0;i<n;i++){
+    ctx.strokeStyle='rgba(245,166,35,.08)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(xp(i),pad.t);ctx.lineTo(xp(i),pad.t+cH);ctx.stroke();
+  }
+
+  function drawLine(data, color, legendX, legendLabel) {
+    // Line only — no area fill
+    ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';
+    data.forEach((v,i)=>{ const x=xp(i),y=yp(v); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke();
+    // Dots
+    data.forEach((v,i)=>{
+      ctx.beginPath();ctx.arc(xp(i),yp(v),5,0,Math.PI*2);
+      ctx.fillStyle=color;ctx.fill();
+      ctx.strokeStyle='rgba(17,17,17,.8)';ctx.lineWidth=1.5;ctx.stroke();
+    });
+    // Legend
+    ctx.fillStyle=color;ctx.fillRect(legendX,pad.t-18,14,3);
+    ctx.fillStyle='rgba(245,245,240,.55)';ctx.font='9px "IBM Plex Mono",monospace';ctx.textAlign='left';
+    ctx.fillText(legendLabel, legendX+18, pad.t-12);
+  }
+
+  drawLine(A,'#F5A623', pad.l, 'Active Listings');
+  drawLine(N,'#8FB89A', pad.l+140, 'New Listings');
+
+  // X labels
+  ctx.fillStyle='rgba(245,245,240,.4)';ctx.font='9.5px "IBM Plex Mono",monospace';ctx.textAlign='center';
+  L.forEach((l,i)=>ctx.fillText(l, xp(i), H-10));
+
+  // Store for tooltip hit testing
+  canvas._chartData = { L, A, N, xp, yp, pad };
+}
+
+// ═══ PG 8: MOVEMENT CHART ═══
+// Shows Under Contract, Sold, $/SqFt (right axis), LSR (right axis) across 5 timepoints
+function drawMovementChart() {
+  const canvas = document.getElementById('movementChart');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#111316'; ctx.fillRect(0,0,W,H);
+
+  // Pull data from REPORT_CONFIG fallback — JSON load overrides via _movementData
+  const d = canvas._movementData || {
+    labels: REPORT_CONFIG.listingsData.map(d=>d.label),
+    contract: [8112,7630,8438,8639,8670],
+    sold:     [6944,5611,4476,7195,7148],
+    sqft:     [301.19,291.66,316.88,315.63,303.60],
+    lsr:      [73.0,70.0,69.0,75.0,74.0]
+  };
+
+  const L = d.labels, n = L.length;
+  const pad = {l:60, r:64, t:28, b:40};
+  const cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
+
+  // Left axis: Under Contract + Sold (volume)
+  const volAll = [...d.contract, ...d.sold];
+  const volMin = Math.min(...volAll)*0.92, volMax = Math.max(...volAll)*1.06;
+  // Right axis: $/SqFt
+  const sqftMin = Math.min(...d.sqft)*0.98, sqftMax = Math.max(...d.sqft)*1.02;
+
+  function xp(i){ return pad.l+(i/(n-1))*cW; }
+  function yVol(v){ return pad.t+cH-((v-volMin)/(volMax-volMin))*cH; }
+  function ySqft(v){ return pad.t+cH-((v-sqftMin)/(sqftMax-sqftMin))*cH; }
+
+  // Grid (left axis ticks)
+  for(let t=0;t<=3;t++){
+    const y=pad.t+(t/3)*cH;
+    const v=volMax-(t/3)*(volMax-volMin);
+    ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    ctx.fillStyle='rgba(245,245,240,.28)';ctx.font='8.5px "IBM Plex Mono",monospace';ctx.textAlign='right';
+    ctx.fillText(Math.round(v).toLocaleString(),pad.l-5,y+3);
+  }
+  // Right axis label ($/SqFt)
+  for(let t=0;t<=3;t++){
+    const v=sqftMin+(t/3)*(sqftMax-sqftMin);
+    const y=pad.t+cH-(t/3)*cH;
+    ctx.fillStyle='rgba(245,166,35,.4)';ctx.font='8px "IBM Plex Mono",monospace';ctx.textAlign='left';
+    ctx.fillText('$'+v.toFixed(0),W-pad.r+5,y+3);
+  }
+  // Vertical refs
+  for(let i=0;i<n;i++){
+    ctx.strokeStyle='rgba(245,166,35,.06)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(xp(i),pad.t);ctx.lineTo(xp(i),pad.t+cH);ctx.stroke();
+  }
+
+  function drawLine(data, yFn, color, legendX, legendLabel, dash) {
+    ctx.save();
+    if(dash) ctx.setLineDash(dash);
+    ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.lineJoin='round';
+    data.forEach((v,i)=>{ const x=xp(i),y=yFn(v); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke();
+    ctx.setLineDash([]);
+    data.forEach((v,i)=>{
+      ctx.beginPath();ctx.arc(xp(i),yFn(v),4.5,0,Math.PI*2);
+      ctx.fillStyle=color;ctx.fill();
+      ctx.strokeStyle='rgba(17,17,17,.8)';ctx.lineWidth=1.5;ctx.stroke();
+    });
+    // Legend
+    if(dash) { ctx.setLineDash(dash); }
+    ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;
+    ctx.moveTo(legendX,pad.t-15);ctx.lineTo(legendX+16,pad.t-15);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+    ctx.fillStyle=color;ctx.font='8.5px "IBM Plex Mono",monospace';ctx.textAlign='left';
+    ctx.fillText(legendLabel,legendX+20,pad.t-11);
+  }
+
+  drawLine(d.contract, yVol, '#F5A623', pad.l,     'Under Contract');
+  drawLine(d.sold,     yVol, '#8FB89A', pad.l+130,  'Sold');
+  drawLine(d.sqft,     ySqft,'#a0bfdf', pad.l+200,  '$/SqFt →', [4,3]);
+
+  // X labels
+  ctx.fillStyle='rgba(245,245,240,.38)';ctx.font='9px "IBM Plex Mono",monospace';ctx.textAlign='center';
+  L.forEach((l,i)=>ctx.fillText(l,xp(i),H-6));
+
+  canvas._movementData = d;
+  // Store y positions for each series so tooltip can hit-test without recomputing axes
+  canvas._movementData._yContract = d.contract.map(v => yVol(v));
+  canvas._movementData._ySold     = d.sold.map(v => yVol(v));
+  canvas._movementData._ySqft     = d.sqft.map(v => ySqft(v));
+}
+
+// Tooltip on chart hover
+const listChart = document.getElementById('listingsChart');
+const chartTip = document.getElementById('chartTooltip');
+listChart.addEventListener('mousemove', function(e) {
+  const d = this._chartData;
+  if(!d) return;
+  const rect = this.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (this.width / rect.width);
+  const my = (e.clientY - rect.top) * (this.height / rect.height);
+  let hit = null;
+  d.L.forEach((l,i) => {
+    const xa=d.xp(i), ya=d.yp(d.A[i]);
+    const xn=d.xp(i), yn=d.yp(d.N[i]);
+    if(Math.hypot(mx-xa,my-ya)<12) hit = {label:l, type:'Active', val:d.A[i]};
+    if(Math.hypot(mx-xn,my-yn)<12) hit = {label:l, type:'New', val:d.N[i]};
+  });
+  if(hit) {
+    chartTip.style.display='block';
+    chartTip.style.left = (e.clientX - this.getBoundingClientRect().left - 6) + 'px';
+    chartTip.style.top = (e.clientY - this.getBoundingClientRect().top - 68) + 'px';
+    chartTip.innerHTML = `<strong>${hit.label}</strong><br>${hit.type} Listings: <strong>${hit.val.toLocaleString()}</strong>`;
+  } else {
+    chartTip.style.display='none';
+  }
+});
+listChart.addEventListener('mouseleave', ()=>{ chartTip.style.display='none'; });
+
+// Movement chart tooltip (pg 8)
+const mvChart = document.getElementById('movementChart');
+const mvTip   = document.getElementById('movementChartTooltip');
+if(mvChart && mvTip) {
+  // Style the tooltip to match #chartTooltip
+  mvTip.style.cssText = 'display:none;position:absolute;background:rgba(8,8,8,.95);border:1px solid #8a6d3f;padding:8px 12px;font-size:10.5px;font-weight:400;color:#F2F4F7;pointer-events:none;z-index:100;letter-spacing:.05em;line-height:1.7;';
+  mvChart.addEventListener('mousemove', function(e) {
+    const d = this._movementData;
+    if(!d) return;
+    const rect = this.getBoundingClientRect();
+    const scaleX = this.width / rect.width;
+    const scaleY = this.height / rect.height;
+    const mx = (e.clientX - rect.left) * scaleX;
+    const my = (e.clientY - rect.top)  * scaleY;
+    const W=this.width, H=this.height;
+    const pad={l:60,r:64,t:28,b:40};
+    const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
+    const n = d.labels.length;
+    function xp(i){ return pad.l+(i/(n-1))*cW; }
+    let hit = null;
+    d.labels.forEach((lbl,i) => {
+      if(Math.hypot(mx-xp(i), my-d._yContract[i]) < 12)
+        hit = { label: lbl, lines: [
+          {color:'#F5A623', text:'Under Contract: <strong>'+d.contract[i].toLocaleString()+'</strong>'},
+          {color:'#8FB89A', text:'Sold: <strong>'+d.sold[i].toLocaleString()+'</strong>'},
+          {color:'#a0bfdf', text:'$/SqFt: <strong>$'+d.sqft[i].toFixed(2)+'</strong>'}
+        ]};
+      if(Math.hypot(mx-xp(i), my-d._ySold[i]) < 12)
+        hit = { label: lbl, lines: [
+          {color:'#F5A623', text:'Under Contract: <strong>'+d.contract[i].toLocaleString()+'</strong>'},
+          {color:'#8FB89A', text:'Sold: <strong>'+d.sold[i].toLocaleString()+'</strong>'},
+          {color:'#a0bfdf', text:'$/SqFt: <strong>$'+d.sqft[i].toFixed(2)+'</strong>'}
+        ]};
+      if(Math.hypot(mx-xp(i), my-d._ySqft[i]) < 12)
+        hit = { label: lbl, lines: [
+          {color:'#a0bfdf', text:'$/SqFt: <strong>$'+d.sqft[i].toFixed(2)+'</strong>'},
+          {color:'#F5A623', text:'Under Contract: <strong>'+d.contract[i].toLocaleString()+'</strong>'},
+          {color:'#8FB89A', text:'Sold: <strong>'+d.sold[i].toLocaleString()+'</strong>'}
+        ]};
+    });
+    if(hit) {
+      mvTip.style.display = 'block';
+      mvTip.style.left = (e.clientX - rect.left + 12) + 'px';
+      mvTip.style.top  = (e.clientY - rect.top  - 60) + 'px';
+      mvTip.innerHTML = `<strong style="color:#F5A623;font-size:9px;letter-spacing:.05em;text-transform:uppercase;">${hit.label}</strong><br>`
+        + hit.lines.map(l=>`<span style="color:${l.color};">◆</span> ${l.text}`).join('<br>');
+    } else {
+      mvTip.style.display = 'none';
+    }
+  });
+  mvChart.addEventListener('mouseleave', ()=>{ mvTip.style.display='none'; });
+}
+
+// ═══ RATE CHART PLACEHOLDER ═══
+function drawRateChartPlaceholder() {
+  const canvas = document.getElementById('rateChartCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.fillStyle='#111316';ctx.fillRect(0,0,W,H);
+  // Fake trend line
+  const pts=[[0,160],[80,150],[160,170],[240,140],[320,130],[400,145],[480,125],[560,110],[640,120],[712,105]];
+  ctx.beginPath();ctx.strokeStyle='rgba(245,166,35,.3)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+  pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(245,166,35,.2)';ctx.font='700 13px "IBM Plex Mono",monospace';ctx.textAlign='center';
+  ctx.fillText('MND RATE CHART — Paste imgur URL into rateChartUrl in REPORT_CONFIG to replace', W/2, H/2);
+}
+
+// ═══ SELLER CANVAS ═══
+function drawSellerCanvas() {
+  const canvas = document.getElementById('sellerCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#111';ctx.fillRect(0,0,W,H);
+
+  const cols=[
+    {label:'THE CONCESSION TRAP', icon:'55%',   lines:['June closed at 55%','Up to 58.4% in July'], color:'#D19595'},
+    {label:'THE MARKET SHIFT',    icon:'↑',     lines:['8 of 18 CMI cities','moving toward sellers'], color:'#8FB89A'},
+    {label:'THE OPPORTUNITY',     icon:'69%',   lines:['Listing success rate','price it right'], color:'#8FB89A'}
+  ];
+
+  const cw=W/3;
+  cols.forEach((col,i)=>{
+    const cx=i*cw+cw/2;
+    ctx.fillStyle=i===1?'rgba(245,166,35,.04)':'rgba(255,255,255,.015)';
+    ctx.fillRect(i*cw+1,1,cw-2,H-2);
+    ctx.strokeStyle='rgba(42,42,42,.9)';ctx.lineWidth=1;
+    ctx.strokeRect(i*cw+1,1,cw-2,H-2);
+    ctx.fillStyle=col.color;ctx.fillRect(i*cw+1,1,cw-2,4);
+
+    ctx.fillStyle='rgba(245,245,240,.38)';
+    ctx.font='700 9px "IBM Plex Mono",monospace';ctx.textAlign='center';
+    ctx.fillText(col.label, cx, 32);
+
+    ctx.fillStyle=col.color;
+    ctx.font='700 56px "IBM Plex Mono",monospace';ctx.textAlign='center';
+    ctx.fillText(col.icon, cx, H/2+10);
+
+    ctx.fillStyle='rgba(245,245,240,.72)';
+    ctx.font='300 13px "IBM Plex Mono",monospace';
+    col.lines.forEach((line,li)=>ctx.fillText(line, cx, H/2+46+li*22));
+  });
+  ctx.strokeStyle='rgba(245,166,35,.12)';ctx.lineWidth=1;
+  [cw,cw*2].forEach(x=>{ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();});
+}
+
+// ═══ PHOENIX SKYLINE ═══
+function drawPhoenixSkyline() {
+  const canvas=document.getElementById('phoenixCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=816,H=1056;
+  const skyG=ctx.createLinearGradient(0,0,0,H*.65);
+  skyG.addColorStop(0,'#080a14');skyG.addColorStop(.4,'#0d1020');skyG.addColorStop(.7,'#1a1008');skyG.addColorStop(1,'#2a1a08');
+  ctx.fillStyle=skyG;ctx.fillRect(0,0,W,H);
+  const rng=s=>{let x=s;return()=>{x=((x*1664525+1013904223)&0xffffffff)/0xffffffff;return x;};};
+  const rand=rng(99);
+  for(let i=0;i<280;i++){const sx=rand()*W,sy=rand()*H*.55;ctx.beginPath();ctx.arc(sx,sy,rand()*1.2+.3,0,Math.PI*2);ctx.fillStyle=`rgba(255,248,230,${rand()*.7+.1})`;ctx.fill();}
+  const mG=ctx.createRadialGradient(648,98,3,648,98,30);mG.addColorStop(0,'rgba(255,245,205,.98)');mG.addColorStop(.7,'rgba(240,225,180,.9)');mG.addColorStop(1,'rgba(220,200,150,.5)');
+  ctx.fillStyle=mG;ctx.beginPath();ctx.arc(648,98,30,0,Math.PI*2);ctx.fill();
+  const mHalo=ctx.createRadialGradient(648,98,30,648,98,120);mHalo.addColorStop(0,'rgba(245,166,35,.1)');mHalo.addColorStop(1,'transparent');
+  ctx.fillStyle=mHalo;ctx.beginPath();ctx.arc(648,98,120,0,Math.PI*2);ctx.fill();
+  const hG=ctx.createLinearGradient(0,H*.55,0,H*.7);hG.addColorStop(0,'transparent');hG.addColorStop(1,'rgba(201,140,60,.22)');
+  ctx.fillStyle=hG;ctx.fillRect(0,H*.55,W,H*.15);
+  ctx.fillStyle='rgba(18,13,7,.92)';ctx.beginPath();ctx.moveTo(0,H);
+  [[0,692],[60,662],[120,642],[180,657],[240,627],[300,647],[360,620],[420,640],[480,622],[540,644],[600,617],[660,637],[720,652],[780,637],[816,657],[816,H]].forEach(([x,y])=>ctx.lineTo(x,y));
+  ctx.closePath();ctx.fill();
+  const BASE=730;
+  const blds=[{x:30,w:18,h:62,fl:6},{x:55,w:24,h:92,fl:9},{x:84,w:20,h:77,fl:7},{x:140,w:28,h:182,fl:16,ant:1},{x:172,w:22,h:142,fl:12},{x:198,w:16,h:102,fl:9},{x:218,w:26,h:222,fl:20,ant:1},{x:248,w:30,h:262,fl:24,ant:1},{x:282,w:24,h:202,fl:18},{x:310,w:18,h:162,fl:14},{x:332,w:28,h:302,fl:28,ant:1},{x:364,w:22,h:242,fl:22},{x:390,w:18,h:182,fl:16},{x:412,w:32,h:282,fl:26,ant:1},{x:448,w:26,h:202,fl:18},{x:478,w:20,h:152,fl:13},{x:502,w:24,h:192,fl:17},{x:530,w:28,h:242,fl:22,ant:1},{x:562,w:22,h:162,fl:14},{x:588,w:18,h:122,fl:10},{x:610,w:26,h:182,fl:16},{x:640,w:20,h:132,fl:11},{x:664,w:16,h:97,fl:8},{x:684,w:22,h:112,fl:10},{x:710,w:18,h:82,fl:7},{x:732,w:24,h:102,fl:9},{x:760,w:18,h:72,fl:6},{x:782,w:20,h:87,fl:7}];
+  const rb=rng(77);
+  blds.forEach(b=>{
+    const bG=ctx.createLinearGradient(b.x,BASE-b.h,b.x+b.w,BASE);bG.addColorStop(0,'rgba(32,28,20,.97)');bG.addColorStop(1,'rgba(18,16,10,.99)');
+    ctx.fillStyle=bG;ctx.fillRect(b.x,BASE-b.h,b.w,b.h);
+    ctx.strokeStyle='rgba(245,166,35,.06)';ctx.lineWidth=.5;ctx.strokeRect(b.x,BASE-b.h,b.w,b.h);
+    if(b.fl){const cols=Math.max(1,Math.floor((b.w-4)/5)),fh=Math.floor(b.h/b.fl);for(let f=0;f<b.fl;f++)for(let c=0;c<cols;c++)if(rb()>.38){const wx=b.x+2+c*5,wy=BASE-b.h+3+f*fh,warm=rb()>.45,br=.25+rb()*.55;ctx.fillStyle=warm?`rgba(255,210,120,${br})`:`rgba(200,220,255,${br*.7})`;ctx.fillRect(wx,wy,3,Math.min(fh-2,4));}}
+    if(b.ant){ctx.strokeStyle='rgba(245,166,35,.42)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(b.x+b.w/2,BASE-b.h);ctx.lineTo(b.x+b.w/2,BASE-b.h-33);ctx.stroke();ctx.beginPath();ctx.arc(b.x+b.w/2,BASE-b.h-33,2,0,Math.PI*2);ctx.fillStyle='rgba(255,80,80,.7)';ctx.fill();}
+  });
+  const gG=ctx.createLinearGradient(0,BASE,0,H);gG.addColorStop(0,'rgba(14,10,5,.95)');gG.addColorStop(1,'rgba(5,3,2,1)');ctx.fillStyle=gG;ctx.fillRect(0,BASE,W,H-BASE);
+  ctx.fillStyle='rgba(22,18,12,.95)';ctx.fillRect(0,BASE+10,W,40);
+  ctx.strokeStyle='rgba(245,166,35,.1)';ctx.setLineDash([18,14]);ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,BASE+30);ctx.lineTo(W,BASE+30);ctx.stroke();ctx.setLineDash([]);
+  const sags=[{x:22,h:96},{x:76,h:71},{x:700,h:101},{x:766,h:73},{x:800,h:56}];
+  sags.forEach(s=>{ctx.fillStyle='rgba(5,4,2,.97)';ctx.fillRect(s.x-4,BASE-s.h,8,s.h);const aH=Math.floor(s.h*.45);ctx.fillRect(s.x-16,BASE-aH,14,5);ctx.fillRect(s.x-16,BASE-aH-26,5,26);ctx.fillRect(s.x+4,BASE-aH,14,5);ctx.fillRect(s.x+13,BASE-aH-22,5,22);});
+  const hazeG=ctx.createLinearGradient(0,BASE-80,0,BASE);hazeG.addColorStop(0,'transparent');hazeG.addColorStop(1,'rgba(201,130,40,.05)');ctx.fillStyle=hazeG;ctx.fillRect(0,BASE-80,W,80);
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAGE VIEWER — pages stay in DOM, visibility is CSS only
+// SPREAD LAYOUT: pg1 solo | 2-3 | 4-5 | 6-7 | 8-9 | 10-11 | 12-13 | 14-15 | pg16 solo
+// ═══════════════════════════════════════════════════════════
+const TOTAL=16;
+let current=1;
+let spreadMode=false;
+
+// Define which pages are single-only (never part of a spread pair)
+const SINGLE_ONLY = new Set([1, 16]);
+
+// Returns the spread "slot" index for a given page in book mode
+// Slots: 0=pg1, 1=pg2+3, 2=pg4+5, 3=pg6+7, 4=pg8+9, 5=pg10+11, 6=pg12+13, 7=pg14+15, 8=pg16
+function pageToSlot(pg) {
+  if(pg===1) return 0;
+  if(pg===16) return 8;
+  return Math.ceil((pg-1)/2); // pages 2-15 → slots 1-7
+}
+function slotToPages(slot) {
+  if(slot===0) return [1];
+  if(slot===8) return [16];
+  return [slot*2, slot*2+1];
+}
+const TOTAL_SLOTS=9;
+let currentSlot=0;
+
+function buildThumbs() {
+  const strip=document.getElementById('thumbStrip');
+  for(let i=1;i<=TOTAL;i++){
+    const t=document.createElement('div');
+    t.className='thumb'+(i===1?' active':'');
+    t.textContent=String(i).padStart(2,'0');
+    t.onclick=()=>goTo(i);
+    t.id='thumb-'+i;
+    strip.appendChild(t);
+  }
+}
+
+function showPages(visibleSet) {
+  const isMobile = window.innerWidth < 860;
+  for(let i=1;i<=TOTAL;i++){
+    const p=document.getElementById('page-'+i);
+    if(!p) continue;
+    if(visibleSet.has(i)){
+      p.style.display='block';
+      if(!isMobile){
+        p.style.cssFloat='none';
+        p.style.margin='0';
+      }
+    } else {
+      p.style.display='none';
+    }
+  }
+}
+
+function goTo(n) {
+  current=n;
+  if(spreadMode){
+    currentSlot=pageToSlot(n);
+    renderSpread();
+  } else {
+    renderSingle();
+  }
+  updateCounter();
+  updateThumbs();
+  if(!spreadMode && !_zoomed) window.scrollTo({top:0,behavior:'smooth'});
+  if(n===5) setTimeout(drawPhoenixSkyline,50);
+  if(n===9) setTimeout(drawSellerCanvas,50);
+}
+
+function renderSingle() {
+  const pw = document.getElementById('pageWrapper');
+  document.getElementById('spreadContainer').style.display='none';
+  pw.style.display='flex';
+  pw.style.flexDirection='row';
+  pw.style.justifyContent='center';
+  pw.style.alignItems='flex-start';
+  showPages(new Set([current]));
+  applyMobileScale();
+  document.getElementById('prevBtn').disabled=current===1;
+  document.getElementById('nextBtn').disabled=current===TOTAL;
+}
+
+function renderSpread() {
+  document.getElementById('pageWrapper').style.display='none';
+  const sc=document.getElementById('spreadContainer');
+  sc.style.display='flex';
+  sc.style.padding='20px';
+  const pages=slotToPages(currentSlot);
+  const visible=new Set(pages);
+  for(let i=1;i<=TOTAL;i++){
+    const p=document.getElementById('page-'+i);
+    if(!p) continue;
+    if(visible.has(i)){
+      p.style.display='block';
+      sc.appendChild(p);
+    } else {
+      p.style.display='none';
+      document.body.appendChild(p);
+    }
+  }
+  if(pages.length===2){
+    sc.style.flexDirection='row';
+    sc.style.justifyContent='center';
+    sc.style.alignItems='center';
+    sc.style.gap='2px';
+  } else {
+    sc.style.flexDirection='column';
+    sc.style.alignItems='center';
+    sc.style.justifyContent='center';
+    sc.style.gap='0';
+  }
+  // Scale spread to fit viewport width without scroll (non-zoom only)
+  if(!_zoomed) {
+    const totalW = pages.length === 2 ? (816 * 2 + 42) : 816 + 40;
+    const vw = window.innerWidth;
+    const scale = vw < totalW ? (vw / totalW) : 1;
+    sc.style.transform = scale < 1 ? `scale(${scale.toFixed(3)})` : '';
+    sc.style.transformOrigin = 'top center';
+    sc.style.marginBottom = scale < 1 ? `${Math.round(1056 * scale - 1056)}px` : '';
+  } else {
+    sc.style.transform = '';
+    sc.style.marginBottom = '';
+  }
+  document.getElementById('prevBtn').disabled=currentSlot===0;
+  document.getElementById('nextBtn').disabled=currentSlot===TOTAL_SLOTS-1;
+  current=pages[0];
+  // Redraw canvases that may be affected by layout shift
+  setTimeout(()=>{
+    if(pages.includes(5)) drawPhoenixSkyline();
+    if(pages.includes(6)) drawListingsChart();
+    if(pages.includes(8)) { if(typeof drawMovementChart==='function') drawMovementChart(); }
+    if(pages.includes(9)) drawSellerCanvas();
+  }, 30);
+}
+
+function changePage(dir) {
+  if(spreadMode){
+    const ns=currentSlot+dir;
+    if(ns>=0&&ns<TOTAL_SLOTS){ currentSlot=ns; current=slotToPages(ns)[0]; renderSpread(); updateCounter(); updateThumbs(); }
+  } else {
+    const nx=current+dir;
+    if(nx>=1&&nx<=TOTAL) goTo(nx);
+  }
+}
+
+function updateCounter() {
+  if(spreadMode){
+    const pages=slotToPages(currentSlot);
+    const txt=pages.length===2?(pages[0]+' — '+pages[1]+' / 16'):(pages[0]+' / 16');
+    document.getElementById('pageCounter').textContent=txt;
+    var _fc=document.getElementById('fsCounter'); if(_fc) _fc.textContent=txt;
+  } else {
+    document.getElementById('pageCounter').textContent=current+' / 16';
+    var _fc2=document.getElementById('fsCounter'); if(_fc2) _fc2.textContent=current+' / 16';
+  }
+}
+
+function updateThumbs() {
+  const active=spreadMode?new Set(slotToPages(currentSlot)):new Set([current]);
+  for(let i=1;i<=TOTAL;i++){
+    const t=document.getElementById('thumb-'+i);
+    if(t) t.className='thumb'+(active.has(i)?' active':'');
+  }
+}
+
+// ═══ SPREAD TOGGLE ═══
+function toggleSpread() {
+  spreadMode=!spreadMode;
+  document.getElementById('spreadBtn').textContent=spreadMode?'☐ Single View':'☷ Book View';
+  if(spreadMode){
+    currentSlot=pageToSlot(current);
+    renderSpread();
+  } else {
+    // Return all pages to pageWrapper
+    for(let i=1;i<=TOTAL;i++){
+      const p=document.getElementById('page-'+i);
+      if(p) document.getElementById('pageWrapper').appendChild(p);
+    }
+    renderSingle();
+  }
+  updateCounter();
+  updateThumbs();
+}
+
+// ═══ ZOOM / MOBILE SCALE ═══
+function applyMobileScale() {
+  const vw = window.innerWidth;
+  if (vw < 860) {
+    const scale = (vw / 816).toFixed(4);
+    document.documentElement.style.setProperty('--mobile-scale', scale);
+    document.querySelectorAll('.page').forEach(p => {
+      p.style.transform = '';
+      p.style.transformOrigin = '';
+    });
+  } else {
+    document.documentElement.style.removeProperty('--mobile-scale');
+    document.querySelectorAll('.page').forEach(p => {
+      p.style.transform = '';
+      p.style.transformOrigin = '';
+    });
+  }
+}
+
+let _zoomed = false;
+function toggleZoom() {
+  _zoomed = !_zoomed;
+  const btn = document.querySelector('.fullscreen-btn');
+  const wrapper = document.getElementById('pageWrapper');
+  const thumbStrip = document.getElementById('thumbStrip');
+  const topControls = document.querySelector('.top-controls');
+  const viewerHeader = document.querySelector('.viewer-header');
+
+  if (_zoomed) {
+    btn.textContent = '✕ Exit Zoom';
+    viewerHeader.style.display = 'none';
+    thumbStrip.style.display = 'none';
+    topControls.style.position = 'fixed';
+    topControls.style.top = '0';
+    topControls.style.left = '0';
+    topControls.style.right = '0';
+    topControls.style.zIndex = '9999';
+    topControls.style.background = '#050505';
+    topControls.style.padding = '12px 0';
+    topControls.style.marginBottom = '0';
+    wrapper.style.position = 'fixed';
+    wrapper.style.inset = '0';
+    wrapper.style.top = '60px';
+    wrapper.style.background = '#000';
+    wrapper.style.zIndex = '9000';
+    wrapper.style.display = 'flex';
+    wrapper.style.alignItems = 'center';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    scalePageToFit();
+  } else {
+    btn.textContent = '⤢ Zoom';
+    viewerHeader.style.display = '';
+    thumbStrip.style.display = '';
+    topControls.style.position = '';
+    topControls.style.top = '';
+    topControls.style.left = '';
+    topControls.style.right = '';
+    topControls.style.zIndex = '';
+    topControls.style.background = '';
+    topControls.style.padding = '';
+    topControls.style.marginBottom = '';
+    wrapper.style.position = '';
+    wrapper.style.inset = '';
+    wrapper.style.top = '';
+    wrapper.style.background = '';
+    wrapper.style.zIndex = '';
+    wrapper.style.display = '';
+    wrapper.style.alignItems = '';
+    wrapper.style.justifyContent = '';
+    wrapper.style.overflow = '';
+    document.body.style.overflow = '';
+    document.querySelectorAll('.page').forEach(p => {
+      p.style.transform = '';
+      p.style.transformOrigin = '';
+    });
+    applyMobileScale();
+  }
+}
+
+function scalePageToFit() {
+  if (!_zoomed) return;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight - 60;
+  const scale = Math.min(vw / 816, vh / 1056);
+  document.querySelectorAll('.page').forEach(p => {
+    p.style.transform = `scale(${scale.toFixed(4)})`;
+    p.style.transformOrigin = 'center center';
+  });
+}
+
+// Touch swipe support
+let _touchStartX = 0;
+document.addEventListener('touchstart', e => {
+  _touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].screenX - _touchStartX;
+  if (Math.abs(dx) > 50) changePage(dx < 0 ? 1 : -1);
+}, { passive: true });
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') changePage(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') changePage(-1);
+  if(e.key==='f'||e.key==='F') toggleZoom();
+});
+
+// ═══ JSON FILE INPUT — delegated to body so inputs survive DOM moves ═══
+document.body.addEventListener('change', function(e) {
+  if(e.target.id==='listingsJsonInput' || e.target.id==='cromfordJsonInput') {
+    loadMasterJson(e);
+  }
+});
+function openFactLightbox(numText, contentHTML) {
+  document.getElementById('factLightboxNum').textContent = numText;
+  document.getElementById('factLightboxText').innerHTML = contentHTML;
+  document.getElementById('factLightbox').classList.add('open');
+}
+function closeFactLightbox() {
+  document.getElementById('factLightbox').classList.remove('close');
+  document.getElementById('factLightbox').classList.remove('open');
+}
+document.getElementById('factLightbox').addEventListener('click', function(e){ if(e.target===this) closeFactLightbox(); });
+
+buildThumbs();
+document.getElementById('prevBtn').disabled=true;
+renderSnapshotGallery();
+applyConfig(REPORT_CONFIG);
+
+// Ensure all pages start inside pageWrapper
+(function(){
+  const pw=document.getElementById('pageWrapper');
+  for(let i=1;i<=TOTAL;i++){
+    const p=document.getElementById('page-'+i);
+    if(p&&p.parentElement!==pw) pw.appendChild(p);
+  }
+})();
+
+setTimeout(()=>{
+  drawListingsChart();
+  drawMovementChart();
+  drawPhoenixSkyline();
+  drawSellerCanvas();
+  drawRateChartPlaceholder();
+},300);
+
+applyMobileScale();
+window.addEventListener('resize', () => {
+  applyMobileScale();
+  if (_zoomed) scalePageToFit();
+});
+
+// ── PDF DOWNLOAD ──
+function downloadPDF() {
+  const pages = document.querySelectorAll('.page');
+  const pw = document.getElementById('pageWrapper');
+  const spreadContainer = document.getElementById('spreadContainer');
+
+  // Save current state
+  const savedDisplay = [];
+  pages.forEach((p, i) => savedDisplay.push(p.style.display));
+  const savedPWDisplay = pw.style.display;
+  const savedPWJustify = pw.style.justifyContent;
+  const spreadWasVisible = spreadContainer && spreadContainer.style.display !== 'none';
+
+  // Prepare for print: show all pages, neutralize wrapper flex
+  pages.forEach(p => {
+    p.style.display = 'block';
+    p.style.removeProperty('transform');
+    p.style.removeProperty('transform-origin');
+    p.style.removeProperty('margin-bottom');
+  });
+  pw.style.display = 'block';
+  pw.style.justifyContent = 'unset';
+  pw.style.padding = '0';
+  if (spreadContainer) spreadContainer.style.display = 'none';
+
+  window.print();
+
+  // Restore after dialog
+  setTimeout(() => {
+    pages.forEach((p, i) => { p.style.display = savedDisplay[i]; });
+    pw.style.display = savedPWDisplay;
+    pw.style.justifyContent = savedPWJustify;
+    pw.style.padding = '';
+    if (spreadContainer && spreadWasVisible) spreadContainer.style.display = '';
+    applyMobileScale();
+    goTo(current);
+  }, 1000);
+}
+
+
+try{document.fonts&&document.fonts.ready.then(function(){try{drawListingsChart();}catch(e){}try{drawMovementChart();}catch(e){}try{drawPhoenixSkyline();}catch(e){}try{drawSellerCanvas();}catch(e){}});}catch(e){}
+</script>
+</body>
+</html>
