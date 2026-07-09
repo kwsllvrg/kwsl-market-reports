@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Phoenix Market Report — June 2026 · Agent Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -88,21 +88,32 @@ body.spread-mode .page{display:none;}
 /* ── MOBILE RESPONSIVE ── */
 @media (max-width: 860px) {
   #spreadBtn { display: none !important; }
-  .thumb { width: 36px; height: 46px; font-size: 7px; }
 
-  /* Wrapper: flex-centered, comfortable spacing, no horizontal scroll */
-  .page-wrapper {
-    padding: 20px 0 40px;
-    overflow: hidden;
-  }
+  /* The 16-box page strip overpowers a phone screen; prev/next + counter is enough. */
+  .thumb-strip { display: none !important; }
 
-  /* Page: scale to fit viewport width via CSS custom property set by JS. */
+  /* Slim the header so report content isn't pushed off-screen. */
+  .viewer-header { margin-bottom: 10px; padding: 14px 16px 0; }
+  .viewer-header h1 { font-size: 12px; line-height: 1.45; }
+  .viewer-header p { font-size: 9px; margin-top: 4px; }
+
+  /* Compact, thumb-friendly controls. */
+  .top-controls { gap: 8px; margin-bottom: 14px; padding: 0 12px; }
+  .nav-btn { width: 44px; height: 44px; font-size: 17px; }
+  .page-counter { min-width: 52px; font-size: 11px; }
+  .fullscreen-btn { padding: 10px 12px; font-size: 8px; }
+
+  /* Full-width overview; pinch-zoom (now enabled) handles reading detail. */
+  .page-wrapper { padding: 6px 0 28px; overflow: hidden; }
   .page {
     flex-shrink: 0;
     transform-origin: top center;
     transform: scale(var(--mobile-scale, 1));
     margin-bottom: calc((var(--mobile-scale, 1) - 1) * 1056px);
   }
+
+  /* Skyline (pg 5) uses very dark tones that crush to near-black on phones; lift it on mobile only. */
+  #phoenixCanvas { filter: brightness(1.15) saturate(1.2) contrast(1.05); }
 }
 
 /* ── PAGE ELEMENTS ── */
