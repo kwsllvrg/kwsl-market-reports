@@ -33,7 +33,14 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;color:var(-
 .fullscreen-btn{background:none;border:1px solid var(--border);color:var(--gold-dim);padding:8px 16px;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:'Inter',-apple-system,sans-serif;transition:all .2s;}
 .fullscreen-btn:hover{border-color:var(--gold);color:var(--gold);}
 
-.thumb-strip{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;padding:0 20px;max-width:900px;margin-left:auto;margin-right:auto;}
+.thumb-strip{display:none;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;padding:0 20px;max-width:900px;margin-left:auto;margin-right:auto;}
+/* -- desktop edge navigation: thumb-strip removed; hover a side margin to reveal an arrow -- */
+.edge-nav{position:fixed;top:50%;transform:translateY(-50%);width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;line-height:0;background:rgba(20,20,21,.6);color:var(--ink-2);border:1px solid var(--hair);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .22s ease,color .2s,border-color .2s,background .2s;z-index:450;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
+.edge-prev{left:24px;} .edge-next{right:24px;}
+.edge-nav.show{opacity:1;pointer-events:auto;}
+.edge-nav:hover{color:var(--amber);border-color:var(--amber);background:rgba(20,20,21,.92);}
+@media (max-width:860px){.edge-nav{display:none !important;}}
+
 .thumb{width:44px;height:57px;background:var(--panel);border:1px solid var(--border);cursor:pointer;font-size:8px;font-weight:600;color:var(--white-dim);display:flex;align-items:center;justify-content:center;transition:all .2s;letter-spacing:.05em;}
 .thumb:hover{border-color:var(--gold-dim);color:var(--gold);}
 .thumb.active{border-color:var(--gold);color:var(--gold);}
@@ -470,6 +477,7 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
 </div>
 
 <div class="thumb-strip" id="thumbStrip"></div>
+<button class="edge-nav edge-prev" onclick="changePage(-1)" aria-label="Previous page">&lsaquo;</button><button class="edge-nav edge-next" onclick="changePage(1)" aria-label="Next page">&rsaquo;</button>
 
 <div class="page-wrapper" id="pageWrapper">
 
@@ -2196,6 +2204,9 @@ buildThumbs();
 document.getElementById('prevBtn').disabled=true;
 renderSnapshotGallery();
 applyConfig(REPORT_CONFIG);
+/* desktop edge-hover page arrows (mobile keeps its own nav) */
+(function(){var pa=document.querySelector('.edge-prev'),na=document.querySelector('.edge-next');if(!pa||!na)return;function upd(e){if(window.innerWidth<861){pa.classList.remove('show');na.classList.remove('show');return;}var w=window.innerWidth,pw=Math.min(816,w),pl=(w-pw)/2,pr=pl+pw;var pd=(document.getElementById('prevBtn')||{}).disabled,nd=(document.getElementById('nextBtn')||{}).disabled;pa.classList.toggle('show',e.clientX<pl+48&&!pd);na.classList.toggle('show',e.clientX>pr-48&&!nd);}document.addEventListener('mousemove',upd);document.addEventListener('mouseleave',function(){pa.classList.remove('show');na.classList.remove('show');});})();
+
 
 // Ensure all pages start inside pageWrapper
 (function(){
