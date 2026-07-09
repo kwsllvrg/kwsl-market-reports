@@ -1904,7 +1904,7 @@ function goTo(n) {
   }
   updateCounter();
   updateThumbs();
-  if(!spreadMode && !_zoomed) window.scrollTo({top:0,behavior:'smooth'});
+  if(!spreadMode && !_zoomed && window.innerWidth < 861) window.scrollTo({top:0,behavior:'smooth'});
   if(n===5) setTimeout(drawPhoenixSkyline,50);
   if(n===9) setTimeout(drawSellerCanvas,50);
 }
