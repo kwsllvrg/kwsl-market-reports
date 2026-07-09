@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>NEW DESIGN PREVIEW — Cover + Warm Palette + Mobile</title>
+<title>NEW DESIGN PREVIEW v2 — Iron-Ore #1d1d1e</title>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --black:#201f23;--dark:#29282b;--panel:#322f34;--elevated:#3a373d;--border:#484550;
+  --black:#141415;--dark:#1d1d1e;--panel:#252527;--elevated:#2c2c2e;--border:#3a3a3e;
   --gold:#a6a199;--gold-light:#ece9e2;--gold-dim:#8f8b82;
   --amber:#F5A623;
   --white:#e6e2da;--white-dim:rgba(230,226,218,0.62);--white-faint:rgba(230,226,218,0.10);
   --up:#8FB89A;--down:#D19595;--steel:#A0BFDF;
-  --ink:#e6e2da;--ink-2:#ada99f;--ink-3:#8f8b82;--hair:#484550;--hair-soft:#322f34;
+  --ink:#e6e2da;--ink-2:#ada99f;--ink-3:#8f8b82;--hair:#3a3a3e;--hair-soft:#252527;
   --page-w:816px;--page-h:1056px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:#050505;font-family:'Inter',-apple-system,sans-serif;color:var(--white);min-height:100vh;padding:40px 0 80px;}
+body{background:#1d1d1e;font-family:'Inter',-apple-system,sans-serif;color:var(--white);min-height:100vh;padding:40px 0 80px;}
 
 /* ── VIEWER CHROME ── */
 .viewer-header{text-align:center;margin-bottom:28px;padding:0 20px;}
@@ -256,7 +256,7 @@ body.spread-mode .page{display:none;}
 
 <style>
 /* ===== COMMAND-CENTER OVERRIDES (appended; win by cascade order) ===== */
-body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
+body{background:#1d1d1e;font-family:'Inter',-apple-system,sans-serif;}
 :root{--sans:'Inter',-apple-system,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;--display:'Archivo',sans-serif;}
 
 /* viewer chrome */
@@ -1562,7 +1562,7 @@ function drawListingsChart(labels, activeData, newData) {
   const cW = W - pad.l - pad.r;
   const cH = H - pad.t - pad.b;
 
-  ctx.fillStyle='#322f34'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#252527'; ctx.fillRect(0,0,W,H);
 
   const allV = [...A, ...N].filter(v=>v!=null);
   const minV = Math.min(...allV)*0.92;
@@ -1624,7 +1624,7 @@ function drawMovementChart() {
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#322f34'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#252527'; ctx.fillRect(0,0,W,H);
 
   // Pull data from REPORT_CONFIG fallback — JSON load overrides via _movementData
   const d = canvas._movementData || {
@@ -1794,7 +1794,7 @@ function drawRateChartPlaceholder() {
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
-  ctx.fillStyle='#322f34';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#252527';ctx.fillRect(0,0,W,H);
   // Fake trend line
   const pts=[[0,160],[80,150],[160,170],[240,140],[320,130],[400,145],[480,125],[560,110],[640,120],[712,105]];
   ctx.beginPath();ctx.strokeStyle='rgba(245,166,35,.3)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
