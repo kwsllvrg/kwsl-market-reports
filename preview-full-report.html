@@ -39,7 +39,7 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;color:var(-
 .edge-prev{left:24px;} .edge-next{right:24px;}
 .edge-nav.show{opacity:1;pointer-events:auto;}
 .edge-nav:hover{color:var(--amber);border-color:var(--amber);background:rgba(20,20,21,.92);}
-@media (max-width:860px){.edge-nav{display:none !important;}}
+@media (max-width:860px){.edge-nav{display:flex !important;opacity:.9;pointer-events:auto;top:auto;bottom:18px;width:46px;height:46px;font-size:27px;background:rgba(20,20,21,.82);}.edge-prev{left:14px;}.edge-next{right:14px;}.edge-nav.at-edge{opacity:0;pointer-events:none;}}
 
 .thumb{width:44px;height:57px;background:var(--panel);border:1px solid var(--border);cursor:pointer;font-size:8px;font-weight:600;color:var(--white-dim);display:flex;align-items:center;justify-content:center;transition:all .2s;letter-spacing:.05em;}
 .thumb:hover{border-color:var(--gold-dim);color:var(--gold);}
@@ -2168,13 +2168,18 @@ function scalePageToFit() {
 }
 
 // Touch swipe support
-let _touchStartX = 0;
+let _touchStartX = 0, _touchStartY = 0;
 document.addEventListener('touchstart', e => {
   _touchStartX = e.changedTouches[0].screenX;
+  _touchStartY = e.changedTouches[0].screenY;
 }, { passive: true });
 document.addEventListener('touchend', e => {
+  // When pinch-zoomed in, let horizontal drags PAN the enlarged page instead of flipping it.
+  if (window.visualViewport && window.visualViewport.scale > 1.1) return;
   const dx = e.changedTouches[0].screenX - _touchStartX;
-  if (Math.abs(dx) > 50) changePage(dx < 0 ? 1 : -1);
+  const dy = e.changedTouches[0].screenY - _touchStartY;
+  // require a deliberate, mostly-horizontal swipe
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) changePage(dx < 0 ? 1 : -1);
 }, { passive: true });
 
 document.addEventListener('keydown',e=>{
@@ -2206,6 +2211,8 @@ renderSnapshotGallery();
 applyConfig(REPORT_CONFIG);
 /* desktop edge-hover page arrows (mobile keeps its own nav) */
 (function(){var pa=document.querySelector('.edge-prev'),na=document.querySelector('.edge-next');if(!pa||!na)return;function upd(e){if(window.innerWidth<861){pa.classList.remove('show');na.classList.remove('show');return;}var w=window.innerWidth,pw=Math.min(816,w),pl=(w-pw)/2,pr=pl+pw;var pd=(document.getElementById('prevBtn')||{}).disabled,nd=(document.getElementById('nextBtn')||{}).disabled;pa.classList.toggle('show',e.clientX<pl+48&&!pd);na.classList.toggle('show',e.clientX>pr-48&&!nd);}document.addEventListener('mousemove',upd);document.addEventListener('mouseleave',function(){pa.classList.remove('show');na.classList.remove('show');});})();
+/* mobile: keep bottom-corner arrows in sync with page bounds (synchronous, wraps goTo) */
+(function(){var pa=document.querySelector('.edge-prev'),na=document.querySelector('.edge-next');if(!pa||!na)return;function sync(){pa.classList.toggle('at-edge',!!(document.getElementById('prevBtn')||{}).disabled);na.classList.toggle('at-edge',!!(document.getElementById('nextBtn')||{}).disabled);}if(typeof goTo==='function'){var _g=goTo;goTo=function(n){_g(n);sync();};}sync();})();
 
 
 // Ensure all pages start inside pageWrapper
