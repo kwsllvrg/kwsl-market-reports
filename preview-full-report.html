@@ -7,12 +7,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --black:#08090B;--dark:#0A0B0D;--panel:#111316;--elevated:#181B1F;--border:#20242A;
-  --gold:#9B9A94;--gold-light:#F2F4F7;--gold-dim:#6B727C;
+  --black:#201f23;--dark:#29282b;--panel:#322f34;--elevated:#3a373d;--border:#484550;
+  --gold:#a6a199;--gold-light:#ece9e2;--gold-dim:#8f8b82;
   --amber:#F5A623;
-  --white:#F2F4F7;--white-dim:rgba(242,244,247,0.62);--white-faint:rgba(242,244,247,0.10);
+  --white:#e6e2da;--white-dim:rgba(230,226,218,0.62);--white-faint:rgba(230,226,218,0.10);
   --up:#8FB89A;--down:#D19595;--steel:#A0BFDF;
-  --ink:#F2F4F7;--ink-2:#AEB4BD;--ink-3:#6B727C;--hair:#20242A;--hair-soft:#15181C;
+  --ink:#e6e2da;--ink-2:#ada99f;--ink-3:#8f8b82;--hair:#484550;--hair-soft:#322f34;
   --page-w:816px;--page-h:1056px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -91,6 +91,9 @@ body.spread-mode .page{display:none;}
 
   /* The 16-box page strip overpowers a phone screen; prev/next + counter is enough. */
   .thumb-strip { display: none !important; }
+
+  /* Zoom button is a broken fullscreen toggle on phones -- hide it (native pinch-zoom replaces it). */
+  .fullscreen-btn[onclick="toggleZoom()"] { display: none !important; }
 
   /* Slim the header so report content isn't pushed off-screen. */
   .viewer-header { margin-bottom: 10px; padding: 14px 16px 0; }
@@ -231,7 +234,7 @@ body.spread-mode .page{display:none;}
 .gdrive-link:hover{background:rgba(245,166,35,.1);}
 
 /* ── COVER ── */
-#page-1{background:var(--black);}
+#page-1{background:radial-gradient(ellipse 92% 62% at 82% 16%, rgba(216,178,112,.11), transparent 62%),radial-gradient(ellipse 58% 44% at 12% 92%, rgba(216,178,112,.05), transparent 55%),var(--dark);}
 .cover-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(245,166,35,.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(245,166,35,.04) 0%,transparent 50%);}
 .cover-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.04) 1px,transparent 1px);background-size:80px 80px;}
 .cover-content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:80px 64px;}
@@ -382,7 +385,7 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
 .gdrive-link:hover{background:rgba(245,166,35,.1);}
 
 /* cover */
-#page-1{background:var(--black);}
+#page-1{background:radial-gradient(ellipse 92% 62% at 82% 16%, rgba(216,178,112,.11), transparent 62%),radial-gradient(ellipse 58% 44% at 12% 92%, rgba(216,178,112,.05), transparent 55%),var(--dark);}
 .cover-bg,.cover-grid{display:none;}
 .cover-eyebrow{font-family:var(--mono);font-weight:500;letter-spacing:.14em;color:var(--ink-3);display:flex;align-items:center;gap:10px;}
 .cover-eyebrow::before{content:'';width:20px;height:3px;background:var(--amber);flex:none;}
@@ -399,7 +402,7 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
 .cover-pg-num{font-family:var(--display);color:rgba(245,166,35,.06);}
 </style>
 <style>
-:root{--sand:#F2F4F7;--ash:#AEB4BD;--ash-3:#6B727C;--grid-minor:#17191D;--grid-major:#262A30;--bar:#08090B;}
+:root{--sand:#e6e2da;--ash:#ada99f;--ash-3:#8f8b82;--grid-minor:#17191D;--grid-major:#262A30;--bar:#08090B;}
 /* ── COVER: Greater Phoenix arterial street grid ── */
 .pgrid{position:absolute;inset:0;width:100%;height:100%;}
 .pgrid .slbl{font-family:'IBM Plex Mono',monospace;font-size:9px;fill:#6B727C;letter-spacing:.03em;}
@@ -407,7 +410,7 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
 .pgrid .dtn{font-family:'IBM Plex Mono',monospace;font-size:9px;fill:#F5A623;letter-spacing:.08em;}
 .pgrid .grand{fill:#8791A0;letter-spacing:.1em;}
 .cov-scrim{position:absolute;left:0;top:78px;width:460px;height:360px;pointer-events:none;
-  background:radial-gradient(120% 90% at 18% 42%,rgba(10,11,13,.86) 0%,rgba(10,11,13,.5) 52%,transparent 82%);}
+  background:radial-gradient(120% 90% at 18% 42%,rgba(41,40,43,.92) 0%,rgba(41,40,43,.55) 52%,transparent 82%);}
 .cov-eyebrow{position:absolute;top:128px;left:52px;display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ash);}
 .cov-eyebrow::before{content:'';width:18px;height:3px;background:var(--amber);}
 .cov-title{position:absolute;top:158px;left:50px;font-family:var(--display);font-variation-settings:'wdth' 113;font-weight:700;font-size:55px;line-height:.92;letter-spacing:.004em;color:var(--sand);text-transform:uppercase;}
@@ -728,7 +731,7 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
     </div>
     <div style="font-size:8px;font-weight:600;letter-spacing:.06em;color:var(--white-dim);text-transform:uppercase;margin-bottom:6px;">Market Snapshot &nbsp;<span style="font-size:7px;color:var(--gold-dim);letter-spacing:.035em;">&nbsp;Click to expand</span></div>
     <div class="snapshot-gallery" id="snapshotGallery"></div>
-    <div style="margin-top:7px;font-size:7.5px;color:rgba(245,166,35,.25);letter-spacing:.05em;text-transform:uppercase;">Paste imgur image URLs into snapshotImages[ ] in the JSON config to activate gallery</div>
+    <div style="display:none;margin-top:7px;font-size:7.5px;color:rgba(245,166,35,.25);letter-spacing:.05em;text-transform:uppercase;">Paste imgur image URLs into snapshotImages[ ] in the JSON config to activate gallery</div>
   </div>
   <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">08</span></div>
 </div>
@@ -1559,7 +1562,7 @@ function drawListingsChart(labels, activeData, newData) {
   const cW = W - pad.l - pad.r;
   const cH = H - pad.t - pad.b;
 
-  ctx.fillStyle='#111316'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#322f34'; ctx.fillRect(0,0,W,H);
 
   const allV = [...A, ...N].filter(v=>v!=null);
   const minV = Math.min(...allV)*0.92;
@@ -1621,7 +1624,7 @@ function drawMovementChart() {
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#111316'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#322f34'; ctx.fillRect(0,0,W,H);
 
   // Pull data from REPORT_CONFIG fallback — JSON load overrides via _movementData
   const d = canvas._movementData || {
@@ -1791,7 +1794,7 @@ function drawRateChartPlaceholder() {
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
-  ctx.fillStyle='#111316';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#322f34';ctx.fillRect(0,0,W,H);
   // Fake trend line
   const pts=[[0,160],[80,150],[160,170],[240,140],[320,130],[400,145],[480,125],[560,110],[640,120],[712,105]];
   ctx.beginPath();ctx.strokeStyle='rgba(245,166,35,.3)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
