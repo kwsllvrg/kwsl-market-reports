@@ -9,25 +9,33 @@
   :root{
     --dark:#1d1d1e; --panel:#252527; --elevated:#2c2c2e; --hair:#3a3a3e; --surround:#050505;
     --ink:#e6e2da; --ink-2:#ada99f; --ink-3:#8f8b82; --amber:#F5A623;
+    --overlay:.86;
     --display:'Archivo',sans-serif; --body:'Inter',sans-serif; --mono:'IBM Plex Mono',monospace;
+  }
+  /* Light / day theme — shares the kwsl-theme preference with the reports. Amber stays amber. */
+  html[data-theme="light"]{
+    --dark:#f5f2ec; --panel:#efeae1; --elevated:#e6e1d7; --hair:#d8d2c6; --surround:#e9e4db;
+    --ink:#242119; --ink-2:#565349; --ink-3:#847f75; --amber:#F5A623;
+    --overlay:.80;
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--surround);color:var(--ink);font-family:var(--body);
        background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);
        background-size:44px 44px;background-position:center;}
-  body::before{content:"";position:fixed;inset:0;background:var(--surround);opacity:.86;pointer-events:none;z-index:-1;}
+  body::before{content:"";position:fixed;inset:0;background:var(--surround);opacity:var(--overlay);pointer-events:none;z-index:-1;}
   a{color:inherit;text-decoration:none;}
   .wrap{max-width:1120px;margin:0 auto;padding:0 24px 80px;}
 
   header{padding:64px 0 40px;text-align:center;position:relative;}
-  .portal{position:absolute;top:28px;right:0;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
-          text-transform:uppercase;color:var(--ink-2);border:1px solid var(--hair);padding:9px 15px;transition:.2s;}
-  .portal:hover{border-color:var(--amber);color:var(--amber);}
+  .toplink{position:absolute;top:28px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+          text-transform:uppercase;color:var(--ink-2);border:1px solid var(--hair);padding:9px 15px;transition:.2s;cursor:pointer;background:none;}
+  .toplink:hover{border-color:var(--amber);color:var(--amber);}
+  .portal{right:0;} .theme-tog{left:0;}
   .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
            display:inline-flex;align-items:center;gap:11px;margin-bottom:18px;}
   .eyebrow::before,.eyebrow::after{content:"";width:18px;height:3px;background:var(--amber);}
   h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,6vw,58px);letter-spacing:.01em;margin:0 0 10px;}
-  header p{color:var(--ink-2);font-size:15px;margin:0 auto 28px;max-width:520px;}
+  header p{color:var(--ink-2);font-size:15px;margin:0 auto 28px;max-width:540px;}
   .search{width:100%;max-width:480px;margin:0 auto;display:block;background:var(--panel);border:1px solid var(--hair);
           color:var(--ink);font-size:14px;font-family:var(--body);padding:14px 18px;border-radius:2px;}
   .search:focus{outline:none;border-color:var(--amber);}
@@ -37,12 +45,15 @@
   .card{background:var(--panel);border:1px solid var(--hair);border-radius:3px;overflow:hidden;
         display:flex;flex-direction:column;transition:border-color .2s,transform .2s;}
   .card:hover{border-color:#57545c;transform:translateY(-2px);}
-  /* Preview = the report's live cover: iframe at 816px renders mobile layout; we crop the
-     162px nav chrome off the top and scale the full 1056px cover to fill the card width. */
+  /* Native preview = the report's own cover: iframe at 816px (mobile layout), nav cropped, scaled to width. */
   .pv{position:relative;width:100%;height:424px;overflow:hidden;background:var(--dark);border:0;border-bottom:1px solid var(--hair);
       cursor:pointer;display:block;padding:0;}
   .pv iframe{position:absolute;left:0;width:816px;height:1400px;border:0;pointer-events:none;
              transform:scale(.402);transform-origin:top left;}  /* top set per-card inline (nav crop) */
+  /* Heyzine preview = the flipbook's cover thumbnail (og:image), filling the frame. */
+  .pv-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;}
+  .pv-badge{position:absolute;top:12px;left:12px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+            color:var(--ink);background:var(--amber);padding:4px 8px;border-radius:2px;font-weight:600;z-index:2;}
   .pv-open{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
            font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#fff;
            background:rgba(10,10,11,.55);opacity:0;transition:.2s;}
@@ -61,26 +72,27 @@
   footer{text-align:center;color:var(--ink-3);font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
          text-transform:uppercase;padding:44px 0 0;}
 
-  /* fullscreen report modal (the "iframe experience") */
+  /* fullscreen report/flipbook modal */
   #modal{position:fixed;inset:0;background:var(--surround);z-index:100;display:none;flex-direction:column;}
   #modal.open{display:flex;}
   .modal-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;
-             background:#0e0e0f;border-bottom:1px solid var(--hair);flex:0 0 auto;}
+             background:var(--elevated);border-bottom:1px solid var(--hair);flex:0 0 auto;}
   .modal-title{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);}
   .modal-x{background:none;border:1px solid var(--hair);color:var(--ink-2);font-size:16px;line-height:1;
            width:38px;height:38px;border-radius:50%;cursor:pointer;transition:.2s;}
   .modal-x:hover{border-color:var(--amber);color:var(--amber);}
   #modal iframe{flex:1 1 auto;width:100%;border:0;background:var(--surround);}
-  @media(max-width:560px){ header{padding:52px 0 30px;} .portal{position:static;display:inline-block;margin-bottom:20px;} }
+  @media(max-width:560px){ header{padding:64px 0 30px;} .toplink{top:16px;} }
 </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <a class="portal" href="http://portal.mykwsl.com/" target="_blank" rel="noopener">Agent Portal ↗</a>
+      <button class="toplink theme-tog" id="themeTog" onclick="toggleTheme()" title="Switch light / dark">&#9788; Light</button>
+      <a class="toplink portal" href="http://portal.mykwsl.com/" target="_blank" rel="noopener">Agent Portal ↗</a>
       <div class="eyebrow">Keller Williams Realty &middot; Sonoran Living</div>
       <h1>Market Update Vault</h1>
-      <p>Every Greater Phoenix market report we&rsquo;ve published — 5 and counting. Search a month or year, click any cover to read it.</p>
+      <p>A running archive of every Greater Phoenix market report we&rsquo;ve published — newest first. Search a month or year, tap any cover to open it.</p>
       <input class="search" id="search" type="search" placeholder="Search updates (e.g. &lsquo;July&rsquo; or &lsquo;2026&rsquo;)…" autocomplete="off">
     </header>
     <main class="grid" id="grid">
@@ -154,6 +166,104 @@
           </div>
         </div>
       </article>
+      <article class="card" data-q="february 2026 february 2026">
+        <button class="pv pv-flip" onclick="openReport('https://mykwsl.hflip.co/kwslfeb2026','February 2026')" aria-label="Open February 2026 magazine">
+          <img class="pv-img" loading="lazy" src="https://cdn.heyzine.com/files/uploaded/b7dcc1a5ad29f29e312fb7d3d80c4901949214dd-5.pdf-thumb.jpg" alt="February 2026 cover">
+          <span class="pv-badge">Heyzine archive</span>
+          <span class="pv-open">View magazine</span>
+        </button>
+        <div class="meta">
+          <h2>February 2026</h2>
+          <p>Greater Phoenix Market Report</p>
+          <div class="actions">
+            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwslfeb2026','February 2026')">View magazine ↗</button>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-q="january 2026 january 2026">
+        <button class="pv pv-flip" onclick="openReport('https://mykwsl.hflip.co/kwsljan2026','January 2026')" aria-label="Open January 2026 magazine">
+          <img class="pv-img" loading="lazy" src="https://cdn.heyzine.com/files/uploaded/v3/7ae725842a2f92c963fb223da49454e1503f24f6-1.pdf-thumb.jpg" alt="January 2026 cover">
+          <span class="pv-badge">Heyzine archive</span>
+          <span class="pv-open">View magazine</span>
+        </button>
+        <div class="meta">
+          <h2>January 2026</h2>
+          <p>Greater Phoenix Market Report</p>
+          <div class="actions">
+            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwsljan2026','January 2026')">View magazine ↗</button>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-q="december 2025 december 2025">
+        <button class="pv pv-flip" onclick="openReport('https://mykwsl.hflip.co/kwsldec2025','December 2025')" aria-label="Open December 2025 magazine">
+          <img class="pv-img" loading="lazy" src="https://cdn.heyzine.com/files/uploaded/v3/aec1e60523bf6a8e41b359f2d327bcbb84551f09-3.pdf-thumb.jpg" alt="December 2025 cover">
+          <span class="pv-badge">Heyzine archive</span>
+          <span class="pv-open">View magazine</span>
+        </button>
+        <div class="meta">
+          <h2>December 2025</h2>
+          <p>Greater Phoenix Market Report</p>
+          <div class="actions">
+            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwsldec2025','December 2025')">View magazine ↗</button>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-q="november 2025 november 2025">
+        <button class="pv pv-flip" onclick="openReport('https://mykwsl.hflip.co/kwslnov2025','November 2025')" aria-label="Open November 2025 magazine">
+          <img class="pv-img" loading="lazy" src="https://cdn.heyzine.com/files/uploaded/208caa4fe3188a3c04c1eea1be444d90ac29d363-2.pdf-thumb.jpg" alt="November 2025 cover">
+          <span class="pv-badge">Heyzine archive</span>
+          <span class="pv-open">View magazine</span>
+        </button>
+        <div class="meta">
+          <h2>November 2025</h2>
+          <p>Greater Phoenix Market Report</p>
+          <div class="actions">
+            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwslnov2025','November 2025')">View magazine ↗</button>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-q="october 2025 october 2025">
+        <button class="pv pv-flip" onclick="openReport('https://mykwsl.hflip.co/kwsloct2025','October 2025')" aria-label="Open October 2025 magazine">
+          <img class="pv-img" loading="lazy" src="https://cdn.heyzine.com/files/uploaded/v3/d16c9ceeeaea0604d82b5640880b34defd462abd-3.pdf-thumb.jpg" alt="October 2025 cover">
+          <span class="pv-badge">Heyzine archive</span>
+          <span class="pv-open">View magazine</span>
+        </button>
+        <div class="meta">
+          <h2>October 2025</h2>
+          <p>Greater Phoenix Market Report</p>
+          <div class="actions">
+            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwsloct2025','October 2025')">View magazine ↗</button>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-q="september 2025 september 2025">
+        <button class="pv pv-flip" onclick="openReport('https://mykwsl.hflip.co/kwslsept2025','September 2025')" aria-label="Open September 2025 magazine">
+          <img class="pv-img" loading="lazy" src="https://cdn.heyzine.com/files/uploaded/v3/9eabe732497e9e96c41194e3268a5e124195f777-2.pdf-thumb.jpg" alt="September 2025 cover">
+          <span class="pv-badge">Heyzine archive</span>
+          <span class="pv-open">View magazine</span>
+        </button>
+        <div class="meta">
+          <h2>September 2025</h2>
+          <p>Greater Phoenix Market Report</p>
+          <div class="actions">
+            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwslsept2025','September 2025')">View magazine ↗</button>
+          </div>
+        </div>
+      </article>
+      <article class="card" data-q="august 2025 august 2025">
+        <button class="pv pv-flip" onclick="openReport('https://mykwsl.hflip.co/kwslaug2025','August 2025')" aria-label="Open August 2025 magazine">
+          <img class="pv-img" loading="lazy" src="https://cdn.heyzine.com/files/uploaded/v3/b2b3cebece4770d15866f5a7c87687925b07451c-2.pdf-thumb.jpg" alt="August 2025 cover">
+          <span class="pv-badge">Heyzine archive</span>
+          <span class="pv-open">View magazine</span>
+        </button>
+        <div class="meta">
+          <h2>August 2025</h2>
+          <p>Greater Phoenix Market Report</p>
+          <div class="actions">
+            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwslaug2025','August 2025')">View magazine ↗</button>
+          </div>
+        </div>
+      </article>
       <div class="empty" id="empty" style="display:none;">No updates match that search.</div>
     </main>
     <footer>KW Sonoran Living &middot; Greater Phoenix Market Reports</footer>
@@ -168,9 +278,21 @@
   </div>
 
 <script>
+  // Theme — shares localStorage['kwsl-theme'] with the reports so the whole site stays in sync.
+  function isLight(){ return document.documentElement.getAttribute('data-theme') === 'light'; }
+  function applyTheme(mode){
+    var light = (mode === 'light');
+    document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
+    var b = document.getElementById('themeTog');
+    if(b) b.innerHTML = light ? '&#9790; Dark' : '&#9788; Light';
+    try{ localStorage.setItem('kwsl-theme', light ? 'light' : 'dark'); }catch(e){}
+  }
+  function toggleTheme(){ applyTheme(isLight() ? 'dark' : 'light'); }
+  (function(){ var s='dark'; try{ s=localStorage.getItem('kwsl-theme')||'dark'; }catch(e){} applyTheme(s); })();
+
   function openReport(url, title){
     document.getElementById('modalTitle').textContent = title || 'Market Report';
-    var f = document.getElementById('modalFrame'); f.src = url;
+    document.getElementById('modalFrame').src = url;
     document.getElementById('modal').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -181,8 +303,7 @@
   }
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeReport(); });
 
-  var search = document.getElementById('search');
-  search.addEventListener('input', function(){
+  document.getElementById('search').addEventListener('input', function(){
     var q = this.value.trim().toLowerCase(), any = false;
     document.querySelectorAll('.card').forEach(function(c){
       var hit = !q || c.dataset.q.indexOf(q) > -1;
