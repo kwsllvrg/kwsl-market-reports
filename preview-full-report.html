@@ -93,6 +93,12 @@ body.spread-mode .page{display:none;}
 }
 
 /* ── MOBILE RESPONSIVE ── */
+
+/* Page 11 KW/iBuyer tables: fixed number + marker slots so cells (incl. no-change) line up. */
+#ibr-tbody td:nth-child(n+2):nth-child(-n+4) > span:first-child,
+#kw-tbody  td:nth-child(n+2):nth-child(-n+6) > span:first-child{display:inline-block;min-width:34px;text-align:right;}
+#ibr-tbody td:nth-child(n+2):nth-child(-n+4) > span:nth-child(2),
+#kw-tbody  td:nth-child(n+2):nth-child(-n+6) > span:nth-child(2){display:inline-block;min-width:36px;text-align:left;}
 @media (max-width: 860px) {
   #spreadBtn { display: none !important; }
 
