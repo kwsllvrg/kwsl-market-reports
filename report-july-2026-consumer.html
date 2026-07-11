@@ -14,9 +14,28 @@
   --up:#8FB89A;--down:#D19595;--steel:#A0BFDF;
   --ink:#e6e2da;--ink-2:#ada99f;--ink-3:#8f8b82;--hair:#3a3a3e;--hair-soft:#252527;
   --page-w:816px;--page-h:1056px;
+  --surround:#050505;
+}
+/* ─────────── LIGHT / DAY THEME (toggle) — amber stays amber per brand ─────────── */
+html[data-theme="light"]{
+  --black:#dcd7cc;--dark:#f5f2ec;--panel:#ebe7df;--elevated:#e2ddd3;--border:#cdc7ba;
+  --gold:#7c786e;--gold-light:#2a2823;--gold-dim:#7c786e;
+  --white:#242119;--white-dim:rgba(36,33,25,0.64);--white-faint:rgba(36,33,25,0.07);
+  --up:#4e7c5b;--down:#b25957;--steel:#587ba3;
+  --ink:#242119;--ink-2:#565349;--ink-3:#7c786e;--hair:#cdc7ba;--hair-soft:#e2ddd3;
+  --sand:#242119;--ash:#565349;--ash-3:#7c786e;
+  --grid-minor:#e2ddd3;--grid-major:#d4cec0;--bar:#dcd7cc;
+  --surround:#e7e2d9;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:#050505;font-family:'Inter',-apple-system,sans-serif;color:var(--white);min-height:100vh;padding:40px 0 80px;}
+body{background:var(--surround);font-family:'Inter',-apple-system,sans-serif;color:var(--white);min-height:100vh;padding:40px 0 80px;}
+html[data-theme="light"] #phoenixCanvas{filter:none;}
+html[data-theme="light"] .skyline-title{color:#2c2822 !important;text-shadow:0 2px 16px rgba(255,255,255,.65) !important;}
+html[data-theme="light"] .skyline-sub{color:#b0740c !important;}
+/* White KW logo PNGs → solid dark on the light theme */
+html[data-theme="light"] .header-logo-img,
+html[data-theme="light"] .cov-lock img,
+html[data-theme="light"] .cover-logo-lockup img{filter:brightness(0);opacity:.72;}
 
 /* ── VIEWER CHROME ── */
 .viewer-header{text-align:center;margin-bottom:28px;padding:0 20px;}
@@ -269,7 +288,7 @@ body.spread-mode .page{display:none;}
 
 <style>
 /* ===== COMMAND-CENTER OVERRIDES (appended; win by cascade order) ===== */
-body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
+body{background:var(--surround);font-family:'Inter',-apple-system,sans-serif;}
 :root{--sans:'Inter',-apple-system,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;--display:'Archivo',sans-serif;}
 
 /* viewer chrome */
@@ -469,17 +488,18 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
 
 
 <div class="viewer-header">
-  <h1>KW Sonoran Living &nbsp;·&nbsp; Agent Edition</h1>
+  <h1>KW Sonoran Living &nbsp;·&nbsp; Consumer Edition</h1>
   <p>Greater Phoenix Market Report &nbsp;·&nbsp; July 2026</p>
 </div>
 
 <div class="top-controls">
   <button class="nav-btn" id="prevBtn" onclick="changePage(-1)">&#8592;</button>
-  <span class="page-counter" id="pageCounter">1 / 16</span>
+  <span class="page-counter" id="pageCounter">1 / 14</span>
   <button class="nav-btn" id="nextBtn" onclick="changePage(1)">&#8594;</button>
   <button class="view-toggle-btn" id="spreadBtn" onclick="toggleSpread()">&#9635; Book View</button>
   <button class="fullscreen-btn" onclick="toggleZoom()">⤢ Zoom</button>
   <button class="fullscreen-btn" onclick="downloadPDF()" title="Download as PDF">&#8595; PDF</button>
+  <button class="fullscreen-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch between dark and light mode">&#9788; Light</button>
 </div>
 
 <div class="thumb-strip" id="thumbStrip"></div>
@@ -554,7 +574,7 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
     <div class="toc-section-label">Pages 1 – 9</div>
     <div class="toc-entry" onclick="goTo(1)"><span class="toc-pg">01</span><span class="toc-title">Cover<span class="toc-sub">Greater Phoenix Market Report &nbsp;·&nbsp; July 2026</span></span></div>
     <div class="toc-entry" onclick="goTo(2)"><span class="toc-pg">02</span><span class="toc-title">Table of Contents<span class="toc-sub">Pages 1–9</span></span></div>
-    <div class="toc-entry" onclick="goTo(3)"><span class="toc-pg">03</span><span class="toc-title">Table of Contents<span class="toc-sub">Pages 10–16</span></span></div>
+    <div class="toc-entry" onclick="goTo(3)"><span class="toc-pg">03</span><span class="toc-title">Table of Contents<span class="toc-sub">Pages 10–14</span></span></div>
     <div class="toc-entry" onclick="goTo(4)"><span class="toc-pg">04</span><span class="toc-title">Our Perspective<span class="toc-sub">Two Markets. One Metro. &nbsp;·&nbsp; Editor's Market Analysis</span></span></div>
     <div class="toc-entry" onclick="goTo(6)"><span class="toc-pg">06</span><span class="toc-title">Active &amp; New Listings<span class="toc-sub">Local Market Data &nbsp;·&nbsp; ARMLS Residential</span></span></div>
     <div class="toc-entry" onclick="goTo(7)"><span class="toc-pg">07</span><span class="toc-title">4 Facts You Need To Consider<span class="toc-sub">Market Intelligence &nbsp;·&nbsp; What The Heck Is Going On</span></span></div>
@@ -605,8 +625,8 @@ body{background:#050505;font-family:'Inter',-apple-system,sans-serif;}
 <div class="page" id="page-5">
   <canvas id="phoenixCanvas" width="816" height="1056" style="position:absolute;inset:0;display:block;"></canvas>
   <div style="position:absolute;bottom:80px;left:64px;right:64px;text-align:center;">
-    <div style="font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 112;font-size:46px;font-weight:700;color:#F2F4F7;letter-spacing:.02em;text-transform:uppercase;text-shadow:0 2px 20px rgba(0,0,0,.8);">Greater <em style="font-style:normal;color:inherit;">Phoenix</em></div>
-    <div style="font-size:9px;font-weight:500;letter-spacing:.08em;color:rgba(245,166,35,.7);text-transform:uppercase;margin-top:6px;">Maricopa County &nbsp;·&nbsp; July 2026</div>
+    <div class="skyline-title" style="font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 112;font-size:46px;font-weight:700;color:#F2F4F7;letter-spacing:.02em;text-transform:uppercase;text-shadow:0 2px 20px rgba(0,0,0,.8);">Greater <em style="font-style:normal;color:inherit;">Phoenix</em></div>
+    <div class="skyline-sub" style="font-size:9px;font-weight:500;letter-spacing:.08em;color:rgba(245,166,35,.7);text-transform:uppercase;margin-top:6px;">Maricopa County &nbsp;·&nbsp; July 2026</div>
   </div>
   <div class="footer-bar"><span class="footer-text">KW Sonoran Living &nbsp;·&nbsp; Greater Phoenix Market Report</span><span class="footer-pg">05</span></div>
 </div>
@@ -1516,6 +1536,7 @@ function drawListingsChart(labels, activeData, newData) {
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0,0,W,H);
+  const C = themeCanvasColors();
 
   const L = labels || REPORT_CONFIG.listingsData.map(d=>d.label);
   const A = activeData || REPORT_CONFIG.listingsData.map(d=>d.activeListings);
@@ -1525,7 +1546,7 @@ function drawListingsChart(labels, activeData, newData) {
   const cW = W - pad.l - pad.r;
   const cH = H - pad.t - pad.b;
 
-  ctx.fillStyle='#252527'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=C.panel; ctx.fillRect(0,0,W,H);
 
   const allV = [...A, ...N].filter(v=>v!=null);
   const minV = Math.min(...allV)*0.92;
@@ -1539,15 +1560,15 @@ function drawListingsChart(labels, activeData, newData) {
   for(let t=0;t<=4;t++){
     const y=pad.t+(t/4)*cH;
     const v=maxV-(t/4)*(maxV-minV);
-    ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+    ctx.strokeStyle=C.grid;ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
-    ctx.fillStyle='rgba(245,245,240,.3)';ctx.font='9px "IBM Plex Mono",monospace';ctx.textAlign='right';
+    ctx.fillStyle=C.txtDim;ctx.font='9px "IBM Plex Mono",monospace';ctx.textAlign='right';
     ctx.fillText(Math.round(v).toLocaleString(), pad.l-6, y+3);
   }
 
   // Vertical reference lines
   for(let i=0;i<n;i++){
-    ctx.strokeStyle='rgba(245,166,35,.08)';ctx.lineWidth=1;
+    ctx.strokeStyle=C.gridAmber;ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(xp(i),pad.t);ctx.lineTo(xp(i),pad.t+cH);ctx.stroke();
   }
 
@@ -1560,11 +1581,11 @@ function drawListingsChart(labels, activeData, newData) {
     data.forEach((v,i)=>{
       ctx.beginPath();ctx.arc(xp(i),yp(v),5,0,Math.PI*2);
       ctx.fillStyle=color;ctx.fill();
-      ctx.strokeStyle='rgba(17,17,17,.8)';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.strokeStyle=C.dot;ctx.lineWidth=1.5;ctx.stroke();
     });
     // Legend
     ctx.fillStyle=color;ctx.fillRect(legendX,pad.t-18,14,3);
-    ctx.fillStyle='rgba(245,245,240,.55)';ctx.font='9px "IBM Plex Mono",monospace';ctx.textAlign='left';
+    ctx.fillStyle=C.txtMid;ctx.font='9px "IBM Plex Mono",monospace';ctx.textAlign='left';
     ctx.fillText(legendLabel, legendX+18, pad.t-12);
   }
 
@@ -1572,7 +1593,7 @@ function drawListingsChart(labels, activeData, newData) {
   drawLine(N,'#8FB89A', pad.l+140, 'New Listings');
 
   // X labels
-  ctx.fillStyle='rgba(245,245,240,.4)';ctx.font='9.5px "IBM Plex Mono",monospace';ctx.textAlign='center';
+  ctx.fillStyle=C.txt;ctx.font='9.5px "IBM Plex Mono",monospace';ctx.textAlign='center';
   L.forEach((l,i)=>ctx.fillText(l, xp(i), H-10));
 
   // Store for tooltip hit testing
@@ -1587,7 +1608,8 @@ function drawMovementChart() {
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#252527'; ctx.fillRect(0,0,W,H);
+  const C = themeCanvasColors();
+  ctx.fillStyle=C.panel; ctx.fillRect(0,0,W,H);
 
   // Pull data from REPORT_CONFIG fallback — JSON load overrides via _movementData
   const d = canvas._movementData || {
@@ -1616,21 +1638,21 @@ function drawMovementChart() {
   for(let t=0;t<=3;t++){
     const y=pad.t+(t/3)*cH;
     const v=volMax-(t/3)*(volMax-volMin);
-    ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=1;
+    ctx.strokeStyle=C.grid;ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
-    ctx.fillStyle='rgba(245,245,240,.28)';ctx.font='8.5px "IBM Plex Mono",monospace';ctx.textAlign='right';
+    ctx.fillStyle=C.txtDim;ctx.font='8.5px "IBM Plex Mono",monospace';ctx.textAlign='right';
     ctx.fillText(Math.round(v).toLocaleString(),pad.l-5,y+3);
   }
   // Right axis label ($/SqFt)
   for(let t=0;t<=3;t++){
     const v=sqftMin+(t/3)*(sqftMax-sqftMin);
     const y=pad.t+cH-(t/3)*cH;
-    ctx.fillStyle='rgba(245,166,35,.4)';ctx.font='8px "IBM Plex Mono",monospace';ctx.textAlign='left';
+    ctx.fillStyle=C.amberDim;ctx.font='8px "IBM Plex Mono",monospace';ctx.textAlign='left';
     ctx.fillText('$'+v.toFixed(0),W-pad.r+5,y+3);
   }
   // Vertical refs
   for(let i=0;i<n;i++){
-    ctx.strokeStyle='rgba(245,166,35,.06)';ctx.lineWidth=1;
+    ctx.strokeStyle=C.gridAmber;ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(xp(i),pad.t);ctx.lineTo(xp(i),pad.t+cH);ctx.stroke();
   }
 
@@ -1644,7 +1666,7 @@ function drawMovementChart() {
     data.forEach((v,i)=>{
       ctx.beginPath();ctx.arc(xp(i),yFn(v),4.5,0,Math.PI*2);
       ctx.fillStyle=color;ctx.fill();
-      ctx.strokeStyle='rgba(17,17,17,.8)';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.strokeStyle=C.dot;ctx.lineWidth=1.5;ctx.stroke();
     });
     // Legend
     if(dash) { ctx.setLineDash(dash); }
@@ -1661,7 +1683,7 @@ function drawMovementChart() {
   drawLine(d.sqft,     ySqft,'#a0bfdf', pad.l+200,  '$/SqFt →', [4,3]);
 
   // X labels
-  ctx.fillStyle='rgba(245,245,240,.38)';ctx.font='9px "IBM Plex Mono",monospace';ctx.textAlign='center';
+  ctx.fillStyle=C.txt;ctx.font='9px "IBM Plex Mono",monospace';ctx.textAlign='center';
   L.forEach((l,i)=>ctx.fillText(l,xp(i),H-6));
 
   canvas._movementData = d;
@@ -1757,7 +1779,8 @@ function drawRateChartPlaceholder() {
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
-  ctx.fillStyle='#252527';ctx.fillRect(0,0,W,H);
+  const C=themeCanvasColors();
+  ctx.fillStyle=C.panel;ctx.fillRect(0,0,W,H);
   // Fake trend line
   const pts=[[0,160],[80,150],[160,170],[240,140],[320,130],[400,145],[480,125],[560,110],[640,120],[712,105]];
   ctx.beginPath();ctx.strokeStyle='rgba(245,166,35,.3)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
@@ -1773,7 +1796,8 @@ function drawSellerCanvas() {
   const ctx = canvas.getContext('2d');
   const W=canvas.width, H=canvas.height;
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#111';ctx.fillRect(0,0,W,H);
+  const C = themeCanvasColors();
+  ctx.fillStyle=C.seller;ctx.fillRect(0,0,W,H);
 
   const cols=[
     {label:'THE CONCESSION TRAP', icon:'55%',   lines:['June closed at 55%','Up to 58.4% in July'], color:'#D19595'},
@@ -1784,13 +1808,13 @@ function drawSellerCanvas() {
   const cw=W/3;
   cols.forEach((col,i)=>{
     const cx=i*cw+cw/2;
-    ctx.fillStyle=i===1?'rgba(245,166,35,.04)':'rgba(255,255,255,.015)';
+    ctx.fillStyle=i===1?C.cellHi:C.cell;
     ctx.fillRect(i*cw+1,1,cw-2,H-2);
-    ctx.strokeStyle='rgba(42,42,42,.9)';ctx.lineWidth=1;
+    ctx.strokeStyle=C.border;ctx.lineWidth=1;
     ctx.strokeRect(i*cw+1,1,cw-2,H-2);
     ctx.fillStyle=col.color;ctx.fillRect(i*cw+1,1,cw-2,4);
 
-    ctx.fillStyle='rgba(245,245,240,.38)';
+    ctx.fillStyle=C.txt;
     ctx.font='700 9px "IBM Plex Mono",monospace';ctx.textAlign='center';
     ctx.fillText(col.label, cx, 32);
 
@@ -1798,19 +1822,26 @@ function drawSellerCanvas() {
     ctx.font='700 56px "IBM Plex Mono",monospace';ctx.textAlign='center';
     ctx.fillText(col.icon, cx, H/2+10);
 
-    ctx.fillStyle='rgba(245,245,240,.72)';
+    ctx.fillStyle=C.txtMid;
     ctx.font='300 13px "IBM Plex Mono",monospace';
     col.lines.forEach((line,li)=>ctx.fillText(line, cx, H/2+46+li*22));
   });
-  ctx.strokeStyle='rgba(245,166,35,.12)';ctx.lineWidth=1;
+  ctx.strokeStyle=C.gridAmber;ctx.lineWidth=1;
   [cw,cw*2].forEach(x=>{ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();});
 }
 
 // ═══ PHOENIX SKYLINE ═══
-function drawPhoenixSkyline() {
+// Shared geometry so the night and daytime renders stay in register.
+const SKYLINE_BASE=730;
+const SKYLINE_PROFILE=[[0,692],[60,662],[120,642],[180,657],[240,627],[300,647],[360,620],[420,640],[480,622],[540,644],[600,617],[660,637],[720,652],[780,637],[816,657],[816,1056]];
+const SKYLINE_SAGS=[{x:22,h:96},{x:76,h:71},{x:700,h:101},{x:766,h:73},{x:800,h:56}];
+const SKYLINE_BLDS=[{x:30,w:18,h:62,fl:6},{x:55,w:24,h:92,fl:9},{x:84,w:20,h:77,fl:7},{x:140,w:28,h:182,fl:16,ant:1},{x:172,w:22,h:142,fl:12},{x:198,w:16,h:102,fl:9},{x:218,w:26,h:222,fl:20,ant:1},{x:248,w:30,h:262,fl:24,ant:1},{x:282,w:24,h:202,fl:18},{x:310,w:18,h:162,fl:14},{x:332,w:28,h:302,fl:28,ant:1},{x:364,w:22,h:242,fl:22},{x:390,w:18,h:182,fl:16},{x:412,w:32,h:282,fl:26,ant:1},{x:448,w:26,h:202,fl:18},{x:478,w:20,h:152,fl:13},{x:502,w:24,h:192,fl:17},{x:530,w:28,h:242,fl:22,ant:1},{x:562,w:22,h:162,fl:14},{x:588,w:18,h:122,fl:10},{x:610,w:26,h:182,fl:16},{x:640,w:20,h:132,fl:11},{x:664,w:16,h:97,fl:8},{x:684,w:22,h:112,fl:10},{x:710,w:18,h:82,fl:7},{x:732,w:24,h:102,fl:9},{x:760,w:18,h:72,fl:6},{x:782,w:20,h:87,fl:7}];
+
+function drawPhoenixSkyline(){
   const canvas=document.getElementById('phoenixCanvas');
   if(!canvas)return;
   const ctx=canvas.getContext('2d');
+  if(isLightTheme()){ drawSkylineDay(ctx); return; }
   const W=816,H=1056;
   const skyG=ctx.createLinearGradient(0,0,0,H*.65);
   skyG.addColorStop(0,'#080a14');skyG.addColorStop(.4,'#0d1020');skyG.addColorStop(.7,'#1a1008');skyG.addColorStop(1,'#2a1a08');
@@ -1825,10 +1856,10 @@ function drawPhoenixSkyline() {
   const hG=ctx.createLinearGradient(0,H*.55,0,H*.7);hG.addColorStop(0,'transparent');hG.addColorStop(1,'rgba(201,140,60,.22)');
   ctx.fillStyle=hG;ctx.fillRect(0,H*.55,W,H*.15);
   ctx.fillStyle='rgba(18,13,7,.92)';ctx.beginPath();ctx.moveTo(0,H);
-  [[0,692],[60,662],[120,642],[180,657],[240,627],[300,647],[360,620],[420,640],[480,622],[540,644],[600,617],[660,637],[720,652],[780,637],[816,657],[816,H]].forEach(([x,y])=>ctx.lineTo(x,y));
+  SKYLINE_PROFILE.forEach(([x,y])=>ctx.lineTo(x,y));
   ctx.closePath();ctx.fill();
-  const BASE=730;
-  const blds=[{x:30,w:18,h:62,fl:6},{x:55,w:24,h:92,fl:9},{x:84,w:20,h:77,fl:7},{x:140,w:28,h:182,fl:16,ant:1},{x:172,w:22,h:142,fl:12},{x:198,w:16,h:102,fl:9},{x:218,w:26,h:222,fl:20,ant:1},{x:248,w:30,h:262,fl:24,ant:1},{x:282,w:24,h:202,fl:18},{x:310,w:18,h:162,fl:14},{x:332,w:28,h:302,fl:28,ant:1},{x:364,w:22,h:242,fl:22},{x:390,w:18,h:182,fl:16},{x:412,w:32,h:282,fl:26,ant:1},{x:448,w:26,h:202,fl:18},{x:478,w:20,h:152,fl:13},{x:502,w:24,h:192,fl:17},{x:530,w:28,h:242,fl:22,ant:1},{x:562,w:22,h:162,fl:14},{x:588,w:18,h:122,fl:10},{x:610,w:26,h:182,fl:16},{x:640,w:20,h:132,fl:11},{x:664,w:16,h:97,fl:8},{x:684,w:22,h:112,fl:10},{x:710,w:18,h:82,fl:7},{x:732,w:24,h:102,fl:9},{x:760,w:18,h:72,fl:6},{x:782,w:20,h:87,fl:7}];
+  const BASE=SKYLINE_BASE;
+  const blds=SKYLINE_BLDS;
   const rb=rng(77);
   blds.forEach(b=>{
     const bG=ctx.createLinearGradient(b.x,BASE-b.h,b.x+b.w,BASE);bG.addColorStop(0,'rgba(32,28,20,.97)');bG.addColorStop(1,'rgba(18,16,10,.99)');
@@ -1840,9 +1871,41 @@ function drawPhoenixSkyline() {
   const gG=ctx.createLinearGradient(0,BASE,0,H);gG.addColorStop(0,'rgba(14,10,5,.95)');gG.addColorStop(1,'rgba(5,3,2,1)');ctx.fillStyle=gG;ctx.fillRect(0,BASE,W,H-BASE);
   ctx.fillStyle='rgba(22,18,12,.95)';ctx.fillRect(0,BASE+10,W,40);
   ctx.strokeStyle='rgba(245,166,35,.1)';ctx.setLineDash([18,14]);ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,BASE+30);ctx.lineTo(W,BASE+30);ctx.stroke();ctx.setLineDash([]);
-  const sags=[{x:22,h:96},{x:76,h:71},{x:700,h:101},{x:766,h:73},{x:800,h:56}];
+  const sags=SKYLINE_SAGS;
   sags.forEach(s=>{ctx.fillStyle='rgba(5,4,2,.97)';ctx.fillRect(s.x-4,BASE-s.h,8,s.h);const aH=Math.floor(s.h*.45);ctx.fillRect(s.x-16,BASE-aH,14,5);ctx.fillRect(s.x-16,BASE-aH-26,5,26);ctx.fillRect(s.x+4,BASE-aH,14,5);ctx.fillRect(s.x+13,BASE-aH-22,5,22);});
   const hazeG=ctx.createLinearGradient(0,BASE-80,0,BASE);hazeG.addColorStop(0,'transparent');hazeG.addColorStop(1,'rgba(201,130,40,.05)');ctx.fillStyle=hazeG;ctx.fillRect(0,BASE-80,W,80);
+}
+
+// Daytime Phoenix — clear desert sky, sun, sunlit downtown towers, green saguaros.
+function drawSkylineDay(ctx){
+  const W=816,H=1056;
+  const skyG=ctx.createLinearGradient(0,0,0,H*.7);
+  skyG.addColorStop(0,'#7fb0dd');skyG.addColorStop(.42,'#aecbe6');skyG.addColorStop(.72,'#e2d6c0');skyG.addColorStop(1,'#efe3cd');
+  ctx.fillStyle=skyG;ctx.fillRect(0,0,W,H);
+  const sunHalo=ctx.createRadialGradient(648,120,30,648,120,170);sunHalo.addColorStop(0,'rgba(255,232,165,.32)');sunHalo.addColorStop(1,'transparent');
+  ctx.fillStyle=sunHalo;ctx.beginPath();ctx.arc(648,120,170,0,Math.PI*2);ctx.fill();
+  const sun=ctx.createRadialGradient(648,120,4,648,120,34);sun.addColorStop(0,'rgba(255,251,238,1)');sun.addColorStop(.6,'rgba(255,240,196,.96)');sun.addColorStop(1,'rgba(255,226,150,.45)');
+  ctx.fillStyle=sun;ctx.beginPath();ctx.arc(648,120,34,0,Math.PI*2);ctx.fill();
+  const hazeSky=ctx.createLinearGradient(0,H*.48,0,H*.66);hazeSky.addColorStop(0,'transparent');hazeSky.addColorStop(1,'rgba(232,214,178,.55)');
+  ctx.fillStyle=hazeSky;ctx.fillRect(0,H*.48,W,H*.18);
+  ctx.fillStyle='rgba(158,128,102,.5)';ctx.beginPath();ctx.moveTo(0,H);
+  SKYLINE_PROFILE.forEach(([x,y])=>ctx.lineTo(x,y));
+  ctx.closePath();ctx.fill();
+  const BASE=SKYLINE_BASE;
+  SKYLINE_BLDS.forEach(b=>{
+    const bG=ctx.createLinearGradient(b.x,BASE-b.h,b.x+b.w,BASE);
+    bG.addColorStop(0,'rgba(220,212,198,.99)');bG.addColorStop(1,'rgba(168,158,142,.99)');
+    ctx.fillStyle=bG;ctx.fillRect(b.x,BASE-b.h,b.w,b.h);
+    ctx.strokeStyle='rgba(120,106,88,.4)';ctx.lineWidth=.5;ctx.strokeRect(b.x,BASE-b.h,b.w,b.h);
+    if(b.fl){const cols=Math.max(1,Math.floor((b.w-4)/5)),fh=Math.floor(b.h/b.fl);
+      for(let f=0;f<b.fl;f++)for(let c=0;c<cols;c++){const wx=b.x+2+c*5,wy=BASE-b.h+3+f*fh;
+        ctx.fillStyle='rgba(96,116,134,.4)';ctx.fillRect(wx,wy,3,Math.min(fh-2,4));}}
+    if(b.ant){ctx.strokeStyle='rgba(120,106,88,.65)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(b.x+b.w/2,BASE-b.h);ctx.lineTo(b.x+b.w/2,BASE-b.h-33);ctx.stroke();ctx.beginPath();ctx.arc(b.x+b.w/2,BASE-b.h-33,2,0,Math.PI*2);ctx.fillStyle='rgba(200,70,70,.85)';ctx.fill();}
+  });
+  const gG=ctx.createLinearGradient(0,BASE,0,H);gG.addColorStop(0,'rgba(226,214,192,1)');gG.addColorStop(1,'rgba(204,187,160,1)');ctx.fillStyle=gG;ctx.fillRect(0,BASE,W,H-BASE);
+  ctx.fillStyle='rgba(196,180,153,1)';ctx.fillRect(0,BASE+10,W,40);
+  ctx.strokeStyle='rgba(120,106,88,.32)';ctx.setLineDash([18,14]);ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,BASE+30);ctx.lineTo(W,BASE+30);ctx.stroke();ctx.setLineDash([]);
+  SKYLINE_SAGS.forEach(s=>{ctx.fillStyle='rgba(78,98,60,.96)';ctx.fillRect(s.x-4,BASE-s.h,8,s.h);const aH=Math.floor(s.h*.45);ctx.fillRect(s.x-16,BASE-aH,14,5);ctx.fillRect(s.x-16,BASE-aH-26,5,26);ctx.fillRect(s.x+4,BASE-aH,14,5);ctx.fillRect(s.x+13,BASE-aH-22,5,22);});
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1994,12 +2057,12 @@ function changePage(dir) {
 function updateCounter() {
   if(spreadMode){
     const pages=slotToPages(currentSlot);
-    const txt=pages.length===2?(pages[0]+' — '+pages[1]+' / 16'):(pages[0]+' / 16');
+    const txt=pages.length===2?(pages[0]+' — '+pages[1]+' / 14'):(pages[0]+' / 14');
     document.getElementById('pageCounter').textContent=txt;
     var _fc=document.getElementById('fsCounter'); if(_fc) _fc.textContent=txt;
   } else {
-    document.getElementById('pageCounter').textContent=current+' / 16';
-    var _fc2=document.getElementById('fsCounter'); if(_fc2) _fc2.textContent=current+' / 16';
+    document.getElementById('pageCounter').textContent=current+' / 14';
+    var _fc2=document.getElementById('fsCounter'); if(_fc2) _fc2.textContent=current+' / 14';
   }
 }
 
@@ -2067,13 +2130,13 @@ function toggleZoom() {
     topControls.style.left = '0';
     topControls.style.right = '0';
     topControls.style.zIndex = '9999';
-    topControls.style.background = '#050505';
+    topControls.style.background = 'var(--surround)';
     topControls.style.padding = '12px 0';
     topControls.style.marginBottom = '0';
     wrapper.style.position = 'fixed';
     wrapper.style.inset = '0';
     wrapper.style.top = '60px';
-    wrapper.style.background = '#000';
+    wrapper.style.background = 'var(--surround)';
     wrapper.style.zIndex = '9000';
     wrapper.style.display = 'flex';
     wrapper.style.alignItems = 'center';
@@ -2186,6 +2249,45 @@ setTimeout(()=>{
   drawSellerCanvas();
   drawRateChartPlaceholder();
 },300);
+
+// ══ THEME TOGGLE ══
+function isLightTheme(){ return document.documentElement.getAttribute('data-theme') === 'light'; }
+function themeCanvasColors(){
+  return isLightTheme() ? {
+    panel:'#ebe7df', seller:'#ebe7df',
+    grid:'rgba(20,18,14,.09)', gridAmber:'rgba(212,140,20,.12)',
+    txt:'rgba(40,37,29,.62)', txtDim:'rgba(40,37,29,.45)', txtMid:'rgba(40,37,29,.74)',
+    dot:'rgba(255,255,255,.9)', border:'rgba(20,18,14,.16)',
+    cell:'rgba(20,18,14,.025)', cellHi:'rgba(245,166,35,.10)', amberDim:'rgba(196,128,16,.55)'
+  } : {
+    panel:'#252527', seller:'#111',
+    grid:'rgba(255,255,255,.05)', gridAmber:'rgba(245,166,35,.08)',
+    txt:'rgba(245,245,240,.4)', txtDim:'rgba(245,245,240,.28)', txtMid:'rgba(245,245,240,.55)',
+    dot:'rgba(17,17,17,.8)', border:'rgba(42,42,42,.9)',
+    cell:'rgba(255,255,255,.015)', cellHi:'rgba(245,166,35,.04)', amberDim:'rgba(245,166,35,.4)'
+  };
+}
+function redrawCanvases(){
+  try{ drawListingsChart(); }catch(e){}
+  try{ drawMovementChart(); }catch(e){}
+  try{ drawSellerCanvas(); }catch(e){}
+  try{ drawPhoenixSkyline(); }catch(e){}
+  try{ if(!REPORT_CONFIG.rateChartUrl) drawRateChartPlaceholder(); }catch(e){}
+}
+function applyTheme(mode){
+  const light = (mode === 'light');
+  document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
+  const btn = document.getElementById('themeToggleBtn');
+  if(btn) btn.innerHTML = light ? '&#9790; Dark' : '&#9788; Light';
+  try{ localStorage.setItem('kwsl-theme', light ? 'light' : 'dark'); }catch(e){}
+  redrawCanvases();
+}
+function toggleTheme(){ applyTheme(isLightTheme() ? 'dark' : 'light'); }
+(function(){
+  let saved = 'dark';
+  try{ saved = localStorage.getItem('kwsl-theme') || 'dark'; }catch(e){}
+  applyTheme(saved);
+})();
 
 applyMobileScale();
 window.addEventListener('resize', () => {
