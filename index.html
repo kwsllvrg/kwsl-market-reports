@@ -81,6 +81,10 @@
   .modal-x{background:none;border:1px solid var(--hair);color:var(--ink-2);font-size:16px;line-height:1;
            width:38px;height:38px;border-radius:50%;cursor:pointer;transition:.2s;}
   .modal-x:hover{border-color:var(--amber);color:var(--amber);}
+  .modal-actions{display:flex;gap:14px;align-items:center;}
+  .modal-open{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);
+              border:1px solid var(--hair);padding:8px 13px;border-radius:2px;transition:.2s;}
+  .modal-open:hover{border-color:var(--amber);color:var(--amber);}
   #modal iframe{flex:1 1 auto;width:100%;border:0;background:var(--surround);}
   @media(max-width:560px){ header{padding:64px 0 30px;} .toplink{top:16px;} }
 </style>
@@ -105,7 +109,7 @@
           <h2>July 2026</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('report-july-2026.html','July 2026')">Open ↗</button>
+            <a class="btn" href="report-july-2026.html" target="_blank" rel="noopener">Open ↗</a>
             <a class="btn ghost" href="report-july-2026-consumer.html" target="_blank" rel="noopener">Consumer&nbsp;edition</a>
           </div>
         </div>
@@ -119,7 +123,7 @@
           <h2>June 2026</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('report-june-2026.html','June 2026')">Open ↗</button>
+            <a class="btn" href="report-june-2026.html" target="_blank" rel="noopener">Open ↗</a>
             <a class="btn ghost" href="report-june-2026-consumer.html" target="_blank" rel="noopener">Consumer&nbsp;edition</a>
           </div>
         </div>
@@ -133,7 +137,7 @@
           <h2>May 2026</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('report-may-2026.html','May 2026')">Open ↗</button>
+            <a class="btn" href="report-may-2026.html" target="_blank" rel="noopener">Open ↗</a>
             <a class="btn ghost" href="report-may-2026-consumer.html" target="_blank" rel="noopener">Consumer&nbsp;edition</a>
           </div>
         </div>
@@ -147,7 +151,7 @@
           <h2>April 2026</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('report-april-2026.html','April 2026')">Open ↗</button>
+            <a class="btn" href="report-april-2026.html" target="_blank" rel="noopener">Open ↗</a>
             <a class="btn ghost" href="report-april-2026-consumer.html" target="_blank" rel="noopener">Consumer&nbsp;edition</a>
           </div>
         </div>
@@ -161,7 +165,7 @@
           <h2>March 2026</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('phoenix-market-report-march-2026-v5.html','March 2026')">Open ↗</button>
+            <a class="btn" href="phoenix-market-report-march-2026-v5.html" target="_blank" rel="noopener">Open ↗</a>
             
           </div>
         </div>
@@ -176,7 +180,7 @@
           <h2>February 2026</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwslfeb2026','February 2026')">View magazine ↗</button>
+            <a class="btn" href="https://mykwsl.hflip.co/kwslfeb2026" target="_blank" rel="noopener">View magazine ↗</a>
           </div>
         </div>
       </article>
@@ -190,7 +194,7 @@
           <h2>January 2026</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwsljan2026','January 2026')">View magazine ↗</button>
+            <a class="btn" href="https://mykwsl.hflip.co/kwsljan2026" target="_blank" rel="noopener">View magazine ↗</a>
           </div>
         </div>
       </article>
@@ -204,7 +208,7 @@
           <h2>December 2025</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwsldec2025','December 2025')">View magazine ↗</button>
+            <a class="btn" href="https://mykwsl.hflip.co/kwsldec2025" target="_blank" rel="noopener">View magazine ↗</a>
           </div>
         </div>
       </article>
@@ -218,7 +222,7 @@
           <h2>November 2025</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwslnov2025','November 2025')">View magazine ↗</button>
+            <a class="btn" href="https://mykwsl.hflip.co/kwslnov2025" target="_blank" rel="noopener">View magazine ↗</a>
           </div>
         </div>
       </article>
@@ -232,7 +236,7 @@
           <h2>October 2025</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwsloct2025','October 2025')">View magazine ↗</button>
+            <a class="btn" href="https://mykwsl.hflip.co/kwsloct2025" target="_blank" rel="noopener">View magazine ↗</a>
           </div>
         </div>
       </article>
@@ -246,7 +250,7 @@
           <h2>September 2025</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwslsept2025','September 2025')">View magazine ↗</button>
+            <a class="btn" href="https://mykwsl.hflip.co/kwslsept2025" target="_blank" rel="noopener">View magazine ↗</a>
           </div>
         </div>
       </article>
@@ -260,7 +264,7 @@
           <h2>August 2025</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('https://mykwsl.hflip.co/kwslaug2025','August 2025')">View magazine ↗</button>
+            <a class="btn" href="https://mykwsl.hflip.co/kwslaug2025" target="_blank" rel="noopener">View magazine ↗</a>
           </div>
         </div>
       </article>
@@ -272,7 +276,10 @@
   <div id="modal" role="dialog" aria-modal="true">
     <div class="modal-bar">
       <span class="modal-title" id="modalTitle">Market Report</span>
-      <button class="modal-x" onclick="closeReport()" aria-label="Close">✕</button>
+      <div class="modal-actions">
+        <a class="modal-open" id="modalOpenFull" href="#" target="_blank" rel="noopener">Open full ↗</a>
+        <button class="modal-x" onclick="closeReport()" aria-label="Close">✕</button>
+      </div>
     </div>
     <iframe id="modalFrame" title="Market report"></iframe>
   </div>
@@ -290,18 +297,24 @@
   function toggleTheme(){ applyTheme(isLight() ? 'dark' : 'light'); }
   (function(){ var s='dark'; try{ s=localStorage.getItem('kwsl-theme')||'dark'; }catch(e){} applyTheme(s); })();
 
+  // Modal opens as a history entry so the browser Back button (and Esc / ✕) returns to the list.
   function openReport(url, title){
     document.getElementById('modalTitle').textContent = title || 'Market Report';
     document.getElementById('modalFrame').src = url;
+    var of = document.getElementById('modalOpenFull'); if(of) of.href = url;
     document.getElementById('modal').classList.add('open');
     document.body.style.overflow = 'hidden';
+    history.pushState({vaultModal: 1}, '');
   }
-  function closeReport(){
+  function doClose(){
     document.getElementById('modal').classList.remove('open');
     document.getElementById('modalFrame').src = 'about:blank';
     document.body.style.overflow = '';
   }
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeReport(); });
+  function modalOpen(){ return document.getElementById('modal').classList.contains('open'); }
+  function closeReport(){ if(history.state && history.state.vaultModal) history.back(); else doClose(); }
+  window.addEventListener('popstate', function(){ if(modalOpen()) doClose(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && modalOpen()) closeReport(); });
 
   document.getElementById('search').addEventListener('input', function(){
     var q = this.value.trim().toLowerCase(), any = false;

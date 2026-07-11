@@ -82,7 +82,7 @@ def native_card(r):
           <h2>{title}</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('{agent}','{title}')">Open ↗</button>
+            <a class="btn" href="{agent}" target="_blank" rel="noopener">Open ↗</a>
             {consumer_btn}
           </div>
         </div>
@@ -101,7 +101,7 @@ def heyzine_card(r):
           <h2>{title}</h2>
           <p>Greater Phoenix Market Report</p>
           <div class="actions">
-            <button class="btn" onclick="openReport('{url}','{title}')">View magazine ↗</button>
+            <a class="btn" href="{url}" target="_blank" rel="noopener">View magazine ↗</a>
           </div>
         </div>
       </article>'''
@@ -198,6 +198,10 @@ TEMPLATE = r'''<!doctype html>
   .modal-x{background:none;border:1px solid var(--hair);color:var(--ink-2);font-size:16px;line-height:1;
            width:38px;height:38px;border-radius:50%;cursor:pointer;transition:.2s;}
   .modal-x:hover{border-color:var(--amber);color:var(--amber);}
+  .modal-actions{display:flex;gap:14px;align-items:center;}
+  .modal-open{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);
+              border:1px solid var(--hair);padding:8px 13px;border-radius:2px;transition:.2s;}
+  .modal-open:hover{border-color:var(--amber);color:var(--amber);}
   #modal iframe{flex:1 1 auto;width:100%;border:0;background:var(--surround);}
   @media(max-width:560px){ header{padding:64px 0 30px;} .toplink{top:16px;} }
 </style>
@@ -222,7 +226,10 @@ TEMPLATE = r'''<!doctype html>
   <div id="modal" role="dialog" aria-modal="true">
     <div class="modal-bar">
       <span class="modal-title" id="modalTitle">Market Report</span>
-      <button class="modal-x" onclick="closeReport()" aria-label="Close">✕</button>
+      <div class="modal-actions">
+        <a class="modal-open" id="modalOpenFull" href="#" target="_blank" rel="noopener">Open full ↗</a>
+        <button class="modal-x" onclick="closeReport()" aria-label="Close">✕</button>
+      </div>
     </div>
     <iframe id="modalFrame" title="Market report"></iframe>
   </div>
@@ -240,18 +247,24 @@ TEMPLATE = r'''<!doctype html>
   function toggleTheme(){ applyTheme(isLight() ? 'dark' : 'light'); }
   (function(){ var s='dark'; try{ s=localStorage.getItem('kwsl-theme')||'dark'; }catch(e){} applyTheme(s); })();
 
+  // Modal opens as a history entry so the browser Back button (and Esc / ✕) returns to the list.
   function openReport(url, title){
     document.getElementById('modalTitle').textContent = title || 'Market Report';
     document.getElementById('modalFrame').src = url;
+    var of = document.getElementById('modalOpenFull'); if(of) of.href = url;
     document.getElementById('modal').classList.add('open');
     document.body.style.overflow = 'hidden';
+    history.pushState({vaultModal: 1}, '');
   }
-  function closeReport(){
+  function doClose(){
     document.getElementById('modal').classList.remove('open');
     document.getElementById('modalFrame').src = 'about:blank';
     document.body.style.overflow = '';
   }
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeReport(); });
+  function modalOpen(){ return document.getElementById('modal').classList.contains('open'); }
+  function closeReport(){ if(history.state && history.state.vaultModal) history.back(); else doClose(); }
+  window.addEventListener('popstate', function(){ if(modalOpen()) doClose(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && modalOpen()) closeReport(); });
 
   document.getElementById('search').addEventListener('input', function(){
     var q = this.value.trim().toLowerCase(), any = false;
