@@ -115,7 +115,7 @@ svg .vlab{font-family:var(--r-display);font-weight:700;fill:var(--r-text)}
 .lb{display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 .lb:target{display:flex}.lb-bg{position:absolute;inset:0;background:rgba(255,255,255,.96)}
 .lb img{position:relative;max-width:90vw;max-height:80vh;object-fit:contain;border:1px solid var(--r-rule);background:#fff}
-.lb-close{position:absolute;top:16px;right:24px;font-size:30px;line-height:1;color:var(--r-text-2);text-decoration:none}
+.lb-close{position:absolute;top:16px;right:24px;z-index:2;font-size:30px;line-height:1;color:var(--r-text-2);text-decoration:none}
 .lb-cap{position:relative;font-family:var(--r-display);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--r-text-3)}
 .lb-nav{position:relative;display:flex;gap:16px;align-items:center;font-size:11px;color:var(--r-text-3)}
 .lb-nav a{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--r-rule);color:var(--r-accent);text-decoration:none}
@@ -151,7 +151,7 @@ a.fact-a{color:inherit;text-decoration:none;cursor:pointer;display:grid}a.fact-a
 svg .pt{cursor:pointer;outline:none}svg .pt .tip{opacity:0;pointer-events:none;transition:opacity .12s}svg .pt:hover .tip,svg .pt:focus .tip{opacity:1}
 svg .pt .tip rect{fill:var(--r-text)}svg .pt .tip text{fill:var(--r-bg);font-family:var(--r-body);font-weight:600}
 a.hl{color:inherit;text-decoration:none}a.hl:hover{text-decoration:underline}
-.flb-box{position:relative;background:var(--r-bg);border:1px solid var(--r-text);padding:44px 50px;max-width:600px;width:90vw}
+.flb-box{position:relative;background:var(--r-bg);border:1px solid var(--r-text);padding:44px 50px;max-width:600px;width:90vw;max-height:calc(100vh - 96px);max-height:calc(100dvh - 96px);overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0}
 .flb-n{font-family:var(--r-display);font-size:64px;line-height:1;color:var(--r-accent);opacity:.5;margin-bottom:14px}
 .flb-t{font-size:19px;line-height:1.7;color:var(--r-text)}
 @media print{.mc-tip,svg .pt .tip{display:none!important}}
@@ -219,6 +219,11 @@ table.data td .chg[style]{font-size:10px!important;color:var(--r-text-3)!importa
 .table-scroll-view table.data th,.table-scroll-view table.data td,.table-scroll-view table.data *{max-width:none}
 .page [style*="columns:"]{columns:1!important}
 .lb img{max-width:96vw!important;max-height:80vh!important}
+/* Fact overlay: keep close control above the card and scroll long facts (esp. fact 4) inside the viewport */
+.lb{justify-content:flex-start;padding:56px 12px 16px;box-sizing:border-box;overflow:hidden}
+.lb-close{top:8px;right:8px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--r-bg);border-radius:50%}
+.flb-box{width:100%;max-width:100%;padding:28px 20px;max-height:none;flex:1 1 auto;min-height:0;overflow-y:auto}
+.lb-nav{flex:0 0 auto;margin-top:8px}
 .mc-tip{max-width:80vw}
 /* Cover: kill bottom-pinned photo background (bleeds through taller mobile page).
    Put the same photo in-flow after chart/text/presented-by so nothing overlaps. */
