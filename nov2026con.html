@@ -392,6 +392,9 @@ svg circle[r="4.5"]{fill:var(--warm)!important;stroke:var(--warm)!important}
 <style id="mr-slides">
 /* KWSL landscape slides — additive only. Report mode is unchanged unless html.is-slides is set. */
 .mr-viewport, .mr-stage, .mr-p11-mid, .mr-p11-left, .mr-p11-right, .mr-p11-kw, .mr-p11-alt { display: contents; }
+/* QR is slide-mode only; must not appear in report mode or print */
+.mr-slide-qr{ display:none; }
+@media print{ .mr-slide-qr{ display:none !important; } }
 #mr-present-btn{
   display:none; position:fixed; z-index:2000; right:16px; bottom:16px;
   font:600 12px/1 var(--r-body, sans-serif); letter-spacing:.14em; text-transform:uppercase;
@@ -642,6 +645,13 @@ html.is-slides #page-8 .p8grid{
   gap:1.3cqh 1.8cqw !important; margin-top:1cqh !important;
   flex:1; min-height:0;
 }
+/* Stack Avg $/sq ft over Median $/sq ft (col 3). Swap Listing success rate with Median. */
+html.is-slides #page-8 .p8grid .metric:nth-child(1){ order:1; }
+html.is-slides #page-8 .p8grid .metric:nth-child(2){ order:2; }
+html.is-slides #page-8 .p8grid .metric:nth-child(3){ order:3; }
+html.is-slides #page-8 .p8grid .metric:nth-child(4){ order:6; } /* Median $/sq ft → bottom right */
+html.is-slides #page-8 .p8grid .metric:nth-child(5){ order:5; }
+html.is-slides #page-8 .p8grid .metric:nth-child(6){ order:4; } /* Listing success rate → bottom left */
 html.is-slides #page-8 .metric{ padding:1.1cqh 1.3cqw .8cqh !important; min-height:0; }
 html.is-slides #page-8 .metric .label{ font-size:.6cqw !important; }
 html.is-slides #page-8 .metric .num{ font-size:2.5cqw !important; margin:.35cqh 0 .45cqh !important; }
@@ -657,21 +667,29 @@ html.is-slides #page-8 .thumb img{ height:100%; object-fit:cover; }
 html.is-slides #page-8 .thumb-label{ font-size:.55cqw !important; padding:.35cqh .4cqw !important; }
 
 /* ---------- Page 9 seller ---------- */
-html.is-slides #page-9 .body > .prose:first-of-type{
-  font-size:1.05cqw !important; line-height:1.5 !important; margin-top:.8cqh !important;
+/* Grow the 3 headline stat boxes and enlarge type so the slide fills the stage. */
+html.is-slides #page-9 .body > h2.title + .prose{
+  font-size:1.20cqw !important; line-height:1.48 !important; margin-top:1.1cqh !important;
+  flex:0 0 auto;
 }
 html.is-slides #page-9 .grid3{
   display:grid !important; grid-template-columns:repeat(3,1fr) !important;
-  gap:1.6cqw !important; margin:1.4cqh 0 !important; flex:0 0 auto;
+  gap:2.2cqw !important; margin:2.2cqh 0 !important;
+  flex:1 1 auto; min-height:0; align-items:stretch;
 }
-html.is-slides #page-9 .grid3 .card{ padding:1.8cqh 1.4cqw !important; text-align:center; }
-html.is-slides #page-9 .grid3 .num{ font-size:3.2cqw !important; margin:.6cqh 0 .5cqh !important; white-space:nowrap !important; }
-html.is-slides #page-9 .grid3 .card > div:not(.label):not(.num){ font-size:.78cqw !important; line-height:1.4; }
+html.is-slides #page-9 .grid3 .card{
+  padding:2.8cqh 1.8cqw !important; text-align:center;
+  display:flex; flex-direction:column; justify-content:center; min-height:0;
+}
+html.is-slides #page-9 .grid3 .label{ font-size:.72cqw !important; letter-spacing:.18em; }
+html.is-slides #page-9 .grid3 .num{ font-size:5cqw !important; margin:1cqh 0 .8cqh !important; white-space:nowrap !important; }
+html.is-slides #page-9 .grid3 .card > div:not(.label):not(.num){ font-size:1cqw !important; line-height:1.4; }
 html.is-slides #page-9 .body > .prose:last-of-type{
-  flex:1; min-height:0; columns:2; column-gap:2.6cqw;
-  font-size:1.02cqw !important; line-height:1.5 !important;
+  flex:0 0 auto; min-height:0; columns:2; column-gap:2.8cqw;
+  font-size:1.22cqw !important; line-height:1.48 !important;
+  margin-bottom:.8cqh;
 }
-html.is-slides #page-9 .body > .prose:last-of-type p + p{ margin-top:1cqh; }
+html.is-slides #page-9 .body > .prose:last-of-type p + p{ margin-top:1.2cqh; }
 
 /* ---------- Page 10 valleys + 2x2 stats ---------- */
 html.is-slides #page-10 .body{
@@ -939,14 +957,112 @@ html.is-slides .page:has(.back-agent) .body > div[style*="border-top"]{
 }
 html.is-slides .page:has(.back-agent) .mr-powered{ font-size:.75cqw !important; }
 
-/* Fact / image overlays scale up a bit on a TV */
+/* Hide the boxed CTA and show a large scannable QR in its place (slide mode only). */
+html.is-slides .page:has(.back-agent) .back-agent .panel,
+html.is-slides .page:has(.back-agent) .mr-agent{ display:none !important; }
+html.is-slides .page:has(.back-agent) .mr-slide-qr{
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
+  gap:1.4cqh; height:100%; min-height:0;
+}
+html.is-slides .mr-slide-qr-frame{
+  flex:0 0 auto;
+  border:1px solid var(--r-text); background:#fff;
+  padding:.9cqh .9cqw; box-sizing:border-box; line-height:0;
+}
+html.is-slides .mr-slide-qr-frame svg{
+  display:block; width:min(36cqh, 30cqw); height:min(36cqh, 30cqw);
+}
+html.is-slides .mr-slide-qr-cap{
+  font-family:var(--r-display); font-weight:600; font-size:1.15cqw;
+  line-height:1.3; color:var(--r-text); letter-spacing:.01em;
+  max-width:36cqw; margin:0;
+}
+
+/* Fact overlays scale up a bit on a TV */
 html.is-slides .flb-box{ padding:3.5cqh 3.2cqw; max-width:min(42cqw, 720px); width:auto; }
 html.is-slides .flb-n{ font-size:4.2cqw; margin-bottom:1.1cqh; }
 html.is-slides .flb-t{ font-size:1.2cqw; line-height:1.55; }
 html.is-slides .lb-close{ font-size:2cqw; top:1.4cqh; right:2cqw; }
 html.is-slides .lb-nav{ font-size:.7cqw; gap:1.2cqw; }
 html.is-slides .lb-nav a{ width:2.2cqw; height:2.2cqw; }
-html.is-slides .lb img{ max-width:86vw; max-height:78vh; }
+
+/* Image lightboxes (CMI, Price Band, Concise Snapshot, MND rates):
+   fill most of the screen in slide mode, with a margin so the close X stays visible.
+   These four sit outside .mr-stage, so use vw/vh — not cqw/cqh. Report mode is unchanged. */
+html.is-slides #lb-cmi,
+html.is-slides #lb-bands,
+html.is-slides #lb-snapshot,
+html.is-slides #lb-rates{
+  overflow:hidden;
+  padding:0;
+  gap:0;
+  box-sizing:border-box;
+}
+html.is-slides #lb-cmi img,
+html.is-slides #lb-bands img,
+html.is-slides #lb-snapshot img,
+html.is-slides #lb-rates img{
+  width:92vw;
+  height:88vh;
+  max-width:92vw !important;
+  max-height:88vh !important;
+  object-fit:contain;
+  object-position:center center;
+  border:none;
+  background:transparent;
+}
+html.is-slides #lb-cmi .lb-close,
+html.is-slides #lb-bands .lb-close,
+html.is-slides #lb-snapshot .lb-close,
+html.is-slides #lb-rates .lb-close{
+  top:1.6vh;
+  right:1.6vw;
+  z-index:20;
+  width:56px;
+  height:56px;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:40px;
+  line-height:1;
+  color:#111;
+  background:#fff;
+  border:1px solid var(--r-rule, #d0d0d0);
+  border-radius:50%;
+  box-shadow:0 1px 8px rgba(0,0,0,.2);
+}
+html.is-slides #lb-cmi .lb-cap,
+html.is-slides #lb-bands .lb-cap,
+html.is-slides #lb-snapshot .lb-cap,
+html.is-slides #lb-rates .lb-cap{
+  position:absolute;
+  left:0; right:0;
+  bottom:4.6vh;
+  z-index:5;
+  text-align:center;
+  font-size:13px;
+  pointer-events:none;
+}
+html.is-slides #lb-cmi .lb-nav,
+html.is-slides #lb-bands .lb-nav,
+html.is-slides #lb-snapshot .lb-nav,
+html.is-slides #lb-rates .lb-nav{
+  position:absolute;
+  left:0; right:0;
+  bottom:1vh;
+  z-index:5;
+  justify-content:center;
+  font-size:13px;
+  gap:16px;
+}
+html.is-slides #lb-cmi .lb-nav a,
+html.is-slides #lb-bands .lb-nav a,
+html.is-slides #lb-snapshot .lb-nav a,
+html.is-slides #lb-rates .lb-nav a{
+  width:40px;
+  height:40px;
+}
 
 </style>
 </head><body>
@@ -1211,6 +1327,11 @@ html.is-slides .lb img{ max-width:86vw; max-height:78vh; }
    <div class="mr-agent" data-mr-agent-slot><div style="font-size:15px;color:var(--r-text-2)">Questions about what this means for your home?</div><div style="font-family:var(--r-display);font-size:30px;font-weight:800;color:var(--r-text);margin-top:8px">Ask your KW Sonoran Living agent</div></div>
    <!--/MR_AGENT_SLOT-->
    </div>
+   <div class="mr-slide-qr">
+    <div class="mr-slide-qr-frame"><svg viewBox="0 0 43 43" preserveAspectRatio="xMidYMid meet" shape-rendering="crispEdges" focusable="false" role="img" aria-label="QR code linking to https://stats.mykwsl.com/nov2026con" xmlns="http://www.w3.org/2000/svg" width="43" height="43" class="segno"><path fill="#fff" d="M0 0h43v43h-43z"/><path class="qrline" stroke="#0b0b0b" d="M3 3.5h7m1 0h1m1 0h1m1 0h4m1 0h1m2 0h2m3 0h1m4 0h7m-37 1h1m5 0h1m3 0h4m1 0h1m5 0h1m2 0h2m2 0h1m1 0h1m5 0h1m-37 1h1m1 0h3m1 0h1m1 0h4m2 0h2m6 0h1m5 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m3 0h1m2 0h2m3 0h1m3 0h1m2 0h2m1 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h2m1 0h3m1 0h1m1 0h1m1 0h3m1 0h4m3 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m2 0h2m1 0h2m1 0h2m1 0h3m3 0h3m1 0h1m1 0h1m5 0h1m-37 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-29 1h1m2 0h1m1 0h2m2 0h1m1 0h2m1 0h4m1 0h2m-24 1h2m3 0h5m1 0h4m3 0h2m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m-37 1h1m1 0h1m1 0h2m3 0h2m1 0h6m2 0h1m1 0h1m2 0h2m1 0h1m1 0h2m1 0h1m-34 1h4m2 0h1m3 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h1m2 0h4m1 0h1m1 0h1m1 0h3m-36 1h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h1m3 0h1m2 0h1m2 0h2m1 0h1m3 0h4m1 0h1m-36 1h1m5 0h1m3 0h9m3 0h2m3 0h1m2 0h2m1 0h1m1 0h2m-36 1h2m2 0h1m3 0h4m1 0h1m3 0h1m1 0h2m1 0h1m2 0h2m1 0h1m1 0h1m2 0h2m-31 1h2m1 0h3m2 0h2m1 0h4m2 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h2m-37 1h1m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h2m4 0h1m6 0h1m1 0h3m1 0h4m-37 1h2m2 0h1m1 0h1m2 0h2m4 0h4m1 0h1m3 0h7m1 0h1m1 0h1m1 0h1m-37 1h2m2 0h2m1 0h2m2 0h4m2 0h1m2 0h3m4 0h3m1 0h1m1 0h1m-33 1h3m2 0h4m3 0h1m1 0h3m2 0h1m2 0h1m1 0h3m3 0h1m1 0h2m1 0h1m-37 1h1m1 0h1m1 0h2m5 0h3m4 0h5m1 0h1m2 0h1m3 0h3m1 0h1m-36 1h3m3 0h1m1 0h1m1 0h3m1 0h1m7 0h2m1 0h1m3 0h4m1 0h1m1 0h1m-35 1h1m2 0h1m1 0h1m1 0h6m2 0h1m1 0h1m4 0h1m2 0h2m2 0h3m-33 1h1m4 0h2m3 0h2m2 0h2m6 0h2m2 0h1m2 0h1m3 0h3m-35 1h1m2 0h1m3 0h1m1 0h1m5 0h1m2 0h1m5 0h2m1 0h3m1 0h1m1 0h1m-36 1h1m1 0h1m2 0h5m2 0h1m2 0h1m1 0h1m3 0h2m2 0h2m1 0h6m1 0h2m-37 1h1m1 0h2m3 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h1m1 0h1m1 0h3m2 0h2m-35 1h1m1 0h1m2 0h6m6 0h4m1 0h1m2 0h1m4 0h1m2 0h4m-37 1h1m1 0h1m1 0h2m1 0h2m2 0h4m1 0h2m2 0h1m3 0h1m2 0h1m1 0h1m2 0h1m1 0h1m-35 1h1m1 0h2m2 0h1m2 0h2m6 0h2m2 0h1m2 0h3m1 0h6m1 0h1m-28 1h2m4 0h3m2 0h3m1 0h1m1 0h4m3 0h2m-34 1h7m2 0h1m1 0h1m1 0h1m2 0h2m2 0h6m2 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m1 0h7m1 0h1m2 0h2m2 0h1m3 0h2m3 0h2m2 0h1m-37 1h1m1 0h3m1 0h1m2 0h3m4 0h2m1 0h2m3 0h2m1 0h6m1 0h3m-37 1h1m1 0h3m1 0h1m9 0h4m1 0h1m4 0h2m2 0h1m3 0h1m-35 1h1m1 0h3m1 0h1m2 0h2m1 0h1m1 0h1m1 0h1m3 0h1m2 0h3m2 0h2m4 0h1m1 0h1m-37 1h1m5 0h1m2 0h1m1 0h1m1 0h3m1 0h2m1 0h2m1 0h1m4 0h1m2 0h1m4 0h1m-37 1h7m3 0h2m2 0h1m1 0h1m1 0h1m2 0h1m4 0h1m1 0h1m1 0h1m2 0h1m2 0h1"/></svg></div>
+    <p class="mr-slide-qr-cap">Scan To Access This Report and Marketing Materials</p>
+   </div>
+
   </div>
   <div class="label" style="margin-bottom:10px">November 2026 at a glance</div>
   <div class="grid3" style="margin-bottom:26px"><div class="card"><div class="label">Under contract</div><div class="num" style="font-size:24px;margin:4px 0 2px">5,350</div><div class="chg">↓ 4.5% vs. Sep</div></div><div class="card"><div class="label">Active listings</div><div class="num" style="font-size:24px;margin:4px 0 2px">25,575</div><div class="chg">↑ 5.6% vs. Sep</div></div><div class="card"><div class="label">Listing success</div><div class="num" style="font-size:24px;margin:4px 0 2px">64.3%</div><div class="chg">↓ 5.3 pts vs. 69.6% in Sep</div></div></div>
@@ -1355,13 +1476,19 @@ html.is-slides .lb img{ max-width:86vw; max-height:78vh; }
   window.addEventListener("orientationchange", function(){ setTimeout(applyMode, 50); });
   window.addEventListener("hashchange", function(){
     var h = (location.hash || "").slice(1);
-    if (overlayOpen()){ if (slideOn()) showSlide("page-7", false); return; }
+    /* Opening a fact/image lightbox used to call showSlide("page-7"), which
+       jumped the deck when CMI/bands/snapshot/rates were opened from page 8 or 13.
+       Leave the current slide alone while an overlay is open. On close (#_),
+       restore that same slide and its page hash. */
+    if (overlayOpen()) return;
     if (h && document.getElementById(h) && document.getElementById(h).classList.contains("page")){
       if (slideOn()) showSlide(h, false);
       else {
         var el = document.getElementById(h);
         if (el) el.scrollIntoView({block:"start", behavior:"auto"});
       }
+    } else if (slideOn() && lastId && (h === "_" || !h)){
+      showSlide(lastId, true);
     }
   });
   document.addEventListener("click", function(e){
@@ -1377,7 +1504,13 @@ html.is-slides .lb img{ max-width:86vw; max-height:78vh; }
     if (e.defaultPrevented || e.repeat) return;
     if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
     if (editable(e.target)) return;
-    if (overlayOpen()) return;
+    if (overlayOpen()){
+      if (e.key === "Escape" || e.key === "Esc"){
+        e.preventDefault();
+        location.hash = "_";
+      }
+      return; /* don't advance slides while a lightbox is open */
+    }
     if (requested === "manual" && (e.key === "p" || e.key === "P") && mq() && !editable(e.target)){
       /* optional shortcut in manual mode only; not advertised */
     }
