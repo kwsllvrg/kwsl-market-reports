@@ -395,6 +395,72 @@ svg circle[r="4.5"]{fill:var(--warm)!important;stroke:var(--warm)!important}
 /* QR is slide-mode only; must not appear in report mode or print */
 .mr-slide-qr{ display:none; }
 @media print{ .mr-slide-qr{ display:none !important; } }
+
+
+/* Download PDF — visible in slide and report modes, never in print */
+#mr-download-pdf{
+  display:inline-flex; align-items:center; gap:8px;
+  position:fixed; z-index:2000;
+  right:max(16px, env(safe-area-inset-right, 0px));
+  bottom:max(16px, env(safe-area-inset-bottom, 0px));
+  font-family:var(--r-body, "Inter", sans-serif);
+  font-weight:600; font-size:11px; line-height:1;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--r-text,#0B0B0B); background:#fff;
+  border:1px solid var(--r-text,#0B0B0B);
+  padding:11px 14px; text-decoration:none;
+  box-shadow:0 8px 24px rgba(11,11,11,.08);
+}
+#mr-download-pdf svg{ width:12px; height:12px; flex:0 0 auto; display:block; }
+#mr-download-pdf:hover,
+#mr-download-pdf:focus-visible{
+  background:var(--r-text,#0B0B0B); color:#fff; outline:none;
+}
+
+/* Print: drop slide-mode layout entirely so the original letter-portrait
+   report CSS takes over — every .page, in order, one sheet each. */
+@media print{
+  #mr-download-pdf, #mr-present-btn, .mr-slide-qr{ display:none !important; }
+  html, html.is-slides, html.is-slides body, body{
+    height:auto !important; overflow:visible !important; background:#fff !important;
+  }
+  html.is-slides .mr-viewport,
+  html.is-slides .mr-stage{
+    display:contents !important;
+    width:auto !important; height:auto !important;
+    overflow:visible !important; position:static !important;
+    box-shadow:none !important; transform:none !important;
+    container-type:normal !important;
+  }
+  html.is-slides .page,
+  html.is-slides .page.is-current,
+  html.is-slides .mr-stage:not(:has(.page.is-current)) .page:target,
+  html.is-slides .mr-stage:not(:has(.page.is-current)) .page:first-of-type{
+    position:relative !important; inset:auto !important;
+    display:flex !important; flex-direction:column !important;
+    width:816px !important; height:1056px !important;
+    margin:0 !important; overflow:hidden !important;
+    padding:44px 56px 0 !important;
+    transform:none !important;
+  }
+}
+
+@media screen{
+/* Chip sits on the stage, just above the footer / page number.
+   On the cover, the right column has a source line there, so the
+   chip moves to the left — still above the "Presented by" band. */
+html.is-slides #mr-download-pdf{
+  position:absolute;
+  z-index:20;
+  right:2cqw;
+  bottom:6.2cqh;
+  box-shadow:0 8px 20px rgba(11,11,11,.10);
+}
+html.is-slides:has(#page-1.is-current) #mr-download-pdf{
+  right:auto;
+  left:2cqw;
+}
+html.is-slides:has(.lb:target) #mr-download-pdf{ display:none; }
 #mr-present-btn{
   display:none; position:fixed; z-index:2000; right:16px; bottom:16px;
   font:600 12px/1 var(--r-body, sans-serif); letter-spacing:.14em; text-transform:uppercase;
@@ -1117,6 +1183,7 @@ html.is-slides #lb-rates .lb-nav a{
   width:40px;
   height:40px;
 }
+}
 
 </style>
 </head><body>
@@ -1437,8 +1504,10 @@ html.is-slides #lb-rates .lb-nav a{
   </div>
  </div>
 </section>
+<a id="mr-download-pdf" href="nov2026.pdf" download="KWSL-Market-Report-November-2026-Agent.pdf" title="Download the printable letter-size booklet"><svg viewBox="0 0 12 12" aria-hidden="true"><path fill="currentColor" d="M5.3 1h1.4v6.1l2.1-2.1.9.9L6 9.6 2.3 5.9l.9-.9 2.1 2.1V1zM1 10.2h10V11.5H1z"/></svg>Download PDF</a>
 </div></div>
 <button type="button" id="mr-present-btn" hidden aria-pressed="false" title="Presentation mode">Present</button>
+
 
 <div class="lb flb" id="fact-1"><a class="lb-bg" href="#page-7" aria-label="Close"></a><a class="lb-close" href="#page-7" aria-label="Close">×</a><div class="flb-box"><div class="flb-n">01</div><div class="flb-t">The contract pipeline is the thinnest in years. On November 1, pending listings stood at <strong>3,411</strong> and listings under contract at <strong>5,705</strong>, down <strong>19.7%</strong> and <strong>22.3%</strong> from a year ago, and the contract ratio fell to <strong>20.30</strong>, the lowest since February 2009. Part of that is the usual dip right after month-end.</div></div><div class="lb-nav"><a href="#fact-4">←</a><span>1 / 4</span><a href="#fact-2">→</a></div></div><div class="lb flb" id="fact-2"><a class="lb-bg" href="#page-7" aria-label="Close"></a><a class="lb-close" href="#page-7" aria-label="Close">×</a><div class="flb-box"><div class="flb-n">02</div><div class="flb-t">Notices of Trustee Sale reached <strong>518</strong> in October, the most in a single month since April 2019, with <strong>4,891</strong> filed from January through October, up <strong>13.9%</strong> and the highest for those months since 2018. Completed Trustee's Deeds rose <strong>47%</strong> to <strong>1,318</strong>.</div></div><div class="lb-nav"><a href="#fact-1">←</a><span>2 / 4</span><a href="#fact-3">→</a></div></div><div class="lb flb" id="fact-3"><a class="lb-bg" href="#page-7" aria-label="Close"></a><a class="lb-close" href="#page-7" aria-label="Close">×</a><div class="flb-box"><div class="flb-n">03</div><div class="flb-t">New home closings fell again, to <strong>1,025</strong> from <strong>1,109</strong> in September, down <strong>19.4%</strong> on the year and the lowest October since 2015. Their share of the Maricopa market still rose to <strong>19.8%</strong>, the highest of 2026, because resales fell slightly faster month over month (<strong>−8.3%</strong> vs. <strong>−7.6%</strong>).</div></div><div class="lb-nav"><a href="#fact-2">←</a><span>3 / 4</span><a href="#fact-4">→</a></div></div><div class="lb flb" id="fact-4"><a class="lb-bg" href="#page-7" aria-label="Close"></a><a class="lb-close" href="#page-7" aria-label="Close">×</a><div class="flb-box"><div class="flb-n">04</div><div class="flb-t">The average went up. The typical home did not. Average price per square foot rose <strong>4.0%</strong> from <strong>$293.21</strong> on October 1 to <strong>$305.01</strong> on November 1, while the median slipped <strong>0.7%</strong> from <strong>$251.88</strong> to <strong>$250.12</strong>, the widest one-month split since at least 2011. Take out closings of <strong>$2 million</strong> or more and the average rose by only about 60 cents.</div></div><div class="lb-nav"><a href="#fact-3">←</a><span>4 / 4</span><a href="#fact-1">→</a></div></div>
 
@@ -1519,6 +1588,7 @@ html.is-slides #lb-rates .lb-nav a{
     }
   }
   function slideOn(){
+    if (document.documentElement.getAttribute("data-printing") === "1") return false;
     if (requested === "off") return false;
     if (!mq()) return false;
     if (requested === "manual") return presenting;
@@ -1527,6 +1597,24 @@ html.is-slides #lb-rates .lb-nav a{
   function applyMode(){
     var on = slideOn();
     var root = document.documentElement;
+    var wasOn = root.classList.contains("is-slides");
+    /* Pick the slide before toggling is-slides. After the class is applied,
+       hidden pages are position:absolute with a 0×0 rect, and
+       currentIndexScroll walks them all and lands on the last page — which
+       is why 16:9 desktops (stage top = 0) opened on the back cover. */
+    var id = lastId;
+    if (on){
+      var h = (location.hash || "").slice(1);
+      if (h && h.indexOf("fact-") === 0) id = "page-7";
+      else if (h && document.getElementById(h) && document.getElementById(h).classList.contains("page")) id = h;
+      else if (!id){
+        if (wasOn) id = currentId();
+        else {
+          var list = pages();
+          id = list.length ? list[currentIndexScroll(list)].id : null;
+        }
+      }
+    }
     root.classList.toggle("is-slides", on);
     root.setAttribute("data-slides-mode", requested);
     root.setAttribute("data-slides", on ? "on" : "off");
@@ -1538,19 +1626,11 @@ html.is-slides #lb-rates .lb-nav a{
       btn.textContent = on ? "Exit" : "Present";
     }
     if (on){
-      var h = (location.hash || "").slice(1);
-      var id = lastId;
-      if (h && h.indexOf("fact-") === 0) id = "page-7";
-      else if (h && document.getElementById(h) && document.getElementById(h).classList.contains("page")) id = h;
-      else if (!id){
-        var list = pages();
-        id = list[currentIndexScroll(list)].id;
-      }
       showSlide(id || pages()[0].id, true);
-    } else {
-      var id = currentId();
+    } else if (root.getAttribute("data-printing") !== "1"){
+      var stay = currentId();
       requestAnimationFrame(function(){
-        var el = id && document.getElementById(id);
+        var el = stay && document.getElementById(stay);
         if (el) el.scrollIntoView({block:"start", behavior:"auto"});
       });
     }
@@ -1642,6 +1722,19 @@ html.is-slides #lb-rates .lb-nav a{
     if (prev && idx > 0) showSlide(ids[idx - 1], true);
     if (next && idx < ids.length - 1) showSlide(ids[idx + 1], true);
   }, false);
+
+  window.addEventListener("beforeprint", function(){
+    var root = document.documentElement;
+    root.setAttribute("data-printing", "1");
+    root.classList.remove("is-slides");
+    root.setAttribute("data-slides", "off");
+    if (typeof window.scrollTo === "function") window.scrollTo(0, 0);
+    else document.documentElement.scrollTop = 0;
+  });
+  window.addEventListener("afterprint", function(){
+    document.documentElement.removeAttribute("data-printing");
+    applyMode();
+  });
 
   if (document.getElementById("mr-present-btn")){
     document.getElementById("mr-present-btn").addEventListener("click", function(){
